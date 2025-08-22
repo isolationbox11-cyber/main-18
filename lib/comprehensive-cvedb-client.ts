@@ -66,34 +66,44 @@ async function makeComprehensiveAPIRequest<T>(
 ): Promise<T> {
   const { maxRetries = 3, retryDelay = 1000, timeout = 30000, fallbackEndpoints = [] } = options
   let lastError: Error | null = null
-  const allUrls = [url, ...fallbackEndpoints]
+          if (!response.ok) {
+            const errorDetails = `${response.status} ${response.statusText}`;
+            console.error(`[CVEDB] HTTP Error: ${errorDetails} for ${currentUrl}`);
 
-  for (const currentUrl of allUrls) {
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        console.log(`[CVEDB] Attempt ${attempt}/${maxRetries}: ${currentUrl}`)
+            if (response.status === 308) {
+              const location = response.headers.get("Location");
+              if (location) {
+                console.warn(`[CVEDB] HTTP 308 Permanent Redirect. Following Location: ${location}`);
+                // Recursively follow the redirect
+                return await makeComprehensiveAPIRequest(location, options);
+              }
+              throw new Error("HTTP 308 received but no Location header found");
+            }
 
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), timeout)
+            if (response.status === 404) {
+              // Try next endpoint for 404s
+              break;
+            }
 
-        const response = await fetch(currentUrl, {
-          method: "GET",
-          headers: {
-            Accept: "application/json",
-            "User-Agent": "CyberWatchVault/3.0 (Multi-source)",
-            "Cache-Control": "no-cache",
-            "Accept-Encoding": "gzip, deflate",
-          },
-          signal: controller.signal,
-        })
+            if (response.status === 429) {
+              const retryAfter = response.headers.get("Retry-After");
+              const waitTime = retryAfter
+                ? Number.parseInt(retryAfter) * 1000
+                : Math.min(retryDelay * Math.pow(2, attempt), 30000);
+              console.warn(`[CVEDB] Rate limited. Waiting ${waitTime}ms before retry ${attempt}/${maxRetries}`);
+              await new Promise((resolve) => setTimeout(resolve, waitTime));
+              continue;
+            }
 
-        clearTimeout(timeoutId)
+            if (response.status >= 500) {
+              console.warn(`[CVEDB] Server error ${errorDetails} for ${currentUrl}. Retrying...`);
+              lastError = new Error(`Server error ${errorDetails}`);
+              await new Promise((resolve) => setTimeout(resolve, retryDelay * attempt));
+              continue;
+            }
 
-        if (!response.ok) {
-          const errorDetails = `${response.status} ${response.statusText}`
-          console.error(`[CVEDB] HTTP Error: ${errorDetails} for ${currentUrl}`)
-
-          if (response.status === 404) {
+            throw new Error(`HTTP ${errorDetails}`);
+          }
             // Try next endpoint for 404s
             break
           }
