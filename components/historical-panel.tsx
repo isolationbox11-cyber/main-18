@@ -320,7 +320,7 @@ export function HistoricalPanel({ domain, onCopy, onOpenExternal }: HistoricalPa
                 <Globe className="w-3 h-3 mr-2" />
                 Bing Cache
               </Button>
-              <p className="text-xs text-slate-400">Microsoft's cached version</p>
+              <p className="text-xs text-slate-400">Microsoft&apos;s cached version</p>
             </div>
             
             <div className="text-center">

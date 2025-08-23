@@ -71,12 +71,22 @@ async function searchDuckDuckGo(query: string) {
     // Add related topics
     if (data.RelatedTopics) {
       data.RelatedTopics.slice(0, 5).forEach((topic: any) => {
-        if (topic.Text && topic.FirstURL) {
+        if (topic.Text && topic.FirstURL && typeof topic.FirstURL === "string" && topic.FirstURL.startsWith("http")) {
+          let displayLink = "";
+          if (typeof topic.FirstURL === "string" && topic.FirstURL.startsWith("http")) {
+            try {
+              displayLink = new URL(topic.FirstURL).hostname;
+            } catch {
+              displayLink = "invalid-url";
+            }
+          } else {
+            displayLink = "invalid-url";
+          }
           results.push({
             title: topic.Text.split(" - ")[0] || "Related Topic",
             link: topic.FirstURL,
             snippet: topic.Text,
-            displayLink: new URL(topic.FirstURL).hostname,
+            displayLink,
             riskLevel: "info" as const,
             category: "Related",
           })
@@ -140,12 +150,12 @@ async function searchSearx(query: string) {
     const data = await response.json()
 
     return (data.results || []).slice(0, 10).map((item: any) => ({
-      title: item.title,
-      link: item.url,
-      snippet: item.content || "",
-      displayLink: new URL(item.url).hostname,
-      riskLevel: assessRiskLevel(item.url, item.content || ""),
-      category: categorizeResult(item.url, item.content || ""),
+  title: item.title,
+  link: item.url,
+  snippet: item.content || "",
+  displayLink: (typeof item.url === "string" && item.url.startsWith("http")) ? (() => { try { return new URL(item.url).hostname } catch { return "invalid-url" } })() : "invalid-url",
+  riskLevel: assessRiskLevel(item.url, item.content || ""),
+  category: categorizeResult(item.url, item.content || ""),
     }))
   } catch (error) {
     console.error("SearX search failed:", error)
@@ -159,15 +169,27 @@ function assessRiskLevel(link: string, snippet: string): "info" | "low" | "mediu
 
   const text = (link + " " + snippet).toLowerCase()
 
-  if (highRiskIndicators.some((indicator) => text.includes(indicator))) return "high"
-  if (mediumRiskIndicators.some((indicator) => text.includes(indicator))) return "medium"
-  return "low"
+  if (highRiskIndicators.some((indicator) => text.includes(indicator))) {
+    return "high";
+  }
+  if (mediumRiskIndicators.some((indicator) => text.includes(indicator))) {
+    return "medium";
+  }
+  return "low";
 }
 
 function categorizeResult(link: string, snippet: string): string {
-  if (link.includes("admin") || snippet.includes("admin")) return "Admin Panel"
-  if (link.includes("login") || snippet.includes("login")) return "Login Page"
-  if (snippet.includes("index of")) return "Directory Listing"
-  if (link.includes("config") || snippet.includes("config")) return "Configuration"
-  return "General"
+  if (link.includes("admin") || snippet.includes("admin")) {
+    return "Admin Panel";
+  }
+  if (link.includes("login") || snippet.includes("login")) {
+    return "Login Page";
+  }
+  if (snippet.includes("index of")) {
+    return "Directory Listing";
+  }
+  if (link.includes("config") || snippet.includes("config")) {
+    return "Configuration";
+  }
+  return "General";
 }

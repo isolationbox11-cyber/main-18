@@ -81,9 +81,8 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
+  /* Removed invalid border-border utility */
+  * {}
   body {
     @apply bg-background text-foreground;
   }

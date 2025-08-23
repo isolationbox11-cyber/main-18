@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -41,14 +41,10 @@ export function BotnetDetailsModal({ botnet, open, onOpenChange }: BotnetDetails
   const [activeTab, setActiveTab] = useState("overview")
   const [selectedHost, setSelectedHost] = useState<ShodanHost | null>(null)
 
-  useEffect(() => {
-    if (botnet && open) {
-      loadBotnetIntelligence()
+  const loadBotnetIntelligence = useCallback(async () => {
+    if (!botnet) {
+      return
     }
-  }, [botnet, open])
-
-  const loadBotnetIntelligence = async () => {
-    if (!botnet) return
 
     setLoading(true)
     try {
@@ -60,7 +56,7 @@ export function BotnetDetailsModal({ botnet, open, onOpenChange }: BotnetDetails
         `org:"${botnet.name}"`,
       ]
 
-      const searchPromises = queries.map((query) => searchShodan(query, ["country", "port", "org"]))
+  const searchPromises = queries.map((query) => searchShodan(query, 1))
       const results = await Promise.all(searchPromises)
 
       // Combine and deduplicate results
@@ -99,7 +95,13 @@ export function BotnetDetailsModal({ botnet, open, onOpenChange }: BotnetDetails
     } finally {
       setLoading(false)
     }
-  }
+  }, [botnet])
+
+  useEffect(() => {
+    if (botnet && open) {
+      loadBotnetIntelligence()
+    }
+  }, [botnet, open, loadBotnetIntelligence])
 
   const getThreatLevelColor = (level: string) => {
     switch (level) {
@@ -125,7 +127,9 @@ export function BotnetDetailsModal({ botnet, open, onOpenChange }: BotnetDetails
     return <Server className="w-4 h-4" />
   }
 
-  if (!botnet) return null
+  if (!botnet) {
+    return null
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -485,14 +489,14 @@ export function BotnetDetailsModal({ botnet, open, onOpenChange }: BotnetDetails
                 <div className="prose prose-invert max-w-none">
                   <h4 className="text-white">What is this botnet?</h4>
                   <p className="text-slate-300">
-                    {botnet.name} is a network of compromised devices (called "bots" or "zombies") that are controlled
+                    {botnet.name} is a network of compromised devices (called &quot;bots&quot; or &quot;zombies&quot;) that are controlled
                     remotely by cybercriminals. These infected devices can be computers, smartphones, IoT devices, or
                     servers that have been compromised through malware, vulnerabilities, or weak security.
                   </p>
 
                   <h4 className="text-white">How does it work?</h4>
                   <p className="text-slate-300">
-                    The botnet operates through Command & Control (C&C) servers that send instructions to infected
+                    The botnet operates through Command &amp; Control (C&amp;C) servers that send instructions to infected
                     devices. These instructions can include launching DDoS attacks, stealing data, mining
                     cryptocurrency, or spreading to other devices.
                   </p>
@@ -501,7 +505,7 @@ export function BotnetDetailsModal({ botnet, open, onOpenChange }: BotnetDetails
                   <ul className="text-slate-300">
                     <li>Can launch massive distributed attacks</li>
                     <li>Steals personal and financial information</li>
-                    <li>Uses your device's resources without permission</li>
+                    <li>Uses your device&apos;s resources without permission</li>
                     <li>Can spread to other devices on your network</li>
                     <li>Difficult to detect and remove</li>
                   </ul>

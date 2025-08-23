@@ -316,7 +316,8 @@ export async function getProductVulnerabilityIntel(product: string) {
       searchCVEsByProduct(cleanProduct, {
         sortByEpss: true,
         limit: 10,
-        daysBack: 30,
+        startDate: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split("T")[0],
+        endDate: new Date().toISOString().split("T")[0],
       }),
       searchCPEsByProduct(cleanProduct, { limit: 20 }),
       searchCVEsByProduct(cleanProduct, { count: true }),

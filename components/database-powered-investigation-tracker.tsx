@@ -1,6 +1,5 @@
 "use client"
-
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -31,62 +30,19 @@ export function DatabasePoweredInvestigationTracker() {
   const [newFinding, setNewFinding] = useState("")
   const [selectedFindingType, setSelectedFindingType] = useState<Finding["type"]>("note")
 
-  // Load investigations on mount
-  useEffect(() => {
-    if (isSupabaseConfigured) {
-      loadInvestigations()
-    }
-  }, [])
-
-  // Load findings and timeline when active investigation changes
-  useEffect(() => {
-    if (activeInvestigation && isSupabaseConfigured) {
-      loadFindings(activeInvestigation.id)
-      loadTimelineEvents(activeInvestigation.id)
-    }
-  }, [activeInvestigation])
-
-  // Set up real-time subscriptions
-  useEffect(() => {
-    if (!isSupabaseConfigured) return
-
-    const investigationsSubscription = InvestigationDB.subscribeToInvestigations((payload) => {
-      console.log("Investigation update:", payload)
-      loadInvestigations()
-    })
-
-    return () => {
-      investigationsSubscription?.unsubscribe()
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!activeInvestigation || !isSupabaseConfigured) return
-
-    const findingsSubscription = InvestigationDB.subscribeToFindings(activeInvestigation.id, (payload) => {
-      console.log("Finding update:", payload)
-      loadFindings(activeInvestigation.id)
-    })
-
-    const timelineSubscription = InvestigationDB.subscribeToTimelineEvents(activeInvestigation.id, (payload) => {
-      console.log("Timeline update:", payload)
-      loadTimelineEvents(activeInvestigation.id)
-    })
-
-    return () => {
-      findingsSubscription?.unsubscribe()
-      timelineSubscription?.unsubscribe()
-    }
-  }, [activeInvestigation])
-
-  const loadInvestigations = async () => {
+  const loadInvestigations = useCallback(async () => {
     setLoading(true)
     try {
       const data = await InvestigationDB.getInvestigations()
       setInvestigations(data)
-      if (data.length > 0 && !activeInvestigation) {
-        setActiveInvestigation(data[0])
-      }
+      setActiveInvestigation(currentActive => {
+        // If the current active investigation still exists in the new list, keep it.
+        if (currentActive && data.some(inv => inv.id === currentActive.id)) {
+          return currentActive
+        }
+        // Otherwise, default to the first investigation in the list, or null if it's empty.
+        return data[0] || null
+      })
     } catch (error) {
       toast({
         title: "Error",
@@ -96,9 +52,9 @@ export function DatabasePoweredInvestigationTracker() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const loadFindings = async (investigationId: string) => {
+  const loadFindings = useCallback(async (investigationId: string) => {
     try {
       const data = await InvestigationDB.getFindings(investigationId)
       setFindings(data)
@@ -109,9 +65,9 @@ export function DatabasePoweredInvestigationTracker() {
         variant: "destructive",
       })
     }
-  }
+  }, [])
 
-  const loadTimelineEvents = async (investigationId: string) => {
+  const loadTimelineEvents = useCallback(async (investigationId: string) => {
     try {
       const data = await InvestigationDB.getTimelineEvents(investigationId)
       setTimelineEvents(data)
@@ -122,10 +78,65 @@ export function DatabasePoweredInvestigationTracker() {
         variant: "destructive",
       })
     }
-  }
+  }, [])
+
+  // Load initial data
+  useEffect(() => {
+    if (isSupabaseConfigured) {
+      loadInvestigations()
+    }
+  }, [loadInvestigations])
+
+  // Load findings and timeline when active investigation changes
+  useEffect(() => {
+    if (activeInvestigation?.id && isSupabaseConfigured) {
+      loadFindings(activeInvestigation.id)
+      loadTimelineEvents(activeInvestigation.id)
+    } else {
+      // Clear findings and timeline if there's no active investigation
+      setFindings([])
+      setTimelineEvents([])
+    }
+  }, [activeInvestigation?.id, loadFindings, loadTimelineEvents])
+
+  // Set up real-time subscription for the investigations list
+  useEffect(() => {
+    if (!isSupabaseConfigured) return
+
+    const investigationsSubscription = InvestigationDB.subscribeToInvestigations(payload => {
+      console.log("Investigation list updated, reloading.", payload)
+      loadInvestigations()
+    })
+
+    return () => {
+      investigationsSubscription?.unsubscribe()
+    }
+  }, [loadInvestigations])
+
+  // Set up real-time subscriptions for the active investigation's details
+  useEffect(() => {
+    if (!activeInvestigation?.id || !isSupabaseConfigured) return
+
+    const findingsSubscription = InvestigationDB.subscribeToFindings(activeInvestigation.id, payload => {
+      console.log("Findings updated, reloading.", payload)
+      loadFindings(activeInvestigation.id)
+    })
+
+    const timelineSubscription = InvestigationDB.subscribeToTimelineEvents(activeInvestigation.id, payload => {
+      console.log("Timeline updated, reloading.", payload)
+      loadTimelineEvents(activeInvestigation.id)
+    })
+
+    return () => {
+      findingsSubscription?.unsubscribe()
+      timelineSubscription?.unsubscribe()
+    }
+  }, [activeInvestigation?.id, loadFindings, loadTimelineEvents])
 
   const createInvestigation = async () => {
-    if (!newInvestigationTitle.trim()) return
+    if (!newInvestigationTitle.trim()) {
+      return
+    }
 
     setLoading(true)
     try {
@@ -174,7 +185,9 @@ export function DatabasePoweredInvestigationTracker() {
   }
 
   const addFinding = async () => {
-    if (!activeInvestigation || !newFinding.trim()) return
+    if (!activeInvestigation || !newFinding.trim()) {
+      return
+    }
 
     setLoading(true)
     try {
@@ -259,26 +272,26 @@ export function DatabasePoweredInvestigationTracker() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 px-2 md:px-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between">
+  <div className="flex items-center justify-between py-4">
         <div>
-          <h2 className="text-3xl font-bold text-white mb-2">Investigation Tracker</h2>
-          <p className="text-slate-400">Database-powered investigation management with real-time collaboration</p>
+          <h2 className="text-4xl font-extrabold text-cyan-400 mb-2 drop-shadow-lg tracking-tight">Investigation Tracker</h2>
+          <p className="text-slate-300 text-lg">Database-powered investigation management with <span className="text-cyan-300 font-semibold">real-time collaboration</span></p>
         </div>
-        <div className="flex gap-3">
-          <Button onClick={loadInvestigations} variant="outline" className="border-slate-600 bg-transparent">
+  <div className="flex gap-4">
+          <Button onClick={loadInvestigations} variant="outline" className="border-cyan-500 bg-gradient-to-r from-cyan-700 to-cyan-900 text-white shadow-md hover:scale-105 transition-transform">
             <RefreshCw className="w-4 h-4 mr-2" />
             Refresh
           </Button>
           <Dialog open={showNewInvestigation} onOpenChange={setShowNewInvestigation}>
             <DialogTrigger asChild>
-              <Button className="bg-cyan-600 hover:bg-cyan-700">
+              <Button className="bg-gradient-to-r from-cyan-500 to-blue-700 text-white shadow-lg hover:scale-105 transition-transform">
                 <Plus className="w-4 h-4 mr-2" />
                 New Investigation
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-slate-900 border-slate-700">
+            <DialogContent className="bg-gradient-to-br from-slate-900 to-cyan-950 border-cyan-700 rounded-xl shadow-2xl">
               <DialogHeader>
                 <DialogTitle className="text-white">Create New Investigation</DialogTitle>
               </DialogHeader>
@@ -289,7 +302,7 @@ export function DatabasePoweredInvestigationTracker() {
                     value={newInvestigationTitle}
                     onChange={(e) => setNewInvestigationTitle(e.target.value)}
                     placeholder="Enter investigation title..."
-                    className="bg-slate-800 border-slate-600 text-white"
+                    className="bg-slate-800 border-cyan-500 text-white rounded-lg focus:ring-2 focus:ring-cyan-400"
                   />
                 </div>
                 <div>
@@ -298,15 +311,15 @@ export function DatabasePoweredInvestigationTracker() {
                     value={newInvestigationDesc}
                     onChange={(e) => setNewInvestigationDesc(e.target.value)}
                     placeholder="Describe the investigation scope and objectives..."
-                    className="bg-slate-800 border-slate-600 text-white"
+                    className="bg-slate-800 border-cyan-500 text-white rounded-lg focus:ring-2 focus:ring-cyan-400"
                     rows={3}
                   />
                 </div>
                 <div className="flex gap-2 justify-end">
-                  <Button variant="outline" onClick={() => setShowNewInvestigation(false)}>
+                  <Button variant="outline" onClick={() => setShowNewInvestigation(false)} className="border-slate-500 text-slate-300 hover:bg-slate-800">
                     Cancel
                   </Button>
-                  <Button onClick={createInvestigation} disabled={loading} className="bg-cyan-600 hover:bg-cyan-700">
+                  <Button onClick={createInvestigation} disabled={loading} className="bg-gradient-to-r from-cyan-500 to-blue-700 text-white shadow-lg hover:scale-105 transition-transform">
                     {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
                     Create Investigation
                   </Button>
@@ -318,11 +331,11 @@ export function DatabasePoweredInvestigationTracker() {
       </div>
 
       {/* Investigation List */}
-      <Card className="bg-slate-900/40 border-slate-700/50">
+  <Card className="bg-gradient-to-br from-slate-900 to-cyan-950 border-cyan-700/60 rounded-xl shadow-xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-white">
-            <Database className="w-5 h-5 text-cyan-400" />
-            Stored Investigations ({investigations.length})
+          <CardTitle className="flex items-center gap-2 text-cyan-300 text-xl font-bold">
+            <Database className="w-5 h-5 text-cyan-400 drop-shadow" />
+            Stored Investigations <span className="bg-cyan-800/30 px-2 py-1 rounded-full text-cyan-200 ml-2">{investigations.length}</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -336,35 +349,35 @@ export function DatabasePoweredInvestigationTracker() {
               No investigations found. Create your first investigation to get started.
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {investigations.map((investigation) => (
                 <Card
                   key={investigation.id}
-                  className={`cursor-pointer transition-all ${
+                  className={`cursor-pointer rounded-lg shadow-md transition-all duration-200 ${
                     activeInvestigation?.id === investigation.id
-                      ? "bg-cyan-900/30 border-cyan-500"
-                      : "bg-slate-800/30 border-slate-600 hover:border-slate-500"
+                      ? "bg-gradient-to-r from-cyan-900 to-blue-900 border-cyan-500 scale-105"
+                      : "bg-slate-800/40 border-slate-600 hover:border-cyan-400 hover:scale-102"
                   }`}
                   onClick={() => setActiveInvestigation(investigation)}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-2">
                       <h3 className="font-semibold text-white text-sm line-clamp-1">{investigation.title}</h3>
-                      <Badge className={getSeverityColor(investigation.priority)}>
+                      <Badge className={getSeverityColor(investigation.priority) + " px-2 py-1 rounded-full text-xs font-semibold shadow"}>
                         {investigation.priority.toUpperCase()}
                       </Badge>
                     </div>
                     <p className="text-slate-400 text-xs mb-3 line-clamp-2">{investigation.description}</p>
-                    <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center justify-between text-xs mt-2">
                       <Badge
                         variant="outline"
                         className={
                           investigation.status === "active"
-                            ? "text-green-400 border-green-500"
+                            ? "text-green-400 border-green-500 bg-green-900/20"
                             : investigation.status === "completed"
-                              ? "text-blue-400 border-blue-500"
-                              : "text-slate-400 border-slate-500"
-                        }
+                              ? "text-blue-400 border-blue-500 bg-blue-900/20"
+                              : "text-slate-400 border-slate-500 bg-slate-900/20"
+                        + " px-2 py-1 rounded-full text-xs font-semibold"}
                       >
                         {investigation.status.toUpperCase()}
                       </Badge>
@@ -379,11 +392,11 @@ export function DatabasePoweredInvestigationTracker() {
       </Card>
 
       {activeInvestigation && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Panel */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-8">
             {/* Add Finding */}
-            <Card className="bg-slate-900/40 border-slate-700/50">
+            <Card className="bg-gradient-to-br from-slate-900 to-orange-950 border-orange-700/60 rounded-xl shadow-xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white">
                   <Target className="w-5 h-5 text-orange-400" />
@@ -396,7 +409,7 @@ export function DatabasePoweredInvestigationTracker() {
                     value={selectedFindingType}
                     onValueChange={(value: Finding["type"]) => setSelectedFindingType(value)}
                   >
-                    <SelectTrigger className="w-32 bg-slate-800 border-slate-600">
+                    <SelectTrigger className="w-32 bg-slate-800 border-orange-500 text-white rounded-lg focus:ring-2 focus:ring-orange-400">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -412,9 +425,9 @@ export function DatabasePoweredInvestigationTracker() {
                     value={newFinding}
                     onChange={(e) => setNewFinding(e.target.value)}
                     placeholder="Add new finding or observation..."
-                    className="bg-slate-800 border-slate-600 text-white"
+                    className="bg-slate-800 border-orange-500 text-white rounded-lg focus:ring-2 focus:ring-orange-400"
                   />
-                  <Button onClick={addFinding} disabled={loading} className="bg-orange-600 hover:bg-orange-700">
+                  <Button onClick={addFinding} disabled={loading} className="bg-gradient-to-r from-orange-500 to-yellow-700 text-white shadow-lg hover:scale-105 transition-transform">
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                   </Button>
                 </div>
@@ -422,7 +435,7 @@ export function DatabasePoweredInvestigationTracker() {
             </Card>
 
             {/* Findings */}
-            <Card className="bg-slate-900/40 border-slate-700/50">
+            <Card className="bg-gradient-to-br from-slate-900 to-green-950 border-green-700/60 rounded-xl shadow-xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white">
                   <Search className="w-5 h-5 text-green-400" />
@@ -433,20 +446,20 @@ export function DatabasePoweredInvestigationTracker() {
                 <ScrollArea className="h-96">
                   <div className="space-y-3">
                     {findings.map((finding) => (
-                      <Card key={finding.id} className="bg-slate-800/30 border-slate-600">
+                      <Card key={finding.id} className="bg-slate-800/40 border-green-700/40 rounded-lg shadow hover:scale-102 transition-transform">
                         <CardContent className="p-4">
                           <div className="flex items-start justify-between mb-2">
                             <div className="flex items-center gap-2">
-                              <Badge variant="outline" className="text-xs">
+                              <Badge variant="outline" className="text-xs px-2 py-1 rounded-full font-semibold">
                                 {finding.type.toUpperCase()}
                               </Badge>
                               <h4 className="font-medium text-white text-sm">{finding.title}</h4>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Badge className={getSeverityColor(finding.severity)}>
+                              <Badge className={getSeverityColor(finding.severity) + " px-2 py-1 rounded-full text-xs font-semibold shadow"}>
                                 {finding.severity.toUpperCase()}
                               </Badge>
-                              {finding.verified && <CheckCircle className="w-4 h-4 text-green-400" />}
+                              {finding.verified && <CheckCircle className="w-4 h-4 text-green-400 animate-pulse" />}
                             </div>
                           </div>
                           <p className="text-slate-300 text-sm mb-2">{finding.content}</p>
@@ -466,7 +479,7 @@ export function DatabasePoweredInvestigationTracker() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Investigation Details */}
-            <Card className="bg-slate-900/40 border-slate-700/50">
+            <Card className="bg-gradient-to-br from-slate-900 to-cyan-950 border-cyan-700/60 rounded-xl shadow-xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white">
                   <Database className="w-5 h-5 text-cyan-400" />
@@ -475,8 +488,8 @@ export function DatabasePoweredInvestigationTracker() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <h3 className="font-semibold text-white mb-1">{activeInvestigation.title}</h3>
-                  <p className="text-slate-400 text-sm">{activeInvestigation.description}</p>
+                  <h3 className="font-semibold text-cyan-300 mb-1 text-lg drop-shadow">{activeInvestigation.title}</h3>
+                  <p className="text-slate-300 text-sm italic">{activeInvestigation.description}</p>
                 </div>
 
                 <div className="space-y-3">
@@ -509,7 +522,7 @@ export function DatabasePoweredInvestigationTracker() {
             </Card>
 
             {/* Timeline */}
-            <Card className="bg-slate-900/40 border-slate-700/50">
+            <Card className="bg-gradient-to-br from-slate-900 to-purple-950 border-purple-700/60 rounded-xl shadow-xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white">
                   <Clock className="w-5 h-5 text-purple-400" />

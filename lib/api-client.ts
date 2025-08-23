@@ -1,16 +1,163 @@
 // Real API integrations with working API keys
-const API_KEYS = {
-  // Using server-side environment variables for security
-  SHODAN: process.env.SHODAN_API_KEY || "C23OXE0bVMnV6K1qzGRjZzcUoNzNtUaD",
-  VIRUSTOTAL: process.env.VIRUSTOTAL_API_KEY || "64b7960464b7960464b7960464b7960464b7960464b7960464b7960464b79604",
-  ABUSEIPDB: process.env.ABUSEIPDB_API_KEY || "d132c5b6c4c5b6c4c5b6c4c5b6c4c5b6c4c5b6c4c5b6c4c5b6c4c5b6c4c5b6c4",
-  GREYNOISE: process.env.GREYNOISE_API_KEY || "greynoise_api_key_here",
-  GOOGLE: process.env.GOOGLE_API_KEY || "AIzaSyBVVJi2VVJi2VVJi2VVJi2VVJi2VVJi2VV",
-  GOOGLE_CSE: process.env.GOOGLE_CSE_ID || "017576662512468239146:omuauf_lfve",
+// Centralized API client for all cyber intelligence features
+// SSR guards, error handling, unified API, modular helpers
+import axios from "axios";
+// import { PUBLIC_API_KEYS } from "./public-config";
+import { SERVER_API_KEYS } from "./server-config";
+
+// SSR guard for Next.js
+function isServer() {
+  return typeof window === "undefined";
 }
 
-// Check if APIs are properly configured
-const isConfigured = (apiKey: string) => apiKey && apiKey.length > 10 && !apiKey.includes("YOUR_")
+// Unified Google Custom Search
+export async function googleSearch(query: string): Promise<any[]> {
+  if (!isServer()) {
+    throw new Error("Google Custom Search API key cannot be accessed on the client.");
+  }
+  const key = SERVER_API_KEYS.GOOGLE;
+  const cx = SERVER_API_KEYS.GOOGLE_CSE;
+  if (!key || !cx) {
+    throw new Error("Google API key or CSE ID missing (server-side)");
+  }
+  const url = `https://www.googleapis.com/customsearch/v1?key=${key}&cx=${cx}&q=${encodeURIComponent(query)}`;
+  const { data } = await axios.get(url);
+  return data.items || [];
+}
+
+// Unified Shodan Search
+export async function shodanSearch(query: string): Promise<any[]> {
+  if (!isServer()) {
+    throw new Error("Shodan API key cannot be accessed on the client.");
+  }
+  const key = SERVER_API_KEYS.SHODAN;
+  if (!key) {
+    throw new Error("Shodan API key missing");
+  }
+  const url = `https://api.shodan.io/shodan/host/search?key=${key}&query=${encodeURIComponent(query)}`;
+  const { data } = await axios.get(url);
+  return data.matches || [];
+}
+
+// Unified Censys Search
+export async function censysSearch(query: string): Promise<any[]> {
+  if (!isServer()) {
+    throw new Error("Censys credentials cannot be accessed on the client.");
+  }
+  const uid = process.env.CENSYS_UID;
+  const secret = process.env.CENSYS_SECRET;
+  if (!uid || !secret) {
+    throw new Error("Censys credentials missing");
+  }
+  const url = "https://search.censys.io/api/v2/hosts/search";
+  const body = { query, per_page: 20, cursor: null };
+  const auth = Buffer.from(`${uid}:${secret}`).toString("base64");
+  const { data } = await axios.post(url, body, {
+    headers: {
+      Authorization: `Basic ${auth}`,
+      "Content-Type": "application/json",
+    },
+  });
+  return data.result?.hits || [];
+}
+
+// Unified GrayNoise IP Check
+export async function grayNoiseCheck(ip: string): Promise<any> {
+  if (!isServer()) {
+    throw new Error("GREYNOISE_API_KEY cannot be accessed on the client.");
+  }
+  const key = SERVER_API_KEYS.GREYNOISE;
+  if (!key) {
+    throw new Error("GrayNoise API key missing");
+  }
+  const url = `https://api.greynoise.io/v3/community/${ip}`;
+  const { data } = await axios.get(url, {
+    headers: { key, Accept: "application/json" },
+  });
+  return data;
+}
+
+// Unified OTX IP Check
+export async function otxCheck(ip: string): Promise<any> {
+  if (!isServer()) {
+    throw new Error("OTX_KEY cannot be accessed on the client.");
+  }
+  const key = process.env.OTX_KEY;
+  if (!key) {
+    throw new Error("OTX API key missing");
+  }
+  const url = `https://otx.alienvault.com/api/v1/indicators/IPv4/${ip}/general`;
+  const { data } = await axios.get(url, {
+    headers: { "X-OTX-API-KEY": key, Accept: "application/json" },
+  });
+  return data;
+}
+
+// Unified VirusTotal IP Check
+export async function vtCheck(ip: string): Promise<any> {
+  if (!isServer()) {
+    throw new Error("VIRUSTOTAL_API_KEY cannot be accessed on the client.");
+  }
+  const key = SERVER_API_KEYS.VIRUSTOTAL;
+  if (!key) {
+    throw new Error("VirusTotal API key missing");
+  }
+  const url = `https://www.virustotal.com/api/v3/ip_addresses/${ip}`;
+  const { data } = await axios.get(url, {
+    headers: { "x-apikey": key, Accept: "application/json" },
+  });
+  return data;
+}
+
+// Unified AbuseIPDB IP Check
+export async function abuseIPDBCheck(ip: string): Promise<any> {
+  if (!isServer()) {
+    throw new Error("ABUSEIPDB_API_KEY cannot be accessed on the client.");
+  }
+  const key = SERVER_API_KEYS.ABUSEIPDB;
+  if (!key) {
+    throw new Error("AbuseIPDB API key missing");
+  }
+  const url = `https://api.abuseipdb.com/api/v2/check?ipAddress=${ip}&maxAgeInDays=90`;
+  const { data } = await axios.get(url, {
+    headers: { Key: key, Accept: "application/json" },
+  });
+  return data;
+}
+
+// Helper: SSR-safe new URL
+export function safeNewURL(url: string): URL | null {
+  try {
+    return new URL(url);
+  } catch {
+    return null;
+  }
+}
+
+// Error boundary wrapper for API calls
+export async function safeApiCall<T>(fn: () => Promise<T>): Promise<T | null> {
+  try {
+    return await fn();
+  } catch (e: any) {
+    if (process.env.NODE_ENV !== "production") {
+      console.error("API error:", e);
+    }
+    return null;
+  }
+}
+
+// Export all helpers for unified usage
+export const apiClient = {
+  googleSearch,
+  shodanSearch,
+  censysSearch,
+  grayNoiseCheck,
+  otxCheck,
+  vtCheck,
+  abuseIPDBCheck,
+  safeNewURL,
+  safeApiCall,
+};
 
 export interface ShodanHost {
   ip_str: string
@@ -138,7 +285,7 @@ export async function searchShodan(query: string, page = 1): Promise<ShodanSearc
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const response = await fetch(
-        `https://api.shodan.io/shodan/host/search?key=${API_KEYS.SHODAN}&query=${encodeURIComponent(query)}&page=${page}`,
+  `https://api.shodan.io/shodan/host/search?key=${SERVER_API_KEYS.SHODAN}&query=${encodeURIComponent(query)}&page=${page}`,
         {
           method: "GET",
           headers: {
@@ -171,7 +318,9 @@ export async function searchShodan(query: string, page = 1): Promise<ShodanSearc
       }
     } catch (error) {
       lastError = error instanceof Error ? error : new Error("Unknown error")
-      if (attempt === maxRetries) break
+      if (attempt === maxRetries) {
+        break
+      }
 
       // Wait before retry
       await new Promise((resolve) => setTimeout(resolve, 1000 * attempt))
@@ -183,7 +332,7 @@ export async function searchShodan(query: string, page = 1): Promise<ShodanSearc
 
 export async function getShodanHostInfo(ip: string): Promise<ShodanHost> {
   try {
-    const response = await fetch(`https://api.shodan.io/shodan/host/${ip}?key=${API_KEYS.SHODAN}`, {
+  const response = await fetch(`https://api.shodan.io/shodan/host/${ip}?key=${SERVER_API_KEYS.SHODAN}`, {
       headers: {
         Accept: "application/json",
         "User-Agent": "CyberWatchVault/1.0",
@@ -210,12 +359,13 @@ export async function getShodanHostInfo(ip: string): Promise<ShodanHost> {
 // VirusTotal API with enhanced error handling
 export async function getVirusTotalIPReport(ip: string): Promise<VirusTotalResult> {
   try {
+    const headers: Record<string, string> = {
+      "x-apikey": SERVER_API_KEYS.VIRUSTOTAL ?? "",
+      Accept: "application/json",
+      "User-Agent": "CyberWatchVault/1.0",
+    }
     const response = await fetch(`https://www.virustotal.com/api/v3/ip_addresses/${ip}`, {
-      headers: {
-        "x-apikey": API_KEYS.VIRUSTOTAL,
-        Accept: "application/json",
-        "User-Agent": "CyberWatchVault/1.0",
-      },
+      headers,
     })
 
     if (!response.ok) {
@@ -241,12 +391,13 @@ export async function getVirusTotalIPReport(ip: string): Promise<VirusTotalResul
 // AbuseIPDB API with enhanced error handling
 export async function getAbuseIPDBReport(ip: string): Promise<ThreatIntelResult> {
   try {
+    const headers: Record<string, string> = {
+      Key: SERVER_API_KEYS.ABUSEIPDB ?? "",
+      Accept: "application/json",
+      "User-Agent": "CyberWatchVault/1.0",
+    }
     const response = await fetch(`https://api.abuseipdb.com/api/v2/check?ipAddress=${ip}&maxAgeInDays=90&verbose`, {
-      headers: {
-        Key: API_KEYS.ABUSEIPDB,
-        Accept: "application/json",
-        "User-Agent": "CyberWatchVault/1.0",
-      },
+      headers,
     })
 
     if (!response.ok) {
@@ -273,12 +424,13 @@ export async function getAbuseIPDBReport(ip: string): Promise<ThreatIntelResult>
 // GreyNoise API with enhanced error handling
 export async function getGreyNoiseContext(ip: string) {
   try {
+    const headers: Record<string, string> = {
+      key: SERVER_API_KEYS.GREYNOISE ?? "",
+      Accept: "application/json",
+      "User-Agent": "CyberWatchVault/1.0",
+    }
     const response = await fetch(`https://api.greynoise.io/v3/community/${ip}`, {
-      headers: {
-        key: API_KEYS.GREYNOISE,
-        Accept: "application/json",
-        "User-Agent": "CyberWatchVault/1.0",
-      },
+      headers,
     })
 
     if (!response.ok) {
@@ -313,24 +465,17 @@ export async function getGreyNoiseContext(ip: string) {
 // Google Custom Search for Dorking with enhanced error handling
 export async function performGoogleDork(dork: string): Promise<GoogleDorkResult[]> {
   try {
-    if (
-      !API_KEYS.GOOGLE ||
-      API_KEYS.GOOGLE.includes("YOUR_") ||
-      API_KEYS.GOOGLE === "AIzaSyBVVJi2VVJi2VVJi2VVJi2VVJi2VVJi2VV"
-    ) {
-      throw new Error("Google API key not configured. Please add GOOGLE_API_KEY to your environment variables.")
-    }
 
-    if (
-      !API_KEYS.GOOGLE_CSE ||
-      API_KEYS.GOOGLE_CSE.includes("YOUR_") ||
-      API_KEYS.GOOGLE_CSE === "017576662512468239146:omuauf_lfve"
-    ) {
-      throw new Error(
-        "Google Custom Search Engine ID not configured. Please add GOOGLE_CSE_ID to your environment variables.",
-      )
-    }
+    // Robust check for valid API keys and CSE ID
+    const isValidKey = (key: string) => key && key.length > 10 && !key.includes("YOUR_") && !key.startsWith("AIzaSyBVVJi2VVJi2VVJi2VVJi2VVJi2VVJi2VV")
+    const isValidCSE = (cse: string) => cse && cse.length > 10 && !cse.includes("YOUR_") && !cse.startsWith("017576662512468239146:omuauf_lfve")
 
+    if (!isValidKey(SERVER_API_KEYS.GOOGLE ?? "")) {
+      throw new Error("Google API key not configured or invalid. Please add a valid GOOGLE_API_KEY to your environment variables.")
+    }
+    if (!isValidCSE(SERVER_API_KEYS.GOOGLE_CSE ?? "")) {
+      throw new Error("Google Custom Search Engine ID not configured or invalid. Please add a valid GOOGLE_CSE_ID to your environment variables.")
+    }
     if (!dork || dork.trim().length === 0) {
       throw new Error("Search query cannot be empty.")
     }
@@ -338,8 +483,13 @@ export async function performGoogleDork(dork: string): Promise<GoogleDorkResult[
     const sanitizedDork = dork.trim()
     console.log("[v0] Attempting Google dork search with query:", sanitizedDork)
 
-    const url = `https://www.googleapis.com/customsearch/v1?key=${API_KEYS.GOOGLE}&cx=${API_KEYS.GOOGLE_CSE}&q=${encodeURIComponent(sanitizedDork)}&num=10`
-    console.log("[v0] Google API URL (key masked):", url.replace(API_KEYS.GOOGLE, "***API_KEY***"))
+    // Only construct URL if keys are valid
+    const url = `https://www.googleapis.com/customsearch/v1?key=${SERVER_API_KEYS.GOOGLE}&cx=${SERVER_API_KEYS.GOOGLE_CSE}&q=${encodeURIComponent(sanitizedDork)}&num=10`
+    if (SERVER_API_KEYS.GOOGLE) {
+      console.log("[v0] Google API URL (key masked):", url.replace(SERVER_API_KEYS.GOOGLE, "***API_KEY***"))
+    } else {
+      console.log("[v0] Google API URL:", url)
+    }
 
     const response = await fetch(url, {
       headers: {
@@ -435,8 +585,7 @@ export async function getThreatMapData(): Promise<ThreatMapData[]> {
 
     const searchPromises = queries.map(async (query) => {
       try {
-        const result = await searchShodan(query, 1)
-        return result
+  return await searchShodan(query, 1)
       } catch (error) {
         console.warn(`Failed to search for ${query}:`, error)
         return { matches: [], total: 0 }
@@ -586,16 +735,28 @@ function assessRiskLevel(link: string, snippet: string): "info" | "low" | "mediu
 
   const text = (link + " " + snippet).toLowerCase()
 
-  if (highRiskIndicators.some((indicator) => text.includes(indicator))) return "high"
-  if (mediumRiskIndicators.some((indicator) => text.includes(indicator))) return "medium"
+  if (highRiskIndicators.some((indicator) => text.includes(indicator))) {
+    return "high"
+  }
+  if (mediumRiskIndicators.some((indicator) => text.includes(indicator))) {
+    return "medium"
+  }
   return "low"
 }
 
 function categorizeResult(link: string, snippet: string): string {
-  if (link.includes("admin") || snippet.includes("admin")) return "Admin Panel"
-  if (link.includes("login") || snippet.includes("login")) return "Login Page"
-  if (snippet.includes("index of")) return "Directory Listing"
-  if (link.includes("config") || snippet.includes("config")) return "Configuration"
+  if (link.includes("admin") || snippet.includes("admin")) {
+    return "Admin Panel"
+  }
+  if (link.includes("login") || snippet.includes("login")) {
+    return "Login Page"
+  }
+  if (snippet.includes("index of")) {
+    return "Directory Listing"
+  }
+  if (link.includes("config") || snippet.includes("config")) {
+    return "Configuration"
+  }
   return "General"
 }
 
@@ -611,7 +772,7 @@ export async function checkAPIHealth() {
 
   try {
     // Test Shodan
-    const shodanResponse = await fetch(`https://api.shodan.io/api-info?key=${API_KEYS.SHODAN}`)
+  const shodanResponse = await fetch(`https://api.shodan.io/api-info?key=${SERVER_API_KEYS.SHODAN}`)
     checks.shodan = shodanResponse.ok
   } catch (error) {
     console.warn("Shodan health check failed:", error)

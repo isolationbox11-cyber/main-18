@@ -365,7 +365,7 @@ export function DomainIntelligenceDashboard({ initialDomain = "" }: DomainIntell
               <p className="font-medium text-slate-300 mb-1">Legal & Ethical Use Notice</p>
               <p>
                 This tool is for legitimate security research, threat intelligence, and authorized penetration testing only. 
-                Users must comply with applicable laws and obtain proper authorization before analyzing domains they don't own. 
+                Users must comply with applicable laws and obtain proper authorization before analyzing domains they don&apos;t own. 
                 Salem Cyber Vault is not responsible for misuse of this tool.
               </p>
             </div>

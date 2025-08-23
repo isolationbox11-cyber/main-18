@@ -5,6 +5,9 @@ const WHOISXML_BASE_URL = 'https://www.whoisxmlapi.com/whoisserver/WhoisService'
 
 export async function GET(request: NextRequest) {
   try {
+    if (!request?.url || typeof request.url !== "string") {
+      return NextResponse.json({ error: "Invalid request URL" }, { status: 400 });
+    }
     const { searchParams } = new URL(request.url)
     const domain = searchParams.get('domain')
     

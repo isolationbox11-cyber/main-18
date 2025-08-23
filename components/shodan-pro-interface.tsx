@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -57,12 +57,6 @@ export function ShodanProInterface({ initialQuery = "", initialHost }: ShodanPro
     hasVulns: false,
     hasSSL: false,
   })
-
-  useEffect(() => {
-    if (initialHost) {
-      loadHostIntelligence(initialHost)
-    }
-  }, [initialHost])
 
   const searchQueries = [
     {
@@ -122,7 +116,9 @@ export function ShodanProInterface({ initialQuery = "", initialHost }: ShodanPro
   ]
 
   const handleSearch = async (searchQuery: string = query) => {
-    if (!searchQuery.trim()) return
+    if (!searchQuery.trim()) {
+      return
+    }
 
     setLoading(true)
     setActiveTab("results")
@@ -130,12 +126,24 @@ export function ShodanProInterface({ initialQuery = "", initialHost }: ShodanPro
     try {
       // Build query with filters
       let finalQuery = searchQuery
-      if (filters.country) finalQuery += ` country:${filters.country}`
-      if (filters.port) finalQuery += ` port:${filters.port}`
-      if (filters.product) finalQuery += ` product:${filters.product}`
-      if (filters.org) finalQuery += ` org:"${filters.org}"`
-      if (filters.hasVulns) finalQuery += ` has_vuln:true`
-      if (filters.hasSSL) finalQuery += ` has_ssl:true`
+      if (filters.country) {
+        finalQuery += ` country:${filters.country}`
+      }
+      if (filters.port) {
+        finalQuery += ` port:${filters.port}`
+      }
+      if (filters.product) {
+        finalQuery += ` product:${filters.product}`
+      }
+      if (filters.org) {
+        finalQuery += ` org:"${filters.org}"`
+      }
+      if (filters.hasVulns) {
+        finalQuery += ` has_vuln:true`
+      }
+      if (filters.hasSSL) {
+        finalQuery += ` has_ssl:true`
+      }
 
       const searchResults = await searchShodan(finalQuery)
       setResults(searchResults.matches || [])
@@ -147,7 +155,7 @@ export function ShodanProInterface({ initialQuery = "", initialHost }: ShodanPro
     }
   }
 
-  const loadHostIntelligence = async (host: ShodanHost) => {
+  const loadHostIntelligence = useCallback(async (host: ShodanHost) => {
     setLoading(true)
     try {
       const intel = await getComprehensiveThreatIntel(host.ip_str)
@@ -157,7 +165,13 @@ export function ShodanProInterface({ initialQuery = "", initialHost }: ShodanPro
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    if (initialHost) {
+      loadHostIntelligence(initialHost)
+    }
+  }, [initialHost, loadHostIntelligence])
 
   const handleHostSelect = (host: ShodanHost) => {
     setSelectedHost(host)
@@ -177,12 +191,22 @@ export function ShodanProInterface({ initialQuery = "", initialHost }: ShodanPro
 
   const getThreatLevel = (host: ShodanHost) => {
     let score = 0
-    if (host.vulns && host.vulns.length > 0) score += host.vulns.length * 2
-    if (threatIntel?.abuseipdb?.abuseConfidence > 75) score += 3
-    if (threatIntel?.virustotal?.data?.attributes?.last_analysis_stats?.malicious > 0) score += 2
+    if (host.vulns && host.vulns.length > 0) {
+      score += host.vulns.length * 2
+    }
+    if (threatIntel?.abuseipdb?.abuseConfidence > 75) {
+      score += 3
+    }
+    if (threatIntel?.virustotal?.data?.attributes?.last_analysis_stats?.malicious > 0) {
+      score += 2
+    }
 
-    if (score > 5) return { level: "high", color: "text-red-400", bg: "bg-red-500/10" }
-    if (score > 2) return { level: "medium", color: "text-yellow-400", bg: "bg-yellow-500/10" }
+    if (score > 5) {
+      return { level: "high", color: "text-red-400", bg: "bg-red-500/10" }
+    }
+    if (score > 2) {
+      return { level: "medium", color: "text-yellow-400", bg: "bg-yellow-500/10" }
+    }
     return { level: "low", color: "text-green-400", bg: "bg-green-500/10" }
   }
 
@@ -397,7 +421,7 @@ export function ShodanProInterface({ initialQuery = "", initialHost }: ShodanPro
           {results.length > 0 && (
             <div className="flex items-center justify-between">
               <div className="text-slate-300">
-                Found {totalResults.toLocaleString()} results for "{query}"
+                Found {totalResults.toLocaleString()} results for &quot;{query}&quot;
               </div>
               <div className="flex gap-2">
                 <Button
@@ -749,7 +773,7 @@ export function ShodanProInterface({ initialQuery = "", initialHost }: ShodanPro
                       <ul className="text-sm text-amber-300 space-y-1">
                         <li>• Only scan systems you own or have explicit permission to test</li>
                         <li>• Use this tool for educational and defensive security purposes</li>
-                        <li>• Respect rate limits and don't overload target systems</li>
+                        <li>• Respect rate limits and don&apos;t overload target systems</li>
                         <li>• Report vulnerabilities responsibly through proper channels</li>
                         <li>• Always comply with local laws and regulations</li>
                       </ul>

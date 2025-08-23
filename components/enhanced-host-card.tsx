@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -37,14 +37,10 @@ export function EnhancedHostCard({ host, threatIntel }: EnhancedHostCardProps) {
   const [showShodanPro, setShowShodanPro] = useState(false)
   const [vulnIntel, setVulnIntel] = useState<any>(null)
 
-  useEffect(() => {
-    if (host.product && showCVEPanel) {
-      loadVulnerabilityIntel()
+  const loadVulnerabilityIntel = useCallback(async () => {
+    if (!host.product) {
+      return
     }
-  }, [host.product, showCVEPanel])
-
-  const loadVulnerabilityIntel = async () => {
-    if (!host.product) return
 
     try {
       const intel = await getProductVulnerabilityIntel(host.product)
@@ -52,7 +48,13 @@ export function EnhancedHostCard({ host, threatIntel }: EnhancedHostCardProps) {
     } catch (error) {
       console.error("Failed to load vulnerability intel:", error)
     }
-  }
+  }, [host.product])
+
+  useEffect(() => {
+    if (host.product && showCVEPanel) {
+      loadVulnerabilityIntel()
+    }
+  }, [host.product, showCVEPanel, loadVulnerabilityIntel])
 
   const getServiceIcon = (product?: string) => {
     if (!product) return <Server className="w-4 h-4" />
@@ -101,9 +103,15 @@ export function EnhancedHostCard({ host, threatIntel }: EnhancedHostCardProps) {
       }
     }
 
-    if (score > 10) return { level: "critical", color: "text-red-400", bg: "bg-red-500/10", reasons }
-    if (score > 5) return { level: "high", color: "text-orange-400", bg: "bg-orange-500/10", reasons }
-    if (score > 2) return { level: "medium", color: "text-yellow-400", bg: "bg-yellow-500/10", reasons }
+    if (score > 10) {
+      return { level: "critical", color: "text-red-400", bg: "bg-red-500/10", reasons }
+    }
+    if (score > 5) {
+      return { level: "high", color: "text-orange-400", bg: "bg-orange-500/10", reasons }
+    }
+    if (score > 2) {
+      return { level: "medium", color: "text-yellow-400", bg: "bg-yellow-500/10", reasons }
+    }
     return { level: "low", color: "text-green-400", bg: "bg-green-500/10", reasons }
   }
 

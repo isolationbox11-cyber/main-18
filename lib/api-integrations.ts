@@ -366,12 +366,12 @@ function processBotnetData(shodanData: any, threatIntel: any): BotnetData[] {
       botnets.push({
         name,
         size: hosts.length,
-        countries: [...new Set(hosts.map((h: any) => h.location.country_name))],
+        countries: [...new Set(hosts.map((h: any) => h.location.country_name).filter(Boolean) as string[])],
         lastSeen: new Date().toISOString(),
         threatLevel: assessThreatLevel(hosts.length),
         description: generateBotnetDescription(name, hosts),
         c2Servers: extractC2Servers(hosts),
-        affectedPorts: [...new Set(hosts.map((h: any) => h.port))],
+        affectedPorts: [...new Set(hosts.map((h: any) => h.port).filter((p: any) => typeof p === 'number') as number[])],
       })
     })
   }
@@ -522,3 +522,5 @@ function mapSeverity(classification: string): "low" | "medium" | "high" | "criti
   if (classification?.includes("suspicious")) return "medium"
   return "low"
 }
+
+export type { ShodanResult, ThreatIntelResult } from '@/types/api-integrations';
