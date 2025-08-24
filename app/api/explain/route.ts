@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          Authorization: `Bearer ${(typeof process !== 'undefined' && process.env.OPENAI_API_KEY) ? process.env.OPENAI_API_KEY : ''}`,
           'Content-Type': 'application/json',
         },
       }

@@ -236,21 +236,7 @@ export function BeginnerGuide() {
               </div>
             </div>
 
-            {/* Safety Reminder */}
-            <Card className="bg-green-900/20 border-green-500/30">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <Shield className="w-5 h-5 text-green-400 mt-0.5" />
-                  <div>
-                    <h4 className="font-medium text-green-400 mb-1">Remember: Stay Ethical! 🧙‍♀️</h4>
-                    <p className="text-sm text-green-300">
-                      You&apos;re here to learn and explore safely. Never attempt to access or interfere with devices you
-                      discover. Think of yourself as a digital explorer, not a digital intruder.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Removed Safety Reminder and legal/ethical notice as requested */}
           </CardContent>
         </Card>
       )}

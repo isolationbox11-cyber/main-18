@@ -9,8 +9,12 @@ export async function GET(request: Request) {
   }
   const { searchParams } = new URL(request.url);
   const q = searchParams.get('q');
-  if (!q) return NextResponse.json({ error: 'Missing query' }, { status: 400 });
+  if (!q) { return NextResponse.json({ error: 'Missing query' }, { status: 400 }); }
 
+  // SSR guard for env var
+  if (typeof process === 'undefined' || !process.env.SHODAN_API_KEY) {
+    return NextResponse.json({ error: 'SHODAN_API_KEY not available server-side' }, { status: 500 });
+  }
   try {
     const { data } = await axios.get(SHODAN_ENDPOINT, {
       params: { key: process.env.SHODAN_API_KEY, query: q },

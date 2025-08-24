@@ -5,6 +5,7 @@ export const SERVER_API_KEYS = {
   GREYNOISE: process.env.GREYNOISE_API_KEY,
   GOOGLE: process.env.GOOGLE_API_KEY,
   GOOGLE_CSE: process.env.GOOGLE_CSE_ID,
+  TAVILY: process.env.TAVILY_API_KEY,
 } as const;
 
 if (process.env.NODE_ENV !== 'production') {

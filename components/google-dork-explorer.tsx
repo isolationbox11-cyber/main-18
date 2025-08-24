@@ -55,36 +55,10 @@ export function GoogleDorkExplorer() {
   const [dorkResults, setDorkResults] = useState<GoogleDorkResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [showPresets, setShowPresets] = useState(true);
-  const [cseReady, setCseReady] = useState(false);
-
-  useEffect(() => {
-    const script = document.createElement('script');
-    const cseId = PUBLIC_API_KEYS.GOOGLE_CSE ?? '';
-    if (!cseId || cseId.length < 5) {
-      console.error('Google CSE ID is missing or invalid.');
-      return;
-    }
-    script.src = `https://cse.google.com/cse.js?cx=${cseId}`;
-    script.async = true;
-    script.onload = () => setCseReady(true);
-    script.onerror = () => console.error('Google CSE script failed to load');
-    document.head.appendChild(script);
-    return () => script.remove();
-  }, []);
-
-  const runGoogleCse = useCallback(() => {
-  if (!cseReady) { return; }
-    try {
-      // @ts-ignore – injected by the CSE script
-      const el = window.google?.search?.cse?.element?.getElement('searchresults');
-  if (el?.execute) { el.execute(query); }
-    } catch (e) {
-      console.error('CSE execution error', e);
-    }
-  }, [query, cseReady]);
+  const [googleUrl, setGoogleUrl] = useState('');
 
   const handleSearch = async () => {
-  if (!query.trim()) { return; }
+    if (!query.trim()) { return; }
     setLoading(true);
     if (mode === 'dork') {
       try {
@@ -97,7 +71,7 @@ export function GoogleDorkExplorer() {
         setLoading(false);
       }
     } else {
-      runGoogleCse();
+      setGoogleUrl(`https://www.google.com/search?q=${encodeURIComponent(query)}`);
       setLoading(false);
     }
   };
@@ -261,13 +235,16 @@ export function GoogleDorkExplorer() {
 
         {/* -------------------- Result area -------------------- */}
         <div className="space-y-6">
-          {/* Google CSE results (only visible when mode === 'google') */}
-          {mode === 'google' && (
-            <div
-              className="gcse-searchresults"
-              id="cse-results"
-              style={{ minHeight: '300px' }}
-            />
+          {/* Google CSE results (always visible in Google mode, sandboxed) */}
+          {mode === 'google' && googleUrl && (
+            <div className="mt-6">
+              <iframe
+                src={googleUrl}
+                title="Google Search Results"
+                className="w-full h-[600px] rounded-xl border-2 border-purple-400 bg-black"
+                sandbox="allow-scripts allow-same-origin allow-popups"
+              />
+            </div>
           )}
 
           {/* Dork‑search result cards */}

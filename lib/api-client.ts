@@ -1,4 +1,27 @@
 // Real API integrations with working API keys
+// Tavily API client (flexible for any use)
+export async function tavilyQuery({ endpoint = "search", method = "POST", body = {} } = {}): Promise<any> {
+  if (!isServer()) {
+    throw new Error("Tavily API key cannot be accessed on the client.");
+  }
+  const key = SERVER_API_KEYS.TAVILY;
+  if (!key) {
+    throw new Error("Tavily API key missing");
+  }
+  const url = `https://api.tavily.com/v1/${endpoint}`;
+  const res = await fetch(url, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${key}`,
+    },
+    body: method === "POST" ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) {
+    throw new Error(`Tavily API error: ${res.status} ${res.statusText}`);
+  }
+  return await res.json();
+}
 // Centralized API client for all cyber intelligence features
 // SSR guards, error handling, unified API, modular helpers
 import axios from "axios";

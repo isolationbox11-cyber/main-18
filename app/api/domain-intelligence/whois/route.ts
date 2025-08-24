@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const WHOISXML_API_KEY = process.env.WHOISXML_API_KEY
+const WHOISXML_API_KEY = (typeof process !== 'undefined' && process.env.WHOISXML_API_KEY) ? process.env.WHOISXML_API_KEY : undefined;
 const WHOISXML_BASE_URL = 'https://www.whoisxmlapi.com/whoisserver/WhoisService'
 
 export async function GET(request: NextRequest) {

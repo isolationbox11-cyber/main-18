@@ -47,44 +47,46 @@ export default function CyberWatchVault() {
         <FloatingParticles />
         <FloatingEyes />
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-8">
-          <TabsList className="flex flex-wrap justify-center gap-3 bg-slate-900/60 p-4 rounded-xl shadow-lg border border-slate-800">
-            <TabsTrigger value="cve" className="flex items-center gap-2 px-4 py-2 rounded-lg text-blue-400 data-[state=active]:bg-blue-900/40">
+          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
+            <TabsList className="flex-nowrap flex justify-start gap-4 bg-slate-900/60 p-4 rounded-xl shadow-lg border border-slate-800 min-w-[900px] w-full">
+            <TabsTrigger value="cve" className="flex items-center gap-2 px-6 py-3 rounded-lg text-blue-400 data-[state=active]:bg-blue-900/40">
               <Shield className="w-5 h-5" /> CVE Intelligence
             </TabsTrigger>
-            <TabsTrigger value="threat-map" className="flex items-center gap-2 px-4 py-2 rounded-lg text-green-400 data-[state=active]:bg-green-900/40">
+            <TabsTrigger value="threat-map" className="flex items-center gap-2 px-6 py-3 rounded-lg text-green-400 data-[state=active]:bg-green-900/40">
               <Globe className="w-5 h-5" /> Threat Map
             </TabsTrigger>
-            <TabsTrigger value="botnet" className="flex items-center gap-2 px-4 py-2 rounded-lg text-purple-400 data-[state=active]:bg-purple-900/40">
+            <TabsTrigger value="botnet" className="flex items-center gap-2 px-6 py-3 rounded-lg text-purple-400 data-[state=active]:bg-purple-900/40">
               <Bot className="w-5 h-5" /> Botnet Tracker
             </TabsTrigger>
-            <TabsTrigger value="domain" className="flex items-center gap-2 px-4 py-2 rounded-lg text-cyan-400 data-[state=active]:bg-cyan-900/40">
+            <TabsTrigger value="domain" className="flex items-center gap-2 px-6 py-3 rounded-lg text-cyan-400 data-[state=active]:bg-cyan-900/40">
               <Database className="w-5 h-5" /> Domain Intelligence
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2 px-4 py-2 rounded-lg text-yellow-400 data-[state=active]:bg-yellow-900/40">
+            <TabsTrigger value="analytics" className="flex items-center gap-2 px-6 py-3 rounded-lg text-yellow-400 data-[state=active]:bg-yellow-900/40">
               <Activity className="w-5 h-5" /> Analytics
             </TabsTrigger>
-            <TabsTrigger value="forensics" className="flex items-center gap-2 px-4 py-2 rounded-lg text-pink-400 data-[state=active]:bg-pink-900/40">
+            <TabsTrigger value="forensics" className="flex items-center gap-2 px-6 py-3 rounded-lg text-pink-400 data-[state=active]:bg-pink-900/40">
               <Target className="w-5 h-5" /> Forensics
             </TabsTrigger>
-            <TabsTrigger value="tracking" className="flex items-center gap-2 px-4 py-2 rounded-lg text-teal-400 data-[state=active]:bg-teal-900/40">
+            <TabsTrigger value="tracking" className="flex items-center gap-2 px-6 py-3 rounded-lg text-teal-400 data-[state=active]:bg-teal-900/40">
               <Database className="w-5 h-5" /> Tracking
             </TabsTrigger>
-            <TabsTrigger value="intel-hub" className="flex items-center gap-2 px-4 py-2 rounded-lg text-emerald-400 data-[state=active]:bg-emerald-900/40">
+            <TabsTrigger value="intel-hub" className="flex items-center gap-2 px-6 py-3 rounded-lg text-emerald-400 data-[state=active]:bg-emerald-900/40">
               <Zap className="w-5 h-5" /> Intel Hub
             </TabsTrigger>
-            <TabsTrigger value="dorking" className="flex items-center gap-2 px-4 py-2 rounded-lg text-indigo-400 data-[state=active]:bg-indigo-900/40">
+            <TabsTrigger value="dorking" className="flex items-center gap-2 px-6 py-3 rounded-lg text-indigo-400 data-[state=active]:bg-indigo-900/40">
               <Eye className="w-5 h-5" /> Google Dorking
             </TabsTrigger>
-            <TabsTrigger value="darkweb" className="flex items-center gap-2 px-4 py-2 rounded-lg text-red-400 data-[state=active]:bg-red-900/40">
+            <TabsTrigger value="darkweb" className="flex items-center gap-2 px-6 py-3 rounded-lg text-red-400 data-[state=active]:bg-red-900/40">
               <AlertTriangle className="w-5 h-5" /> Dark Web
             </TabsTrigger>
-            <TabsTrigger value="russian" className="flex items-center gap-2 px-4 py-2 rounded-lg text-orange-400 data-[state=active]:bg-orange-900/40">
+            <TabsTrigger value="russian" className="flex items-center gap-2 px-6 py-3 rounded-lg text-orange-400 data-[state=active]:bg-orange-900/40">
               <Globe className="w-5 h-5" /> Russian Darknet
             </TabsTrigger>
-            <TabsTrigger value="guide" className="flex items-center gap-2 px-4 py-2 rounded-lg text-slate-400 data-[state=active]:bg-slate-800/40">
+            <TabsTrigger value="guide" className="flex items-center gap-2 px-6 py-3 rounded-lg text-slate-400 data-[state=active]:bg-slate-800/40">
               <Eye className="w-5 h-5" /> Beginner Guide
             </TabsTrigger>
-          </TabsList>
+            </TabsList>
+          </div>
           <TabsContent value="cve" className="space-y-6"><ErrorBoundary><ComprehensiveCVEIntelligencePanel /></ErrorBoundary></TabsContent>
           <TabsContent value="threat-map" className="space-y-6"><ErrorBoundary><ThreatWorldMap /></ErrorBoundary></TabsContent>
           <TabsContent value="botnet" className="space-y-6"><ErrorBoundary><LiveBotnetTracker /></ErrorBoundary></TabsContent>

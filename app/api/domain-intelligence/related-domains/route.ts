@@ -16,17 +16,26 @@ export async function GET(request: Request) {
   const results: RelatedDomainsResult = { domain: domain || '' };
 
   try {
-    const response = await fetch(`https://api.viewdns.info/reverseip/?host=${domain}&apikey=${process.env.VIEWDNS_API_KEY}&output=json`);
-    if (response.ok) {
-      const data = await response.json();
-      results.reverseIP = data.response?.domains?.map((d: any) => ({ name: d.name })) || [];
-    } else {
-      // Fallback – still type‑correct
+    // SSR guard for env var
+    if (typeof process === 'undefined' || !process.env.VIEWDNS_API_KEY) {
       results.reverseIP = [
         { name: `example1.${domain || 'com'}` },
         { name: `example2.${domain || 'com'}` },
         { name: `example3.${domain || 'com'}` },
       ];
+    } else {
+      const response = await fetch(`https://api.viewdns.info/reverseip/?host=${domain}&apikey=${process.env.VIEWDNS_API_KEY}&output=json`);
+      if (response.ok) {
+        const data = await response.json();
+        results.reverseIP = data.response?.domains?.map((d: any) => ({ name: d.name })) || [];
+      } else {
+        // Fallback – still type‑correct
+        results.reverseIP = [
+          { name: `example1.${domain || 'com'}` },
+          { name: `example2.${domain || 'com'}` },
+          { name: `example3.${domain || 'com'}` },
+        ];
+      }
     }
   } catch (error) {
     console.error("Related domains API error:", error);

@@ -45,6 +45,10 @@ export async function GET(request: Request) {
   }
 
   // final fallback → Google‑style CSE (you already have a CSE id)
+  // SSR guard for env vars
+  if (typeof process === 'undefined' || !process.env.GOOGLE_API_KEY || !process.env.GOOGLE_CX) {
+    return NextResponse.json({ error: 'Google API key or CSE ID not available server-side' }, { status: 500 });
+  }
   const GOOGLE_ENDPOINT = "https://www.googleapis.com/customsearch/v1";
   const key = process.env.GOOGLE_API_KEY!;
   const cx = process.env.GOOGLE_CX!;

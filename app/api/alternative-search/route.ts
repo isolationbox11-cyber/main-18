@@ -102,8 +102,7 @@ async function searchDuckDuckGo(query: string) {
 }
 
 async function searchBing(query: string) {
-  const bingApiKey = process.env.BING_API_KEY
-
+  const bingApiKey = (typeof process !== 'undefined' && process.env.BING_API_KEY) ? process.env.BING_API_KEY : undefined;
   if (!bingApiKey) {
     throw new Error("Bing API key not configured")
   }
