@@ -122,61 +122,100 @@ async function makeComprehensiveAPIRequest<T>(
       continue;
     }
   }
-  // Instead of throwing, return a user-friendly error object
-  return {
-    error: true,
-    message: lastError?.message || "Comprehensive CVEDB API request failed after retries.",
-    source: "CVEDB",
-    url: currentUrl,
-    attempts: maxRetries,
-  } as unknown as T;
+  throw lastError || new Error("Comprehensive CVEDB API request failed after retries.");
 }
 
 // 1. GET /cve/{cve_id} - Get detailed information about a specific CVE
 export async function getCVEDetailsComprehensive(cveId: string): Promise<any> {
-  const cleanCveId = cveId.toUpperCase().trim();
-  if (!cleanCveId.match(/^CVE-\d{4}-\d{4,}$/)) {
-    return {
-      error: true,
-      message: `Invalid CVE ID format: ${cveId}. Expected format: CVE-YYYY-NNNNN`,
-      source: "CVEDB",
-    };
+  try {
+    const cleanCveId = cveId.toUpperCase().trim();
+    if (!cleanCveId.match(/^CVE-\d{4}-\d{4,}$/)) {
+      throw new Error(`Invalid CVE ID format: ${cveId}. Expected format: CVE-YYYY-NNNNN`);
+    }
+    // Try NVD API first (most reliable)
+    const nvdUrl = `${CVE_API_ENDPOINTS.nvd}?cveId=${cleanCveId}`;
+    const circlUrl = `${CVE_API_ENDPOINTS.circl}/cve/${cleanCveId}`;
+    const shodanUrl = `${CVE_API_ENDPOINTS.shodan}/cve/${cleanCveId}`;
+    let nvdResult = null;
+    try {
+      nvdResult = await makeComprehensiveAPIRequest<any>(nvdUrl, {
+        fallbackEndpoints: [circlUrl, shodanUrl],
+        maxRetries: 2,
+      });
+    } catch (error) {
+      console.error(`[CVEDB] All endpoints failed for CVE ${cveId}:`, error);
+    }
+    if (nvdResult && nvdResult.vulnerabilities && nvdResult.vulnerabilities.length > 0) {
+      const vuln = nvdResult.vulnerabilities[0].cve;
+      return {
+        cve_id: vuln.id,
+        summary: vuln.descriptions?.[0]?.value || null,
+        cvss:
+          vuln.metrics?.cvssMetricV31?.[0]?.cvssData?.baseScore ||
+          vuln.metrics?.cvssMetricV30?.[0]?.cvssData?.baseScore ||
+          vuln.metrics?.cvssMetricV2?.[0]?.cvssData?.baseScore ||
+          null,
+        cvss_version: vuln.metrics?.cvssMetricV31
+          ? 3.1
+          : vuln.metrics?.cvssMetricV30
+            ? 3.0
+            : vuln.metrics?.cvssMetricV2
+              ? 2.0
+              : null,
+        cvss_v2: vuln.metrics?.cvssMetricV2?.[0]?.cvssData?.baseScore || null,
+        cvss_v3:
+          vuln.metrics?.cvssMetricV31?.[0]?.cvssData?.baseScore ||
+          vuln.metrics?.cvssMetricV30?.[0]?.cvssData?.baseScore ||
+          null,
+        published_date: vuln.published || null,
+        last_modified_date: vuln.lastModified || null,
+        cpes:
+          vuln.configurations?.nodes?.flatMap(
+            (node: any) => node.cpeMatch?.map((match: any) => match.criteria) || [],
+          ) || [],
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error(`[CVEDB] Failed to fetch CVE ${cveId}:`, error);
+    return null;
   }
-  const nvdUrl = `${CVE_API_ENDPOINTS.nvd}?cveId=${cleanCveId}`;
-  const circlUrl = `${CVE_API_ENDPOINTS.circl}/cve/${cleanCveId}`;
-  const shodanUrl = `${CVE_API_ENDPOINTS.shodan}/cve/${cleanCveId}`;
-  const nvdResult = await makeComprehensiveAPIRequest<any>(nvdUrl, {
-    fallbackEndpoints: [circlUrl, shodanUrl],
-    maxRetries: 2,
-  });
-  if (nvdResult && nvdResult.vulnerabilities && nvdResult.vulnerabilities.length > 0) {
-    const vuln = nvdResult.vulnerabilities[0].cve;
-    return {
-      cve_id: vuln.id,
-      summary: vuln.descriptions?.[0]?.value || null,
-      cvss:
-        vuln.metrics?.cvssMetricV31?.[0]?.cvssData?.baseScore ||
-        vuln.metrics?.cvssMetricV30?.[0]?.cvssData?.baseScore ||
-        vuln.metrics?.cvssMetricV2?.[0]?.cvssData?.baseScore ||
-        null,
-      cvss_version: vuln.metrics?.cvssMetricV31
-        ? 3.1
-        : vuln.metrics?.cvssMetricV30
-        ? 3.0
-        : vuln.metrics?.cvssMetricV2
-        ? 2.0
-        : null,
-      published_date: vuln.published || null,
-      last_modified_date: vuln.lastModified || null,
-      references: vuln.references?.map((r: any) => r.url) || [],
-      cpes:
-        vuln.configurations?.nodes?.flatMap(
-          (node: any) => node.cpeMatch?.map((match: any) => match.criteria) || [],
-        ) || [],
-    };
+}
+
+// 2. GET /cpes - Search for CPEs by product name with full pagination support
+export async function searchCPEsComprehensive(
+  product: string,
+  options: { limit?: number; skip?: number } = {},
+): Promise<CPESearchResult> {
+  try {
+    const cleanProduct = product.trim().toLowerCase()
+    if (!cleanProduct) {
+      throw new Error("Product name cannot be empty")
+    }
+
+    try {
+      const result = await makeCirclAPIRequest<any>(`action=browse&product=${encodeURIComponent(cleanProduct)}`)
+
+      if (result && Array.isArray(result)) {
+        const cpes = result.map((item) => item.id || `cpe:2.3:a:*:${cleanProduct}:*:*:*:*:*:*:*:*`)
+        return { cpes: cpes.slice(0, options.limit || 100) }
+      }
+    } catch (error) {
+      console.warn(`[CVEDB] CIRCL CPE search failed, using generated CPEs:`, error)
+    }
+
+    // Fallback to generated CPE patterns
+    const generatedCpes = [
+      `cpe:2.3:a:*:${cleanProduct}:*:*:*:*:*:*:*:*`,
+      `cpe:2.3:a:${cleanProduct}:${cleanProduct}:*:*:*:*:*:*:*:*`,
+      `cpe:2.3:a:${cleanProduct}_project:${cleanProduct}:*:*:*:*:*:*:*:*`,
+    ]
+
+    return { cpes: generatedCpes }
+  } catch (error) {
+    console.error(`[CVEDB] Failed to search CPEs for product ${product}:`, error)
+    throw error
   }
-  // If all endpoints fail, propagate the error object
-  return nvdResult;
 }
 
 // 3. GET /cves - Search for CVEs by product name with comprehensive filtering
@@ -337,26 +376,30 @@ export async function getComprehensiveProductIntelligence(product: string) {
   const cpes = cpesResult?.cpes || []
 
     // Categorize CVEs by severity
-    const criticalCVEs = allCves.filter((cve: any) => (cve.cvss || 0) >= 9.0)
-    const highCVEs = allCves.filter((cve: any) => (cve.cvss || 0) >= 7.0 && (cve.cvss || 0) < 9.0)
-    const mediumCVEs = allCves.filter((cve: any) => (cve.cvss || 0) >= 4.0 && (cve.cvss || 0) < 7.0)
-    const lowCVEs = allCves.filter((cve: any) => (cve.cvss || 0) > 0.0 && (cve.cvss || 0) < 4.0)
+    const criticalCVEs = allCves.filter((cve) => (cve.cvss || 0) >= 9.0)
+    const highCVEs = allCves.filter((cve) => (cve.cvss || 0) >= 7.0 && (cve.cvss || 0) < 9.0)
+    const mediumCVEs = allCves.filter((cve) => (cve.cvss || 0) >= 4.0 && (cve.cvss || 0) < 7.0)
+    const lowCVEs = allCves.filter((cve) => (cve.cvss || 0) > 0.0 && (cve.cvss || 0) < 4.0)
 
     // Calculate analytics
-    const validCvssScores = allCves.filter((cve: any) => cve.cvss !== null).map((cve: any) => cve.cvss!)
-    const validEpssScores = allCves.filter((cve: any) => cve.epss !== null).map((cve: any) => cve.epss!)
-    const avgCvss = validCvssScores.length > 0 ? validCvssScores.reduce((a: number, b: number) => a + b, 0) / validCvssScores.length : 0
-    const avgEpss = validEpssScores.length > 0 ? validEpssScores.reduce((a: number, b: number) => a + b, 0) / validEpssScores.length : 0
+    const validCvssScores = allCves.filter((cve) => cve.cvss !== null).map((cve) => cve.cvss!)
+    const validEpssScores = allCves.filter((cve) => cve.epss !== null).map((cve) => cve.epss!)
+
+    const averageCvss =
+      validCvssScores.length > 0 ? validCvssScores.reduce((a, b) => a + b, 0) / validCvssScores.length : 0
+    
+    const averageEpss =
+      validEpssScores.length > 0 ? validEpssScores.reduce((a, b) => a + b, 0) / validEpssScores.length : 0
 
     // Determine risk levels
     const exploitationLikelihood =
-      avgCvss > 8.0
+      averageCvss > 8.0
         ? "very high"
-        : avgCvss > 6.0
+        : averageCvss > 6.0
           ? "high"
-          : avgCvss > 4.0
+          : averageCvss > 4.0
             ? "medium"
-            : avgCvss > 2.0
+            : averageCvss > 2.0
               ? "low"
               : "very low"
 
@@ -403,8 +446,8 @@ export async function getComprehensiveProductIntelligence(product: string) {
         recentCount: recentCVEs.length,
       },
       analytics: {
-        averageCvss: avgCvss,
-        averageEpss: avgEpss,
+        averageCvss,
+        averageEpss,
         exploitationLikelihood,
         riskLevel,
         patchPriority,
@@ -413,7 +456,7 @@ export async function getComprehensiveProductIntelligence(product: string) {
 
     console.log(`[CVEDB] Comprehensive analysis complete for ${product}:`, {
   totalCVEs,
-  criticalCount: Array.isArray(allCves) ? allCves.filter((cve: any) => (cve.cvss || 0) >= 9.0).length : 0,
+  criticalCount: Array.isArray(allCves) ? allCves.filter((cve) => (cve.cvss || 0) >= 9.0).length : 0,
   riskLevel,
     })
 
@@ -482,12 +525,12 @@ export async function getComprehensiveTrendingVulnerabilities(
       // Calculate analytics for CVSS only
       const analytics = {
         totalFound: cves.length,
-        criticalCount: cves.filter((cve: any) => (cve.cvss || 0) >= 9.0).length,
-        highCount: cves.filter((cve: any) => (cve.cvss || 0) >= 7.0 && (cve.cvss || 0) < 9.0).length,
-        mediumCount: cves.filter((cve: any) => (cve.cvss || 0) >= 4.0 && (cve.cvss || 0) < 7.0).length,
-        lowCount: cves.filter((cve: any) => (cve.cvss || 0) > 0.0 && (cve.cvss || 0) < 4.0).length,
-        averageCvss: cves.reduce((sum: number, cve: any) => sum + (cve.cvss || 0), 0) / cves.length || 0,
-        topCvssScore: Math.max(...cves.map((cve: any) => cve.cvss || 0)),
+        criticalCount: cves.filter((cve) => (cve.cvss || 0) >= 9.0).length,
+        highCount: cves.filter((cve) => (cve.cvss || 0) >= 7.0 && (cve.cvss || 0) < 9.0).length,
+        mediumCount: cves.filter((cve) => (cve.cvss || 0) >= 4.0 && (cve.cvss || 0) < 7.0).length,
+        lowCount: cves.filter((cve) => (cve.cvss || 0) > 0.0 && (cve.cvss || 0) < 4.0).length,
+        averageCvss: cves.reduce((sum, cve) => sum + (cve.cvss || 0), 0) / cves.length || 0,
+        topCvssScore: Math.max(...cves.map((cve) => cve.cvss || 0)),
       }
 
       return {
@@ -817,13 +860,11 @@ export async function checkCVEDBHealthComprehensive(): Promise<{
 
 // Check if a CVE is recent
 export function isRecentComprehensiveCVE(publishedDate: string | null): boolean {
-  if (!publishedDate) {
-    return false;
-  }
-  const date = new Date(publishedDate);
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-  return date > thirtyDaysAgo;
+  if (!publishedDate) return false
+  const date = new Date(publishedDate)
+  const thirtyDaysAgo = new Date()
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+  return date > thirtyDaysAgo
 }
 
 export type { CVEDetails, CVEWithCPEs } from '@/types/cve';

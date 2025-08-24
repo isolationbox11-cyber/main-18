@@ -2,6 +2,7 @@ import { fetchJSON } from "./fetcher";
 
 export interface OtxResult {
   ip: string;
+  pulses: any[];
   tags: string[];
   reputation: number;
 }
