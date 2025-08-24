@@ -1,4 +1,3 @@
-
 import { NextResponse } from 'next/server';
 
 // Edge‑runtime – runs on V8 isolates, super fast & cheap
