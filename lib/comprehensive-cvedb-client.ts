@@ -360,7 +360,7 @@ export async function getComprehensiveProductIntelligence(product: string) {
   searchCVEsComprehensive(cleanProduct, { limit: 100 }),
   searchCVEsComprehensive(cleanProduct, { limit: 100 }),
   searchCVEsComprehensive(cleanProduct, { limit: 50 }),
-  searchCPEsComprehensive(cleanProduct, {}),
+  searchCVEsComprehensive(cleanProduct, {}),
     ]);
 
     // Extract results
@@ -371,9 +371,7 @@ export async function getComprehensiveProductIntelligence(product: string) {
     const recentCVEs = recentCvesResult?.cves || [];
     const highEpssCVEs = highEpssCvesResult?.cves ? highEpssCvesResult.cves.filter((cve: any) => (cve.epss || 0) > 0.3) : [];
     const topEpssCVEs = [...(highEpssCvesResult?.cves || [])].sort((a, b) => (b.epss || 0) - (a.epss || 0)).slice(0, 10);
-    const affectedCPEs = cpesResult?.cpes || [];
-
-  const cpes = cpesResult?.cpes || []
+  // Remove affectedCPEs and cpes references (not present in CVESearchResult)
 
     // Categorize CVEs by severity
     const criticalCVEs = allCves.filter((cve) => (cve.cvss || 0) >= 9.0)
@@ -424,7 +422,7 @@ export async function getComprehensiveProductIntelligence(product: string) {
     const result = {
       product: product,
       totalCVEs,
-      totalCPEs: affectedCPEs.length,
+  totalCPEs: 0,
       criticalCVEs,
       highCVEs,
       mediumCVEs,
@@ -434,7 +432,7 @@ export async function getComprehensiveProductIntelligence(product: string) {
       ransomwareCVEs,
       highEpssCVEs,
       topEpssCVEs,
-      affectedCPEs,
+  affectedCPEs: [],
       summary: {
         criticalCount: criticalCVEs.length,
         highCount: highCVEs.length,

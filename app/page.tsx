@@ -21,11 +21,16 @@ import { ForensicInvestigationWorkspace } from "@/components/forensic-investigat
 import { DatabasePoweredInvestigationTracker } from "@/components/database-powered-investigation-tracker"
 import { RealTimeThreatIntelligenceHub } from "@/components/real-time-threat-intelligence-hub"
 import { Shield, Globe, Bot, Zap, Target, Eye, AlertTriangle, Database, Activity } from "lucide-react"
+import { ThreatFeedsPanel } from "@/components/threat-feeds-panel"
 
 export default function CyberWatchVault() {
   const [activeTab, setActiveTab] = useState("cve")
   const [testProduct, setTestProduct] = useState("")
   const [testCVEs, setTestCVEs] = useState("")
+  // SSR guard: Only render on client
+  if (typeof window === "undefined") {
+    return null;
+  }
 
   // Error boundary wrapper for each tab content
   function ErrorBoundary({ children }: { children: React.ReactNode }) {
@@ -82,6 +87,9 @@ export default function CyberWatchVault() {
             <TabsTrigger value="russian" className="flex items-center gap-2 px-6 py-3 rounded-lg text-orange-400 data-[state=active]:bg-orange-900/40">
               <Globe className="w-5 h-5" /> Russian Darknet
             </TabsTrigger>
+            <TabsTrigger value="feeds" className="flex items-center gap-2 px-6 py-3 rounded-lg text-pink-400 data-[state=active]:bg-pink-900/40">
+              <Zap className="w-5 h-5" /> Threat Feeds
+            </TabsTrigger>
             <TabsTrigger value="guide" className="flex items-center gap-2 px-6 py-3 rounded-lg text-slate-400 data-[state=active]:bg-slate-800/40">
               <Eye className="w-5 h-5" /> Beginner Guide
             </TabsTrigger>
@@ -98,6 +106,7 @@ export default function CyberWatchVault() {
           <TabsContent value="dorking" className="space-y-6"><ErrorBoundary><GoogleDorkExplorer /></ErrorBoundary></TabsContent>
           <TabsContent value="darkweb" className="space-y-6"><ErrorBoundary><DarkWebIntelligencePanel /></ErrorBoundary></TabsContent>
           <TabsContent value="russian" className="space-y-6"><ErrorBoundary><RussianDarknetPanel /></ErrorBoundary></TabsContent>
+          <TabsContent value="feeds" className="space-y-6"><ErrorBoundary><ThreatFeedsPanel /></ErrorBoundary></TabsContent>
           <TabsContent value="guide" className="space-y-6"><ErrorBoundary><BeginnerGuide /></ErrorBoundary></TabsContent>
         </Tabs>
         {/* Footer */}

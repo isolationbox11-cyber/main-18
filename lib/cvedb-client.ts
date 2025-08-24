@@ -72,11 +72,10 @@ async function makeAPIRequest<T>(url: string, maxRetries = 3): Promise<T> {
         throw new Error(`CVEDB API error: ${response.status} ${response.statusText}`)
       }
 
-      const data = await response.json()
-      return data
+  return await response.json()
     } catch (error) {
       lastError = error instanceof Error ? error : new Error("Unknown error")
-      if (attempt === maxRetries) break
+  if (attempt === maxRetries) { break }
 
       // Wait before retry
       const waitTime = 1000 * attempt
@@ -119,7 +118,7 @@ export async function searchCVEsByProduct(
   try {
     const cleanProduct = product.toLowerCase().trim()
     if (!cleanProduct) {
-      throw new Error("Product name cannot be empty")
+  throw new Error("Product name cannot be empty")
     }
 
     const params = new URLSearchParams({
@@ -132,18 +131,18 @@ export async function searchCVEsByProduct(
     })
 
     // Add date filters if provided
-    if (options.startDate) {
+      if (options.startDate) { 
       if (!options.startDate.match(/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2})?$/)) {
         throw new Error("Invalid start_date format. Use YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS")
       }
-      params.append("start_date", options.startDate)
+        params.append("start_date", options.startDate) 
     }
 
-    if (options.endDate) {
+      if (options.endDate) { 
       if (!options.endDate.match(/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2})?$/)) {
         throw new Error("Invalid end_date format. Use YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS")
       }
-      params.append("end_date", options.endDate)
+        params.append("end_date", options.endDate) 
     }
 
     const url = `${CVEDB_BASE_URL}/cves?${params}`
@@ -185,8 +184,8 @@ export async function searchCVEsByCPE(
     })
 
     // Add date filters if provided
-    if (options.startDate) params.append("start_date", options.startDate)
-    if (options.endDate) params.append("end_date", options.endDate)
+    if (options.startDate) { params.append("start_date", options.startDate) }
+    if (options.endDate) { params.append("end_date", options.endDate) }
 
     const url = `${CVEDB_BASE_URL}/cves?${params}`
     return await makeAPIRequest<CVESearchResult | CVEsTotal>(url)
@@ -227,8 +226,8 @@ export async function getLatestCVEs(
       params.append("start_date", startDate.toISOString().split("T")[0])
       params.append("end_date", endDate.toISOString().split("T")[0])
     } else {
-      if (options.startDate) params.append("start_date", options.startDate)
-      if (options.endDate) params.append("end_date", options.endDate)
+  if (options.startDate) { params.append("start_date", options.startDate) }
+  if (options.endDate) { params.append("end_date", options.endDate) }
     }
 
     const url = `${CVEDB_BASE_URL}/cves?${params}`
@@ -420,7 +419,7 @@ export async function getTrendingVulnerabilities(
     })
 
     if ("cves" in result) {
-      let cves = result.cves
+  let { cves } = result
 
       // Filter by minimum EPSS score if specified
       if (options.minEpss !== undefined) {
