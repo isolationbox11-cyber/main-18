@@ -10,6 +10,7 @@ import { Table, TableHeader, TableRow, TableCell, TableBody } from "./ui/table";
 
 export function UnifiedSearch() {
   const [query, setQuery] = useState("");
+  const [count, setCount] = useState(10);
 
   type UnifiedData = {
     source?: string;
@@ -21,10 +22,10 @@ export function UnifiedSearch() {
     isFetching,
     error,
   } = useQuery<UnifiedData>({
-    queryKey: ["unified", query],
+    queryKey: ["unified", query, count],
     queryFn: async () => {
       const { data } = await axios.get("/api/unified", {
-        params: { q: query },
+        params: { q: query, count },
       });
       return data as UnifiedData;
     },
@@ -33,16 +34,30 @@ export function UnifiedSearch() {
 
   const safeData: UnifiedData = data ?? {};
   return (
-    <div className="space-y-4">
-      <Input
-        placeholder="shodan:apache, censys:port:22, or any search term"
-        value={query}
-        onChange={e => setQuery(e.target.value)}
-        className="max-w-xl"
-      />
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row gap-4 items-center">
+        <Input
+          placeholder="Try: shodan:apache, censys:port:22, or any search term"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          className="max-w-xl"
+        />
+        <div className="flex gap-2 items-center">
+          <label htmlFor="count" className="text-sm text-gray-400">Results:</label>
+          <input
+            id="count"
+            type="number"
+            min={1}
+            max={50}
+            value={count}
+            onChange={e => setCount(Number(e.target.value))}
+            className="w-16 px-2 py-1 rounded border border-gray-700 bg-slate-900 text-white"
+          />
+        </div>
+      </div>
 
-      {isFetching && <p className="text-gray-400">Looking up…</p>}
-      {error && <p className="text-red-500">{(error as any).message}</p>}
+      {isFetching && <p className="text-blue-400 animate-pulse">Looking up…</p>}
+      {error && <p className="text-red-500 font-bold">{(error as any).message}</p>}
 
       {safeData.source && (
         <Tabs defaultValue={safeData.source} className="w-full">
@@ -54,11 +69,16 @@ export function UnifiedSearch() {
             <TabsTrigger value="vt">VirusTotal</TabsTrigger>
             <TabsTrigger value="abuse">AbuseIPDB</TabsTrigger>
             <TabsTrigger value="google">Web</TabsTrigger>
+            <TabsTrigger value="sandbox">Sandbox</TabsTrigger>
           </TabsList>
 
-          {/* Shodan results */}
+          {/* Shodan results: show more interesting fields */}
           <TabsContent value="shodan">
-            <ResultsTable data={Array.isArray(safeData.results) ? safeData.results : []} columns={["ip", "org", "port", "os"]} />
+            <ResultsTable
+              data={Array.isArray(safeData.results) ? safeData.results : []}
+              columns={["ip", "org", "port", "os", "vulns", "location"]}
+              showMap
+            />
           </TabsContent>
 
           {/* Censys results */}
@@ -97,13 +117,44 @@ export function UnifiedSearch() {
           {/* Google results */}
           <TabsContent value="google">
             {(Array.isArray(safeData.results) ? safeData.results : []).map((item: any, i: number) => (
-              <div key={i} className="border-b border-gray-700 py-2">
-                <a href={item.link} target="_blank" rel="noopener" className="text-primary underline">
+              <div key={i} className="border-b border-gray-700 py-2 hover:bg-slate-800 transition cursor-pointer">
+                <a href={item.link} target="_blank" rel="noopener" className="text-primary underline font-bold text-lg">
                   {item.title}
                 </a>
                 <p className="text-sm text-gray-300">{item.snippet}</p>
               </div>
             ))}
+          </TabsContent>
+
+          {/* Sandbox: interactive panel for exploring results visually */}
+          <TabsContent value="sandbox">
+            <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 rounded-lg p-6 shadow-lg">
+              <h2 className="text-2xl font-bold text-cyan-400 mb-2">Cyber Sandbox</h2>
+              <p className="text-slate-300 mb-4">Drag, click, and explore real assets. Click IPs, orgs, ports, or vulnerabilities for instant forensics and visual aids.</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {(Array.isArray(safeData.results) ? safeData.results : []).slice(0, 8).map((row: any, i: number) => (
+                  <div key={i} className="bg-slate-800 rounded-lg p-4 shadow hover:scale-105 transition cursor-pointer">
+                    <div className="flex gap-2 items-center mb-2">
+                      <span className="text-blue-400 font-mono text-lg">{row.ip}</span>
+                      <span className="text-green-400 text-xs px-2 py-1 rounded bg-green-900">Port {row.port}</span>
+                      <span className="text-yellow-400 text-xs px-2 py-1 rounded bg-yellow-900">{row.org}</span>
+                    </div>
+                    <div className="text-xs text-slate-400 mb-2">{row.os ?? "Unknown OS"}</div>
+                    <div className="flex gap-2 mb-2">
+                      {row.vulns && row.vulns.length > 0 ? (
+                        row.vulns.map((v: string, idx: number) => (
+                          <a key={idx} href={`https://cve.mitre.org/cgi-bin/cvename.cgi?name=${v}`} target="_blank" rel="noopener noreferrer" className="text-red-400 underline text-xs">{v}</a>
+                        ))
+                      ) : (
+                        <span className="text-green-400 text-xs">No known vulns</span>
+                      )}
+                    </div>
+                    <div className="text-xs text-cyan-300">{row.location?.city}, {row.location?.country}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 text-xs text-slate-400">Tip: Click any asset for details. Vulnerabilities link to CVE records. All panels are interactive and visually enhanced for cyber forensics.</div>
+            </div>
           </TabsContent>
         </Tabs>
       )}
@@ -119,23 +170,29 @@ function ResultsTable({ data, columns }: { data: any[]; columns: string[] }) {
       <TableHeader>
         <TableRow>
           {columns.map((c) => (
-            <TableCell key={c}>{c.toUpperCase()}</TableCell>
+            <TableCell key={c} className="font-bold text-cyan-300 text-base cursor-pointer">{c.toUpperCase()}</TableCell>
           ))}
-          <TableCell>Forensics</TableCell>
+          <TableCell className="font-bold text-orange-400 text-base">Forensics</TableCell>
         </TableRow>
       </TableHeader>
       <TableBody>
         {data.map((row, i) => (
-          <>
-            <TableRow key={i}>
+          <React.Fragment key={i}>
+            <TableRow className="hover:bg-slate-800 transition cursor-pointer">
               {columns.map((c) => (
-                <TableCell key={c}>
-                  {Array.isArray(row[c]) ? row[c].join(", ") : row[c] ?? "—"}
+                <TableCell key={c} className="text-blue-200">
+                  {c === "vulns" && Array.isArray(row[c]) ? (
+                    row[c].length > 0 ? row[c].map((v: string, idx: number) => (
+                      <a key={idx} href={`https://cve.mitre.org/cgi-bin/cvename.cgi?name=${v}`} target="_blank" rel="noopener noreferrer" className="text-red-400 underline mx-1">{v}</a>
+                    )) : <span className="text-green-400">No vulns</span>
+                  ) : c === "location" && row[c] ? (
+                    <span className="text-cyan-400">{row[c].city}, {row[c].country}</span>
+                  ) : Array.isArray(row[c]) ? row[c].join(", ") : row[c] ?? "—"}
                 </TableCell>
               ))}
               <TableCell>
                 <button
-                  className="text-blue-400 underline text-xs"
+                  className={`text-blue-400 underline text-xs px-2 py-1 rounded bg-blue-900 hover:bg-blue-700 transition font-bold`}
                   onClick={() => setExpanded(expanded === i ? null : i)}
                   aria-label="Show forensic details"
                 >
@@ -145,8 +202,8 @@ function ResultsTable({ data, columns }: { data: any[]; columns: string[] }) {
             </TableRow>
             {expanded === i && (
               <TableRow>
-                <TableCell>
-                  <div className={`bg-slate-900 text-xs text-left p-4 flex gap-4 items-start`} style={{ gridColumn: `span ${columns.length + 1}` }}>
+                <TableCell colSpan={columns.length + 1}>
+                  <div className={`bg-slate-900 text-xs text-left p-4 flex gap-4 items-start rounded-lg shadow-lg border border-blue-900`}> 
                     <div>
                       <Image src="/placeholder-logo.png" alt="Asset" className="w-16 h-16 rounded mb-2 border border-gray-700" width={64} height={64} />
                       <svg width="80" height="60" viewBox="0 0 80 60" className="mb-2">
@@ -190,7 +247,7 @@ function ResultsTable({ data, columns }: { data: any[]; columns: string[] }) {
                 </TableCell>
               </TableRow>
             )}
-          </>
+          </React.Fragment>
         ))}
       </TableBody>
     </Table>
