@@ -88,7 +88,7 @@ export default function CyberWatchVault() {
                 <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center">
                   <Eye className="w-6 h-6 text-white" />
                 </div>
-                <div className="absolute inset-0 bg-cyan-400/20 rounded-xl blur-lg animate-pulse"></div>
+                <div className="absolute inset-0 bg-cyan-400/20 rounded-xl blur-lg animate-pulse text-red-600"></div>
               </div>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
