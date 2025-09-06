@@ -92,9 +92,9 @@ export default function CyberWatchVault() {
               </div>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  Cyber Watch Vault
+                  Salem Cyber Vault
                 </h1>
-                <p className="text-slate-400">Advanced Internet Intelligence Platform 🎃</p>
+                <p className="text-slate-400">Advanced Internet Intelligence Platform</p>
               </div>
             </div>
 
