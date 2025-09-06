@@ -36,10 +36,3 @@ export async function shodanSearch(query: string): Promise<ShodanHost[]> {
     },
   }));
 }
-
-export async function getShodanHostDetails(ip: string): Promise<any> {
-  const apiKey = process.env.SHODAN_API_KEY!;
-  const url = `https://api.shodan.io/shodan/host/${ip}?key=${apiKey}`;
-  const raw = await fetchJSON<any>(url);
-  return raw;
-}

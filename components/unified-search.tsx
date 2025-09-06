@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Image from 'next/image';
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -163,7 +163,7 @@ export function UnifiedSearch() {
 }
 
 /* Tiny reusable table */
-function ResultsTable({ data, columns, showMap }: { data: any[]; columns: string[]; showMap?: boolean }) {
+function ResultsTable({ data, columns }: { data: any[]; columns: string[] }) {
   const [expanded, setExpanded] = useState<number | null>(null);
   return (
     <Table>

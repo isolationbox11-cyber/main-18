@@ -18,6 +18,7 @@ export async function otxCheck(ip: string): Promise<OtxResult> {
   });
   return {
     ip: raw.indicator,
+    pulses: raw.pulse_info.pulses ?? [],
     tags: raw.pulse_info.tags ?? [],
     reputation: raw.reputation ?? 0,
   };

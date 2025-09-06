@@ -292,9 +292,7 @@ export function InteractiveSearchResults({ query, loading, resultCount }: Intera
     )
   }
 
-  if (!results.length) {
-    return null;
-  }
+  if (!results.length) return null
 
   return (
     <div className="space-y-6">

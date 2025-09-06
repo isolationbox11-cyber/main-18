@@ -231,7 +231,7 @@ export async function createShodanAlert(
 ): Promise<ShodanAlert | null> {
   try {
     const body: any = { name, filters }
-  if (expires) { body.expires = expires }
+    if (expires) body.expires = expires
 
     const response = await fetch(`${SHODAN_BASE_URL}/shodan/alert?key=${SHODAN_API_KEY}`, {
       method: "POST",

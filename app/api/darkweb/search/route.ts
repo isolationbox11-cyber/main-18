@@ -11,12 +11,7 @@ export async function GET(request: Request) {
   if (!request?.url || typeof request.url !== "string") {
     return NextResponse.json({ error: "Invalid request URL" }, { status: 400 });
   }
-  let searchParams;
-  try {
-    searchParams = new URL(request.url).searchParams;
-  } catch {
-    return NextResponse.json({ error: "Invalid request URL" }, { status: 400 });
-  }
+  const { searchParams } = new URL(request.url);
   const q = searchParams.get("q");
   if (!q) {
     return NextResponse.json({ error: "Missing query" }, { status: 400 });

@@ -9,24 +9,281 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "@/hooks/use-toast"
-// Supabase integration removed for Next.js compatibility
+import {
+  InvestigationDB,
+  type Investigation,
+  type Finding,
+  type TimelineEvent,
+  isSupabaseConfigured,
+} from "@/lib/supabase/database"
 import { Database, Plus, Save, Search, Clock, Target, CheckCircle, Loader2, RefreshCw } from "lucide-react"
 
 export function DatabasePoweredInvestigationTracker() {
+  const [investigations, setInvestigations] = useState<Investigation[]>([])
+  const [activeInvestigation, setActiveInvestigation] = useState<Investigation | null>(null)
+  const [findings, setFindings] = useState<Finding[]>([])
+  const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([])
+  const [loading, setLoading] = useState(false)
+  const [showNewInvestigation, setShowNewInvestigation] = useState(false)
+  const [newInvestigationTitle, setNewInvestigationTitle] = useState("")
+  const [newInvestigationDesc, setNewInvestigationDesc] = useState("")
+  const [newFinding, setNewFinding] = useState("")
+  const [selectedFindingType, setSelectedFindingType] = useState<Finding["type"]>("note")
+
+  const loadInvestigations = useCallback(async () => {
+    setLoading(true)
+    try {
+      const data = await InvestigationDB.getInvestigations()
+      setInvestigations(data)
+      setActiveInvestigation(currentActive => {
+        // If the current active investigation still exists in the new list, keep it.
+        if (currentActive && data.some(inv => inv.id === currentActive.id)) {
+          return currentActive
+        }
+        // Otherwise, default to the first investigation in the list, or null if it's empty.
+        return data[0] || null
+      })
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load investigations",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const loadFindings = useCallback(async (investigationId: string) => {
+    try {
+      const data = await InvestigationDB.getFindings(investigationId)
+      setFindings(data)
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load findings",
+        variant: "destructive",
+      })
+    }
+  }, [])
+
+  const loadTimelineEvents = useCallback(async (investigationId: string) => {
+    try {
+      const data = await InvestigationDB.getTimelineEvents(investigationId)
+      setTimelineEvents(data)
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load timeline events",
+        variant: "destructive",
+      })
+    }
+  }, [])
+
+  // Load initial data
+  useEffect(() => {
+    if (isSupabaseConfigured) {
+      loadInvestigations()
+    }
+  }, [loadInvestigations])
+
+  // Load findings and timeline when active investigation changes
+  useEffect(() => {
+    if (activeInvestigation?.id && isSupabaseConfigured) {
+      loadFindings(activeInvestigation.id)
+      loadTimelineEvents(activeInvestigation.id)
+    } else {
+      // Clear findings and timeline if there's no active investigation
+      setFindings([])
+      setTimelineEvents([])
+    }
+  }, [activeInvestigation?.id, loadFindings, loadTimelineEvents])
+
+  // Set up real-time subscription for the investigations list
+  useEffect(() => {
+    if (!isSupabaseConfigured) return
+
+    const investigationsSubscription = InvestigationDB.subscribeToInvestigations(payload => {
+      console.log("Investigation list updated, reloading.", payload)
+      loadInvestigations()
+    })
+
+    return () => {
+      investigationsSubscription?.unsubscribe()
+    }
+  }, [loadInvestigations])
+
+  // Set up real-time subscriptions for the active investigation's details
+  useEffect(() => {
+    if (!activeInvestigation?.id || !isSupabaseConfigured) return
+
+    const findingsSubscription = InvestigationDB.subscribeToFindings(activeInvestigation.id, payload => {
+      console.log("Findings updated, reloading.", payload)
+      loadFindings(activeInvestigation.id)
+    })
+
+    const timelineSubscription = InvestigationDB.subscribeToTimelineEvents(activeInvestigation.id, payload => {
+      console.log("Timeline updated, reloading.", payload)
+      loadTimelineEvents(activeInvestigation.id)
+    })
+
+    return () => {
+      findingsSubscription?.unsubscribe()
+      timelineSubscription?.unsubscribe()
+    }
+  }, [activeInvestigation?.id, loadFindings, loadTimelineEvents])
+
+  const createInvestigation = async () => {
+    if (!newInvestigationTitle.trim()) {
+      return
+    }
+
+    setLoading(true)
+    try {
+      const investigation = await InvestigationDB.createInvestigation({
+        title: newInvestigationTitle,
+        description: newInvestigationDesc,
+        status: "active",
+        priority: "medium",
+        targets: [],
+        tags: [],
+      })
+
+      if (investigation) {
+        // Add initial timeline event
+        await InvestigationDB.addTimelineEvent({
+          investigation_id: investigation.id,
+          title: "Investigation Created",
+          description: `New investigation: ${investigation.title}`,
+          event_type: "discovery",
+          source: "System",
+          severity: "info",
+          event_timestamp: new Date().toISOString(),
+          metadata: {},
+        })
+
+        setActiveInvestigation(investigation)
+        setNewInvestigationTitle("")
+        setNewInvestigationDesc("")
+        setShowNewInvestigation(false)
+        loadInvestigations()
+
+        toast({
+          title: "Success",
+          description: "Investigation created successfully",
+        })
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create investigation",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const addFinding = async () => {
+    if (!activeInvestigation || !newFinding.trim()) {
+      return
+    }
+
+    setLoading(true)
+    try {
+      const finding = await InvestigationDB.addFinding({
+        investigation_id: activeInvestigation.id,
+        type: selectedFindingType,
+        title: `${selectedFindingType.toUpperCase()} Finding`,
+        content: newFinding,
+        source: "Manual Entry",
+        severity: "medium",
+        verified: false,
+        tags: [],
+        metadata: {},
+      })
+
+      if (finding) {
+        // Add timeline event
+        await InvestigationDB.addTimelineEvent({
+          investigation_id: activeInvestigation.id,
+          title: "New Finding Added",
+          description: `Added ${selectedFindingType} finding: ${finding.title}`,
+          event_type: "analysis",
+          source: "User",
+          severity: "info",
+          event_timestamp: new Date().toISOString(),
+          metadata: { finding_id: finding.id },
+        })
+
+        setNewFinding("")
+        loadFindings(activeInvestigation.id)
+        loadTimelineEvents(activeInvestigation.id)
+
+        toast({
+          title: "Success",
+          description: "Finding added successfully",
+        })
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add finding",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case "critical":
+        return "text-red-400 bg-red-900/20 border-red-500"
+      case "high":
+        return "text-orange-400 bg-orange-900/20 border-orange-500"
+      case "medium":
+        return "text-yellow-400 bg-yellow-900/20 border-yellow-500"
+      case "low":
+        return "text-blue-400 bg-blue-900/20 border-blue-500"
+      default:
+        return "text-slate-400 bg-slate-900/20 border-slate-500"
+    }
+  }
+
+  if (!isSupabaseConfigured) {
+    return (
+      <Card className="bg-amber-900/20 border-amber-600">
+        <CardContent className="p-8 text-center">
+          <Database className="w-12 h-12 text-amber-400 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-amber-400 mb-2">Database Connection Required</h3>
+          <p className="text-amber-200 mb-4">
+            Connect Supabase to enable persistent investigation tracking and real-time collaboration.
+          </p>
+          <Button
+            onClick={() => window.open("https://vercel.com/dashboard", "_blank")}
+            className="bg-amber-600 hover:bg-amber-700"
+          >
+            Configure Supabase
+          </Button>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
-    <Card className="bg-slate-900/20 border-slate-600">
-      <CardContent className="p-8 text-center">
-        <Database className="w-12 h-12 text-cyan-400 mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-cyan-400 mb-2">Investigation Tracker (Demo)</h3>
-        <p className="text-cyan-200 mb-4">
-          Database-powered investigation tracking is currently disabled.<br />
-          All features are available in demo mode only.
-        </p>
-      </CardContent>
-    </Card>
-  )
-}
-// All code below this line removed
+    <div className="space-y-8 px-2 md:px-8 max-w-7xl mx-auto">
+      {/* Header */}
+  <div className="flex items-center justify-between py-4">
+        <div>
+          <h2 className="text-4xl font-extrabold text-cyan-400 mb-2 drop-shadow-lg tracking-tight">Investigation Tracker</h2>
+          <p className="text-slate-300 text-lg">Database-powered investigation management with <span className="text-cyan-300 font-semibold">real-time collaboration</span></p>
+        </div>
+  <div className="flex gap-4">
+          <Button onClick={loadInvestigations} variant="outline" className="border-cyan-500 bg-gradient-to-r from-cyan-700 to-cyan-900 text-white shadow-md hover:scale-105 transition-transform">
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Refresh
+          </Button>
           <Dialog open={showNewInvestigation} onOpenChange={setShowNewInvestigation}>
             <DialogTrigger asChild>
               <Button className="bg-gradient-to-r from-cyan-500 to-blue-700 text-white shadow-lg hover:scale-105 transition-transform">
@@ -124,7 +381,7 @@ export function DatabasePoweredInvestigationTracker() {
                       >
                         {investigation.status.toUpperCase()}
                       </Badge>
-                      <span className="text-slate-500">{investigation.updated_at_formatted ?? investigation.updated_at}</span>
+                      <span className="text-slate-500">{new Date(investigation.updated_at).toLocaleDateString()}</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -208,7 +465,7 @@ export function DatabasePoweredInvestigationTracker() {
                           <p className="text-slate-300 text-sm mb-2">{finding.content}</p>
                           <div className="flex items-center justify-between text-xs text-slate-500">
                             <span>{finding.source}</span>
-                            <span>{finding.created_at_formatted ?? finding.created_at}</span>
+                            <span>{new Date(finding.created_at).toLocaleString()}</span>
                           </div>
                         </CardContent>
                       </Card>
@@ -251,13 +508,13 @@ export function DatabasePoweredInvestigationTracker() {
                   <div className="flex justify-between items-center">
                     <span className="text-slate-400 text-sm">Created:</span>
                     <span className="text-white text-sm">
-                      {activeInvestigation.created_at_formatted ?? activeInvestigation.created_at}
+                      {new Date(activeInvestigation.created_at).toLocaleDateString()}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-slate-400 text-sm">Updated:</span>
                     <span className="text-white text-sm">
-                      {activeInvestigation.updated_at_formatted ?? activeInvestigation.updated_at}
+                      {new Date(activeInvestigation.updated_at).toLocaleDateString()}
                     </span>
                   </div>
                 </div>
@@ -299,8 +556,7 @@ export function DatabasePoweredInvestigationTracker() {
                           <p className="text-slate-400 text-xs mb-2">{event.description}</p>
                           <div className="flex justify-between items-center text-xs text-slate-500">
                             <span>{event.source}</span>
-                            <span>{event.event_timestamp_formatted ?? event.event_timestamp}</span>
-// All broken hooks and formatting logic removed; only static placeholder remains
+                            <span>{new Date(event.event_timestamp).toLocaleString()}</span>
                           </div>
                         </div>
                       </div>
@@ -314,4 +570,4 @@ export function DatabasePoweredInvestigationTracker() {
       )}
     </div>
   )
-// End of component
+}
