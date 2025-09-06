@@ -1,5 +1,5 @@
 // Advanced Shodan API client with full endpoint coverage
-const SHODAN_API_KEY = process.env.SHODAN_API_KEY || "YOUR_SHODAN_KEY"
+const SHODAN_API_KEY = process.env.NEXT_PUBLIC_SHODAN_API_KEY || "YOUR_SHODAN_KEY"
 const SHODAN_BASE_URL = "https://api.shodan.io"
 
 export interface ShodanHostDetails {
@@ -231,7 +231,7 @@ export async function createShodanAlert(
 ): Promise<ShodanAlert | null> {
   try {
     const body: any = { name, filters }
-  if (expires) { body.expires = expires }
+    if (expires) body.expires = expires
 
     const response = await fetch(`${SHODAN_BASE_URL}/shodan/alert?key=${SHODAN_API_KEY}`, {
       method: "POST",

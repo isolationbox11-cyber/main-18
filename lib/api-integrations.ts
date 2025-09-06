@@ -1,24 +1,24 @@
 // Real API integrations with comprehensive error handling
 const API_CONFIG = {
   SHODAN: {
-    key: process.env.SHODAN_API_KEY || "YOUR_SHODAN_KEY",
+    key: process.env.NEXT_PUBLIC_SHODAN_API_KEY || "YOUR_SHODAN_KEY",
     baseUrl: "https://api.shodan.io",
   },
   VIRUSTOTAL: {
-    key: process.env.VIRUSTOTAL_API_KEY || "YOUR_VT_KEY",
+    key: process.env.NEXT_PUBLIC_VIRUSTOTAL_API_KEY || "YOUR_VT_KEY",
     baseUrl: "https://www.virustotal.com/api/v3",
   },
   GOOGLE_CSE: {
-    key: process.env.GOOGLE_API_KEY || "YOUR_GOOGLE_KEY",
-    cx: process.env.GOOGLE_CSE_ID || "YOUR_CSE_ID",
+    key: process.env.NEXT_PUBLIC_GOOGLE_API_KEY || "YOUR_GOOGLE_KEY",
+    cx: process.env.NEXT_PUBLIC_GOOGLE_CSE_ID || "YOUR_CSE_ID",
     baseUrl: "https://www.googleapis.com/customsearch/v1",
   },
   ABUSEIPDB: {
-    key: process.env.ABUSEIPDB_API_KEY || "YOUR_ABUSE_KEY",
+    key: process.env.NEXT_PUBLIC_ABUSEIPDB_KEY || "YOUR_ABUSE_KEY",
     baseUrl: "https://api.abuseipdb.com/api/v2",
   },
   GREYNOISE: {
-    key: process.env.GREYNOISE_API_KEY || "YOUR_GREYNOISE_KEY",
+    key: process.env.NEXT_PUBLIC_GREYNOISE_KEY || "YOUR_GREYNOISE_KEY",
     baseUrl: "https://api.greynoise.io/v3",
   },
 }
@@ -161,7 +161,7 @@ export async function searchShodan(query: string, facets?: string[]): Promise<an
 export async function getShodanStats(): Promise<any> {
   try {
     const response = await fetch(`${API_CONFIG.SHODAN.baseUrl}/shodan/host/count?key=${API_CONFIG.SHODAN.key}&query=*`)
-  if (!response.ok) { throw new Error(`Shodan stats error: ${response.status}`) }
+    if (!response.ok) throw new Error(`Shodan stats error: ${response.status}`)
     return await response.json()
   } catch (error) {
     console.error("Shodan stats failed:", error)
@@ -176,7 +176,7 @@ export async function performGoogleDork(dork: string): Promise<GoogleDorkResult[
       `${API_CONFIG.GOOGLE_CSE.baseUrl}?key=${API_CONFIG.GOOGLE_CSE.key}&cx=${API_CONFIG.GOOGLE_CSE.cx}&q=${encodeURIComponent(dork)}&num=10`,
     )
 
-  if (!response.ok) { throw new Error(`Google API error: ${response.status}`) }
+    if (!response.ok) throw new Error(`Google API error: ${response.status}`)
     const data = await response.json()
 
     return (data.items || []).map((item: any) => ({
@@ -201,7 +201,7 @@ export async function analyzeWithVirusTotal(resource: string, type: "ip" | "doma
       headers: { "x-apikey": API_CONFIG.VIRUSTOTAL.key },
     })
 
-  if (!response.ok) { throw new Error(`VirusTotal error: ${response.status}`) }
+    if (!response.ok) throw new Error(`VirusTotal error: ${response.status}`)
     return await response.json()
   } catch (error) {
     console.error("VirusTotal analysis failed:", error)
@@ -366,12 +366,12 @@ function processBotnetData(shodanData: any, threatIntel: any): BotnetData[] {
       botnets.push({
         name,
         size: hosts.length,
-        countries: [...new Set(hosts.map((h: any) => h.location.country_name).filter(Boolean) as string[])],
+        countries: [...new Set(hosts.map((h: any) => h.location.country_name))],
         lastSeen: new Date().toISOString(),
         threatLevel: assessThreatLevel(hosts.length),
         description: generateBotnetDescription(name, hosts),
         c2Servers: extractC2Servers(hosts),
-        affectedPorts: [...new Set(hosts.map((h: any) => h.port).filter((p: any) => typeof p === 'number') as number[])],
+        affectedPorts: [...new Set(hosts.map((h: any) => h.port))],
       })
     })
   }
@@ -522,5 +522,3 @@ function mapSeverity(classification: string): "low" | "medium" | "high" | "criti
   if (classification?.includes("suspicious")) return "medium"
   return "low"
 }
-
-export type { ShodanResult, ThreatIntelResult } from '@/types/api-integrations';
