@@ -6,11 +6,11 @@ export function Table({ children }: { children: React.ReactNode }) {
 export function TableHeader({ children }: { children: React.ReactNode }) {
   return <thead className="bg-gray-900 text-white">{children}</thead>;
 }
-export function TableRow({ children }: { children: React.ReactNode }) {
-  return <tr className="border-b border-gray-800">{children}</tr>;
+export function TableRow({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <tr className={className ? `border-b border-gray-800 ${className}` : "border-b border-gray-800"}>{children}</tr>;
 }
-export function TableCell({ children }: { children: React.ReactNode }) {
-  return <td className="px-2 py-1">{children}</td>;
+export function TableCell({ children, className, colSpan }: { children: React.ReactNode; className?: string; colSpan?: number }) {
+  return <td className={className ? `px-2 py-1 ${className}` : "px-2 py-1"} colSpan={colSpan}>{children}</td>;
 }
 export function TableBody({ children }: { children: React.ReactNode }) {
   return <tbody>{children}</tbody>;

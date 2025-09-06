@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import MarkerClusterGroup from "react-leaflet-cluster";
+// import MarkerClusterGroup from "react-leaflet-cluster"; // Removed: not installed
 import { HeatmapLayer } from "react-leaflet-heatmap-layer-v3";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -110,42 +110,41 @@ export default function MapAdvanced() {
             latitudeExtractor={(m: HeatmapPoint) => m[0]}
             intensityExtractor={(m: HeatmapPoint) => m[2]}
           />
-          <MarkerClusterGroup>
-            {filteredAmenities.map((a) => (
-              <Marker key={a.id} position={[a.lat, a.lon]} icon={eyeIcon}>
-                <Popup>
-                  <strong>{a.tags?.name ?? "Cafe"}</strong>
-                  <br />
-                  {a.tags?.amenity ?? "Amenity"}
-                  <br />
-                  Lat: {a.lat}, Lon: {a.lon}
-                  <br />
-                  <span className="font-bold text-orange-300">Nearby Devices:</span>
-                  <ul className="list-disc ml-4">
-                    {mockDevices.filter(d => Math.abs(d.lat - a.lat) < 1 && Math.abs(d.lon - a.lon) < 1).map((d, i) => (
-                      <li key={i}>
-                        <span className="font-mono">{d.ip}</span> – {d.type}
-                        {d.vulns.length > 0 && (
-                          <span className="text-red-400 ml-2">Vulns: {d.vulns.join(", ")}</span>
-                        )}
-                      </li>
-                    ))}
-                    {mockDevices.filter(d => Math.abs(d.lat - a.lat) < 1 && Math.abs(d.lon - a.lon) < 1).length === 0 && (
-                      <li className="text-gray-400">No devices found</li>
-                    )}
-                  </ul>
-                </Popup>
-              </Marker>
-            ))}
-            {/* Show API hosts if available */}
-            {Array.isArray(data) && data.map((host: Host) => (
-              <Marker key={host.ip + host.port} position={[host.location.latitude, host.location.longitude]} icon={eyeIcon}>
-                <Popup>
-                  <strong>{host.ip}</strong>
-                </Popup>
-              </Marker>
-            ))}
-          </MarkerClusterGroup>
+          {/* Clustered markers removed due to missing dependency. Show markers directly. */}
+          {filteredAmenities.map((a) => (
+            <Marker key={a.id} position={[a.lat, a.lon]} icon={eyeIcon}>
+              <Popup>
+                <strong>{a.tags?.name ?? "Cafe"}</strong>
+                <br />
+                {a.tags?.amenity ?? "Amenity"}
+                <br />
+                Lat: {a.lat}, Lon: {a.lon}
+                <br />
+                <span className="font-bold text-orange-300">Nearby Devices:</span>
+                <ul className="list-disc ml-4">
+                  {mockDevices.filter(d => Math.abs(d.lat - a.lat) < 1 && Math.abs(d.lon - a.lon) < 1).map((d, i) => (
+                    <li key={i}>
+                      <span className="font-mono">{d.ip}</span> – {d.type}
+                      {d.vulns.length > 0 && (
+                        <span className="text-red-400 ml-2">Vulns: {d.vulns.join(", ")}</span>
+                      )}
+                    </li>
+                  ))}
+                  {mockDevices.filter(d => Math.abs(d.lat - a.lat) < 1 && Math.abs(d.lon - a.lon) < 1).length === 0 && (
+                    <li className="text-gray-400">No devices found</li>
+                  )}
+                </ul>
+              </Popup>
+            </Marker>
+          ))}
+          {/* Show API hosts if available */}
+          {Array.isArray(data) && data.map((host: Host) => (
+            <Marker key={host.ip + host.port} position={[host.location.latitude, host.location.longitude]} icon={eyeIcon}>
+              <Popup>
+                <strong>{host.ip}</strong>
+              </Popup>
+            </Marker>
+          ))}
         </MapContainer>
         {loading && <div className="absolute inset-0 flex items-center justify-center bg-black/30 text-white">Loading map…</div>}
       </div>

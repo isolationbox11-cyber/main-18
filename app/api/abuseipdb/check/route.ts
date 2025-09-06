@@ -7,9 +7,16 @@ export async function GET(request: Request) {
   if (!request?.url || typeof request.url !== "string") {
     return NextResponse.json({ error: "Invalid request URL" }, { status: 400 });
   }
-  const { searchParams } = new URL(request.url);
+  let searchParams;
+  try {
+    searchParams = new URL(request.url).searchParams;
+  } catch {
+    return NextResponse.json({ error: "Invalid request URL" }, { status: 400 });
+  }
   const ip = searchParams.get("ip");
-  if (!ip) return NextResponse.json({ error: "Missing IP" }, { status: 400 });
+  if (!ip) {
+    return NextResponse.json({ error: "Missing IP" }, { status: 400 });
+  }
 
   try {
     const result = await abuseIPDBCheck(ip);

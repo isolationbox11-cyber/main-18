@@ -60,229 +60,148 @@ export const isSupabaseConfigured =
   typeof process.env.SUPABASE_ANON_KEY === "string" &&
   process.env.SUPABASE_ANON_KEY.length > 0
 
-// Create Supabase client
-export const supabase = isSupabaseConfigured
-  ? createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!)
-  : null
-
-// Database operations
+// Supabase integration removed per user request
 export class InvestigationDB {
-  static async createInvestigation(
-    investigation: Omit<Investigation, "id" | "created_at" | "updated_at">,
-  ): Promise<Investigation | null> {
-    if (!supabase) return null
-
-    const { data, error } = await supabase.from("investigations").insert(investigation).select().single()
-
+  // Create a new investigation
+  static async createInvestigation(data: Partial<Investigation>): Promise<Investigation | null> {
+  if (!isSupabaseConfigured) { return null; }
+  const { supabase } = await import('./client');
+    const { data: result, error } = await supabase.from('investigations').insert([data]).select().single();
     if (error) {
-      console.error("Error creating investigation:", error)
-      return null
+      console.error('Supabase createInvestigation error:', error);
+      return null;
     }
-
-    return data
+    return result as Investigation;
   }
 
+  // Get all investigations
   static async getInvestigations(): Promise<Investigation[]> {
-    if (!supabase) return []
-
-    const { data, error } = await supabase.from("investigations").select("*").order("updated_at", { ascending: false })
-
+  if (!isSupabaseConfigured) { return []; }
+  const { supabase } = await import('./client');
+    const { data, error } = await supabase.from('investigations').select('*');
     if (error) {
-      console.error("Error fetching investigations:", error)
-      return []
+      console.error('Supabase getInvestigations error:', error);
+      return [];
     }
-
-    return data || []
+    return data as Investigation[];
   }
 
+  // Get a single investigation by ID
   static async getInvestigation(id: string): Promise<Investigation | null> {
-    if (!supabase) return null
-
-    const { data, error } = await supabase.from("investigations").select("*").eq("id", id).single()
-
+  if (!isSupabaseConfigured) { return null; }
+  const { supabase } = await import('./client');
+    const { data, error } = await supabase.from('investigations').select('*').eq('id', id).single();
     if (error) {
-      console.error("Error fetching investigation:", error)
-      return null
+      console.error('Supabase getInvestigation error:', error);
+      return null;
     }
-
-    return data
+    return data as Investigation;
   }
 
+  // Update an investigation
   static async updateInvestigation(id: string, updates: Partial<Investigation>): Promise<Investigation | null> {
-    if (!supabase) return null
-
-    const { data, error } = await supabase.from("investigations").update(updates).eq("id", id).select().single()
-
+  if (!isSupabaseConfigured) { return null; }
+  const { supabase } = await import('./client');
+    const { data, error } = await supabase.from('investigations').update(updates).eq('id', id).select().single();
     if (error) {
-      console.error("Error updating investigation:", error)
-      return null
+      console.error('Supabase updateInvestigation error:', error);
+      return null;
     }
-
-    return data
+    return data as Investigation;
   }
 
+  // Delete an investigation
   static async deleteInvestigation(id: string): Promise<boolean> {
-    if (!supabase) return false
-
-    const { error } = await supabase.from("investigations").delete().eq("id", id)
-
+  if (!isSupabaseConfigured) { return false; }
+  const { supabase } = await import('./client');
+    const { error } = await supabase.from('investigations').delete().eq('id', id);
     if (error) {
-      console.error("Error deleting investigation:", error)
-      return false
+      console.error('Supabase deleteInvestigation error:', error);
+      return false;
     }
-
-    return true
+    return true;
   }
 
-  static async addFinding(finding: Omit<Finding, "id" | "created_at" | "updated_at">): Promise<Finding | null> {
-    if (!supabase) return null
-
-    const { data, error } = await supabase.from("findings").insert(finding).select().single()
-
+  // Add a finding to an investigation
+  static async addFinding(data: Partial<Finding>): Promise<Finding | null> {
+  if (!isSupabaseConfigured) { return null; }
+  const { supabase } = await import('./client');
+    const { data: result, error } = await supabase.from('findings').insert([data]).select().single();
     if (error) {
-      console.error("Error adding finding:", error)
-      return null
+      console.error('Supabase addFinding error:', error);
+      return null;
     }
-
-    return data
+    return result as Finding;
   }
 
-  static async getFindings(investigationId: string): Promise<Finding[]> {
-    if (!supabase) return []
-
-    const { data, error } = await supabase
-      .from("findings")
-      .select("*")
-      .eq("investigation_id", investigationId)
-      .order("created_at", { ascending: false })
-
+  // Get all findings for an investigation
+  static async getFindings(investigation_id: string): Promise<Finding[]> {
+  if (!isSupabaseConfigured) { return []; }
+  const { supabase } = await import('./client');
+    const { data, error } = await supabase.from('findings').select('*').eq('investigation_id', investigation_id);
     if (error) {
-      console.error("Error fetching findings:", error)
-      return []
+      console.error('Supabase getFindings error:', error);
+      return [];
     }
-
-    return data || []
+    return data as Finding[];
   }
 
+  // Update a finding
   static async updateFinding(id: string, updates: Partial<Finding>): Promise<Finding | null> {
-    if (!supabase) return null
-
-    const { data, error } = await supabase.from("findings").update(updates).eq("id", id).select().single()
-
+  if (!isSupabaseConfigured) { return null; }
+  const { supabase } = await import('./client');
+    const { data, error } = await supabase.from('findings').update(updates).eq('id', id).select().single();
     if (error) {
-      console.error("Error updating finding:", error)
-      return null
+      console.error('Supabase updateFinding error:', error);
+      return null;
     }
-
-    return data
+    return data as Finding;
   }
 
-  static async addTimelineEvent(event: Omit<TimelineEvent, "id" | "created_at">): Promise<TimelineEvent | null> {
-    if (!supabase) return null
-
-    const { data, error } = await supabase.from("timeline_events").insert(event).select().single()
-
+  // Add a timeline event
+  static async addTimelineEvent(data: Partial<TimelineEvent>): Promise<TimelineEvent | null> {
+  if (!isSupabaseConfigured) { return null; }
+  const { supabase } = await import('./client');
+    const { data: result, error } = await supabase.from('timeline_events').insert([data]).select().single();
     if (error) {
-      console.error("Error adding timeline event:", error)
-      return null
+      console.error('Supabase addTimelineEvent error:', error);
+      return null;
     }
-
-    return data
+    return result as TimelineEvent;
   }
 
-  static async getTimelineEvents(investigationId: string): Promise<TimelineEvent[]> {
-    if (!supabase) return []
-
-    const { data, error } = await supabase
-      .from("timeline_events")
-      .select("*")
-      .eq("investigation_id", investigationId)
-      .order("event_timestamp", { ascending: false })
-
+  // Get all timeline events for an investigation
+  static async getTimelineEvents(investigation_id: string): Promise<TimelineEvent[]> {
+  if (!isSupabaseConfigured) { return []; }
+  const { supabase } = await import('./client');
+    const { data, error } = await supabase.from('timeline_events').select('*').eq('investigation_id', investigation_id);
     if (error) {
-      console.error("Error fetching timeline events:", error)
-      return []
+      console.error('Supabase getTimelineEvents error:', error);
+      return [];
     }
-
-    return data || []
+    return data as TimelineEvent[];
   }
 
-  static async cacheIntelligence(target: string, source: string, data: Record<string, any>): Promise<void> {
-    if (!supabase) return
+  // Cache intelligence data
+  static async cacheIntelligence(data: Partial<IntelligenceCache>): Promise<void> {
+  if (!isSupabaseConfigured) { return; }
+  const { supabase } = await import('./client');
+    await supabase.from('intelligence_cache').insert([data]);
+  }
 
-    const { error } = await supabase.from("intelligence_cache").upsert({
-      target,
-      source,
-      data,
-      expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-    })
-
+  // Get cached intelligence for a target
+  static async getCachedIntelligence(target: string): Promise<Record<string, any> | null> {
+  if (!isSupabaseConfigured) { return null; }
+  const { supabase } = await import('./client');
+    const { data, error } = await supabase.from('intelligence_cache').select('*').eq('target', target).single();
     if (error) {
-      console.error("Error caching intelligence:", error)
+      console.error('Supabase getCachedIntelligence error:', error);
+      return null;
     }
+    return data as Record<string, any>;
   }
 
-  static async getCachedIntelligence(target: string, source: string): Promise<Record<string, any> | null> {
-    if (!supabase) return null
-
-    const { data, error } = await supabase
-      .from("intelligence_cache")
-      .select("data")
-      .eq("target", target)
-      .eq("source", source)
-      .gt("expires_at", new Date().toISOString())
-      .single()
-
-    if (error || !data) {
-      return null
-    }
-
-    return data.data
-  }
-
-  // Real-time subscriptions
-  static subscribeToInvestigations(callback: (payload: any) => void) {
-    if (!supabase) return null
-
-    return supabase
-      .channel("investigations")
-      .on("postgres_changes", { event: "*", schema: "public", table: "investigations" }, callback)
-      .subscribe()
-  }
-
-  static subscribeToFindings(investigationId: string, callback: (payload: any) => void) {
-    if (!supabase) return null
-
-    return supabase
-      .channel(`findings:${investigationId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "findings",
-          filter: `investigation_id=eq.${investigationId}`,
-        },
-        callback,
-      )
-      .subscribe()
-  }
-
-  static subscribeToTimelineEvents(investigationId: string, callback: (payload: any) => void) {
-    if (!supabase) return null
-
-    return supabase
-      .channel(`timeline:${investigationId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "timeline_events",
-          filter: `investigation_id=eq.${investigationId}`,
-        },
-        callback,
-      )
-      .subscribe()
-  }
+  // Real-time subscriptions (example)
+  // To use: import { supabase } from './client' in client components
+  // supabase.channel('investigations').on('postgres_changes', {...})
 }

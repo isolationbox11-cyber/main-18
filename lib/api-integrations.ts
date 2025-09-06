@@ -161,7 +161,7 @@ export async function searchShodan(query: string, facets?: string[]): Promise<an
 export async function getShodanStats(): Promise<any> {
   try {
     const response = await fetch(`${API_CONFIG.SHODAN.baseUrl}/shodan/host/count?key=${API_CONFIG.SHODAN.key}&query=*`)
-    if (!response.ok) throw new Error(`Shodan stats error: ${response.status}`)
+  if (!response.ok) { throw new Error(`Shodan stats error: ${response.status}`) }
     return await response.json()
   } catch (error) {
     console.error("Shodan stats failed:", error)
@@ -176,7 +176,7 @@ export async function performGoogleDork(dork: string): Promise<GoogleDorkResult[
       `${API_CONFIG.GOOGLE_CSE.baseUrl}?key=${API_CONFIG.GOOGLE_CSE.key}&cx=${API_CONFIG.GOOGLE_CSE.cx}&q=${encodeURIComponent(dork)}&num=10`,
     )
 
-    if (!response.ok) throw new Error(`Google API error: ${response.status}`)
+  if (!response.ok) { throw new Error(`Google API error: ${response.status}`) }
     const data = await response.json()
 
     return (data.items || []).map((item: any) => ({
@@ -201,7 +201,7 @@ export async function analyzeWithVirusTotal(resource: string, type: "ip" | "doma
       headers: { "x-apikey": API_CONFIG.VIRUSTOTAL.key },
     })
 
-    if (!response.ok) throw new Error(`VirusTotal error: ${response.status}`)
+  if (!response.ok) { throw new Error(`VirusTotal error: ${response.status}`) }
     return await response.json()
   } catch (error) {
     console.error("VirusTotal analysis failed:", error)

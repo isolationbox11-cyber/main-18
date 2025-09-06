@@ -56,7 +56,7 @@ async function fetchCveDetails(cveId: string): Promise<any> {
   }
 }
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import MarkerClusterGroup from 'react-leaflet-cluster';
+// import MarkerClusterGroup from 'react-leaflet-cluster'; // Removed: not installed
 import { HeatmapLayer } from 'react-leaflet-heatmap-layer-v3';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -374,54 +374,53 @@ export function MapExplorer() {
             latitudeExtractor={(m: [number, number, number]) => m[0]}
             intensityExtractor={(m: [number, number, number]) => m[2]}
           />
-          <MarkerClusterGroup>
-            {amenities.map((a) => (
-              <Marker key={a.id} position={[a.lat, a.lon]} icon={eyeIcon} eventHandlers={{ click: () => setSelectedAmenity(a) }}>
-                <Popup minWidth={250} maxWidth={350}>
-                  <div className="flex flex-col gap-2">
-                    <strong>{a.tags?.name ?? 'Cafe'}</strong>
-                    <span>{a.tags?.amenity ?? 'Amenity'}</span>
-                    <span>Lat: {a.lat}, Lon: {a.lon}</span>
-                    {/* Show device info for matching city/amenity */}
-                    {mockDevices.filter(d => d.city.toLowerCase() === (a.tags?.city?.toLowerCase() || '') && d.amenity.toLowerCase() === (a.tags?.amenity?.toLowerCase() || 'cafe')).map((d, i) => (
-                      <div key={i} className="border-t border-gray-700 pt-2">
-                        <Image src={d.image} alt={d.type} className="w-24 h-16 object-cover rounded mb-1" width={96} height={64} />
-                        <div><strong>Type:</strong> {d.type} <span className="text-xs text-gray-400">(A {d.type} is a networked device. Example: routers connect networks, cameras stream video, POS handles payments.)</span></div>
-                        <div><strong>IP Address:</strong> {d.ip} <span className="text-xs text-gray-400">(Unique identifier for this device on the network.)</span></div>
-                        <div><strong>Vendor:</strong> {d.meta.vendor} <span className="text-xs text-gray-400">(Company that made the device.)</span></div>
-                        <div><strong>Model:</strong> {d.meta.model} <span className="text-xs text-gray-400">(Specific product version.)</span></div>
-                        <div><strong>Operating System:</strong> {d.meta.os} <span className="text-xs text-gray-400">(Software running on the device.)</span></div>
-                        <div><strong>Vulnerabilities:</strong> {d.vulns.length ? d.vulns.map(v => (
-                          <div key={v} className="mb-2">
-                            <a
-                              href={`https://cve.mitre.org/cgi-bin/cvename.cgi?name=${v}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block text-red-500 underline hover:text-red-700"
-                            >
-                              {v} <span className="text-xs text-gray-400">(Security issue. Click to learn more.)</span>
-                            </a>
-                            {cveDetails[v] ? (
-                              <div className="text-xs text-yellow-300 mt-1">
-                                <strong>{cveDetails[v].summary}</strong>
-                                <div>Published: {cveDetails[v].Published}</div>
-                                <div>CVSS Score: {cveDetails[v].cvss}</div>
-                                <div>References: {cveDetails[v].references?.slice(0,2).map((r: string, idx: number) => (
-                                  <a key={idx} href={r} target="_blank" rel="noopener noreferrer" className="underline text-blue-400 mr-2">Source</a>
-                                ))}</div>
-                              </div>
-                            ) : <div className="text-xs text-gray-500">Loading details…</div>}
-                          </div>
-                        )) : 'None'} </div>
-                        <div className="mt-2 text-xs text-blue-400">Forensic Tip: Devices like these can be entry points for hackers. Always update firmware and use strong passwords. Vulnerabilities (CVEs) are public records of security flaws—search the CVE code for details and fixes.</div>
-                        <div className="mt-1 text-xs text-green-400">Beginner Explanation: This panel shows real-world devices found in public places. Each device has an IP address, a vendor, and may have known security issues. Cyber forensics means investigating these details to understand risks and protect networks.</div>
-                      </div>
-                    ))}
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MarkerClusterGroup>
+          {/* Clustered markers removed due to missing dependency. Show markers directly. */}
+          {amenities.map((a) => (
+            <Marker key={a.id} position={[a.lat, a.lon]} icon={eyeIcon} eventHandlers={{ click: () => setSelectedAmenity(a) }}>
+              <Popup minWidth={250} maxWidth={350}>
+                <div className="flex flex-col gap-2">
+                  <strong>{a.tags?.name ?? 'Cafe'}</strong>
+                  <span>{a.tags?.amenity ?? 'Amenity'}</span>
+                  <span>Lat: {a.lat}, Lon: {a.lon}</span>
+                  {/* Show device info for matching city/amenity */}
+                  {mockDevices.filter(d => d.city.toLowerCase() === (a.tags?.city?.toLowerCase() || '') && d.amenity.toLowerCase() === (a.tags?.amenity?.toLowerCase() || 'cafe')).map((d, i) => (
+                    <div key={i} className="border-t border-gray-700 pt-2">
+                      <Image src={d.image} alt={d.type} className="w-24 h-16 object-cover rounded mb-1" width={96} height={64} />
+                      <div><strong>Type:</strong> {d.type} <span className="text-xs text-gray-400">(A {d.type} is a networked device. Example: routers connect networks, cameras stream video, POS handles payments.)</span></div>
+                      <div><strong>IP Address:</strong> {d.ip} <span className="text-xs text-gray-400">(Unique identifier for this device on the network.)</span></div>
+                      <div><strong>Vendor:</strong> {d.meta.vendor} <span className="text-xs text-gray-400">(Company that made the device.)</span></div>
+                      <div><strong>Model:</strong> {d.meta.model} <span className="text-xs text-gray-400">(Specific product version.)</span></div>
+                      <div><strong>Operating System:</strong> {d.meta.os} <span className="text-xs text-gray-400">(Software running on the device.)</span></div>
+                      <div><strong>Vulnerabilities:</strong> {d.vulns.length ? d.vulns.map(v => (
+                        <div key={v} className="mb-2">
+                          <a
+                            href={`https://cve.mitre.org/cgi-bin/cvename.cgi?name=${v}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block text-red-500 underline hover:text-red-700"
+                          >
+                            {v} <span className="text-xs text-gray-400">(Security issue. Click to learn more.)</span>
+                          </a>
+                          {cveDetails[v] ? (
+                            <div className="text-xs text-yellow-300 mt-1">
+                              <strong>{cveDetails[v].summary}</strong>
+                              <div>Published: {cveDetails[v].Published}</div>
+                              <div>CVSS Score: {cveDetails[v].cvss}</div>
+                              <div>References: {cveDetails[v].references?.slice(0,2).map((r: string, idx: number) => (
+                                <a key={idx} href={r} target="_blank" rel="noopener noreferrer" className="underline text-blue-400 mr-2">Source</a>
+                              ))}</div>
+                            </div>
+                          ) : <div className="text-xs text-gray-500">Loading details…</div>}
+                        </div>
+                      )) : 'None'} </div>
+                      <div className="mt-2 text-xs text-blue-400">Forensic Tip: Devices like these can be entry points for hackers. Always update firmware and use strong passwords. Vulnerabilities (CVEs) are public records of security flaws—search the CVE code for details and fixes.</div>
+                      <div className="mt-1 text-xs text-green-400">Beginner Explanation: This panel shows real-world devices found in public places. Each device has an IP address, a vendor, and may have known security issues. Cyber forensics means investigating these details to understand risks and protect networks.</div>
+                    </div>
+                  ))}
+                </div>
+              </Popup>
+            </Marker>
+          ))}
         </MapContainer>
         {loading && <div className="absolute inset-0 flex items-center justify-center bg-black/30 text-white">Loading map…</div>}
       </div>
