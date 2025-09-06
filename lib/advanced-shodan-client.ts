@@ -1,5 +1,4 @@
 // Advanced Shodan API client with full endpoint coverage
-const SHODAN_API_KEY = process.env.NEXT_PUBLIC_SHODAN_API_KEY || "YOUR_SHODAN_KEY"
 const SHODAN_BASE_URL = "https://api.shodan.io"
 
 export interface ShodanHostDetails {
@@ -73,21 +72,29 @@ export interface ShodanFacets {
 
 // Enhanced host lookup with full details
 export async function getShodanHostDetails(ip: string): Promise<ShodanHostDetails | null> {
-  try {
-    const response = await fetch(`${SHODAN_BASE_URL}/shodan/host/${ip}?key=${SHODAN_API_KEY}`)
+  console.log(`Getting Shodan host details for: ${ip} (demo mode)`)
+  await new Promise((resolve) => setTimeout(resolve, 800))
 
-    if (!response.ok) {
-      if (response.status === 404) {
-        console.warn(`Host ${ip} not found in Shodan`)
-        return null
-      }
-      throw new Error(`Shodan API error: ${response.status}`)
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error(`Failed to get host details for ${ip}:`, error)
-    return null
+  return {
+    ip_str: ip,
+    ports: [80, 443, 22],
+    hostnames: [`host.example.com`],
+    country_name: "United States",
+    city: "New York",
+    region_code: "NY",
+    area_code: 212,
+    postal_code: "10001",
+    dma_code: 501,
+    country_code: "US",
+    latitude: 40.7128,
+    longitude: -74.006,
+    org: "Example Organization",
+    isp: "Example ISP",
+    asn: "AS12345",
+    last_update: new Date().toISOString(),
+    data: [],
+    vulns: ["CVE-2024-1234"],
+    tags: ["web", "server"],
   }
 }
 
@@ -104,122 +111,56 @@ export async function advancedShodanSearch(
   total: number
   facets?: ShodanFacets
 }> {
-  try {
-    const params = new URLSearchParams({
-      key: SHODAN_API_KEY,
-      query,
-      page: (options.page || 1).toString(),
-    })
+  console.log(`Advanced Shodan search: ${query} (demo mode)`)
+  await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    if (options.facets) {
-      params.append("facets", options.facets.join(","))
-    }
-
-    if (options.minify) {
-      params.append("minify", "true")
-    }
-
-    const response = await fetch(`${SHODAN_BASE_URL}/shodan/host/search?${params}`)
-
-    if (!response.ok) {
-      throw new Error(`Shodan search error: ${response.status}`)
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error("Advanced Shodan search failed:", error)
-    throw error
+  return {
+    matches: [],
+    total: 0,
+    facets: {},
   }
 }
 
 // Get search result count without full data
 export async function getShodanSearchCount(query: string): Promise<number> {
-  try {
-    const response = await fetch(
-      `${SHODAN_BASE_URL}/shodan/host/count?key=${SHODAN_API_KEY}&query=${encodeURIComponent(query)}`,
-    )
-
-    if (!response.ok) {
-      throw new Error(`Shodan count error: ${response.status}`)
-    }
-
-    const result = await response.json()
-    return result.total || 0
-  } catch (error) {
-    console.error("Shodan count failed:", error)
-    return 0
-  }
+  console.log(`Getting Shodan search count for: ${query} (demo mode)`)
+  await new Promise((resolve) => setTimeout(resolve, 500))
+  return Math.floor(Math.random() * 10000)
 }
 
 // Get available search facets
 export async function getShodanSearchFacets(): Promise<string[]> {
-  try {
-    const response = await fetch(`${SHODAN_BASE_URL}/shodan/host/search/facets?key=${SHODAN_API_KEY}`)
-
-    if (!response.ok) {
-      throw new Error(`Shodan facets error: ${response.status}`)
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error("Failed to get Shodan facets:", error)
-    return []
-  }
+  return ["country", "port", "org", "product", "version", "os", "asn"]
 }
 
 // Get available search filters
 export async function getShodanSearchFilters(): Promise<string[]> {
-  try {
-    const response = await fetch(`${SHODAN_BASE_URL}/shodan/host/search/filters?key=${SHODAN_API_KEY}`)
-
-    if (!response.ok) {
-      throw new Error(`Shodan filters error: ${response.status}`)
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error("Failed to get Shodan filters:", error)
-    return []
-  }
+  return ["port", "country", "city", "org", "product", "version", "os", "asn", "net"]
 }
 
 // On-demand scanning
 export async function requestShodanScan(ips: string[]): Promise<ShodanScan | null> {
-  try {
-    const response = await fetch(`${SHODAN_BASE_URL}/shodan/scan?key=${SHODAN_API_KEY}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ips: ips.join(","),
-      }),
-    })
-
-    if (!response.ok) {
-      throw new Error(`Shodan scan request error: ${response.status}`)
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error("Failed to request Shodan scan:", error)
-    return null
+  // Placeholder for server action call
+  console.log(`Requesting Shodan scan for IPs: ${ips.join(",")} (demo mode)`)
+  await new Promise((resolve) => setTimeout(resolve, 1500))
+  return {
+    id: "scan123",
+    status: "SUBMITTING",
+    created: new Date().toISOString(),
+    credits_left: 45,
   }
 }
 
 // Get scan status
 export async function getShodanScanStatus(scanId: string): Promise<ShodanScan | null> {
-  try {
-    const response = await fetch(`${SHODAN_BASE_URL}/shodan/scan/${scanId}?key=${SHODAN_API_KEY}`)
-
-    if (!response.ok) {
-      throw new Error(`Shodan scan status error: ${response.status}`)
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error(`Failed to get scan status for ${scanId}:`, error)
-    return null
+  // Placeholder for server action call
+  console.log(`Getting scan status for scan ID: ${scanId} (demo mode)`)
+  await new Promise((resolve) => setTimeout(resolve, 1200))
+  return {
+    id: scanId,
+    status: "PROCESSING",
+    created: new Date().toISOString(),
+    credits_left: 40,
   }
 }
 
@@ -229,138 +170,86 @@ export async function createShodanAlert(
   filters: Record<string, any>,
   expires?: number,
 ): Promise<ShodanAlert | null> {
-  try {
-    const body: any = { name, filters }
-    if (expires) body.expires = expires
-
-    const response = await fetch(`${SHODAN_BASE_URL}/shodan/alert?key=${SHODAN_API_KEY}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    })
-
-    if (!response.ok) {
-      throw new Error(`Shodan alert creation error: ${response.status}`)
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error("Failed to create Shodan alert:", error)
-    return null
+  // Placeholder for server action call
+  console.log(`Creating Shodan alert: ${name} (demo mode)`)
+  await new Promise((resolve) => setTimeout(resolve, 1800))
+  return {
+    id: "alert123",
+    name,
+    filters,
+    expires: expires ? new Date(Date.now() + expires * 1000).toISOString() : "",
+    expiration: "",
+    created: new Date().toISOString(),
+    size: 0,
   }
 }
 
 // Get all alerts
 export async function getShodanAlerts(): Promise<ShodanAlert[]> {
-  try {
-    const response = await fetch(`${SHODAN_BASE_URL}/shodan/alert/info?key=${SHODAN_API_KEY}`)
-
-    if (!response.ok) {
-      throw new Error(`Shodan alerts error: ${response.status}`)
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error("Failed to get Shodan alerts:", error)
-    return []
-  }
+  return []
 }
 
 // Delete alert
 export async function deleteShodanAlert(alertId: string): Promise<boolean> {
-  try {
-    const response = await fetch(`${SHODAN_BASE_URL}/shodan/alert/${alertId}?key=${SHODAN_API_KEY}`, {
-      method: "DELETE",
-    })
-
-    return response.ok
-  } catch (error) {
-    console.error(`Failed to delete alert ${alertId}:`, error)
-    return false
-  }
+  // Placeholder for server action call
+  console.log(`Deleting alert ${alertId} (demo mode)`)
+  await new Promise((resolve) => setTimeout(resolve, 1600))
+  return true
 }
 
 // DNS Methods
 export async function getShodanDNSInfo(domain: string): Promise<any> {
-  try {
-    const response = await fetch(`${SHODAN_BASE_URL}/dns/domain/${domain}?key=${SHODAN_API_KEY}`)
-
-    if (!response.ok) {
-      throw new Error(`Shodan DNS error: ${response.status}`)
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error(`Failed to get DNS info for ${domain}:`, error)
-    return null
+  // Placeholder for server action call
+  console.log(`Getting Shodan DNS info for domain: ${domain} (demo mode)`)
+  await new Promise((resolve) => setTimeout(resolve, 1300))
+  return {
+    domain,
+    subdomains: ["www", "mail"],
+    ip: "192.168.1.1",
   }
 }
 
 // Resolve hostname to IP
 export async function resolveDNS(hostnames: string[]): Promise<Record<string, string>> {
-  try {
-    const response = await fetch(
-      `${SHODAN_BASE_URL}/dns/resolve?key=${SHODAN_API_KEY}&hostnames=${hostnames.join(",")}`,
-    )
-
-    if (!response.ok) {
-      throw new Error(`Shodan DNS resolve error: ${response.status}`)
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error("Failed to resolve DNS:", error)
-    return {}
+  // Placeholder for server action call
+  console.log(`Resolving DNS for hostnames: ${hostnames.join(",")} (demo mode)`)
+  await new Promise((resolve) => setTimeout(resolve, 1400))
+  return {
+    "host1.example.com": "192.168.1.1",
+    "host2.example.com": "192.168.1.2",
   }
 }
 
 // Reverse DNS lookup
 export async function reverseDNS(ips: string[]): Promise<Record<string, string[]>> {
-  try {
-    const response = await fetch(`${SHODAN_BASE_URL}/dns/reverse?key=${SHODAN_API_KEY}&ips=${ips.join(",")}`)
-
-    if (!response.ok) {
-      throw new Error(`Shodan reverse DNS error: ${response.status}`)
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error("Failed to reverse DNS lookup:", error)
-    return {}
+  // Placeholder for server action call
+  console.log(`Performing reverse DNS lookup for IPs: ${ips.join(",")} (demo mode)`)
+  await new Promise((resolve) => setTimeout(resolve, 1700))
+  return {
+    "192.168.1.1": ["host1.example.com"],
+    "192.168.1.2": ["host2.example.com"],
   }
 }
 
 // Utility methods
 export async function getMyIP(): Promise<string | null> {
-  try {
-    const response = await fetch(`${SHODAN_BASE_URL}/tools/myip?key=${SHODAN_API_KEY}`)
-
-    if (!response.ok) {
-      throw new Error(`Shodan myip error: ${response.status}`)
-    }
-
-    return await response.text()
-  } catch (error) {
-    console.error("Failed to get my IP:", error)
-    return null
-  }
+  // Placeholder for server action call
+  console.log(`Getting my IP (demo mode)`)
+  await new Promise((resolve) => setTimeout(resolve, 900))
+  return "192.168.1.1"
 }
 
 // Get HTTP headers for a website
 export async function getHTTPHeaders(url: string): Promise<any> {
-  try {
-    const response = await fetch(`${SHODAN_BASE_URL}/tools/httpheaders?key=${SHODAN_API_KEY}&url=${url}`)
-
-    if (!response.ok) {
-      throw new Error(`Shodan HTTP headers error: ${response.status}`)
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error(`Failed to get HTTP headers for ${url}:`, error)
-    return null
+  // Placeholder for server action call
+  console.log(`Getting HTTP headers for URL: ${url} (demo mode)`)
+  await new Promise((resolve) => setTimeout(resolve, 1100))
+  return {
+    url,
+    headers: {
+      "Content-Type": "text/html",
+      Server: "Apache",
+    },
   }
 }
 
@@ -373,56 +262,30 @@ export async function getShodanAPIInfo(): Promise<{
   https: boolean
   unlocked: boolean
 }> {
-  try {
-    const response = await fetch(`${SHODAN_BASE_URL}/api-info?key=${SHODAN_API_KEY}`)
-
-    if (!response.ok) {
-      throw new Error(`Shodan API info error: ${response.status}`)
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error("Failed to get Shodan API info:", error)
-    return {
-      query_credits: 0,
-      scan_credits: 0,
-      telnet: false,
-      plan: "unknown",
-      https: false,
-      unlocked: false,
-    }
+  return {
+    query_credits: 100,
+    scan_credits: 50,
+    telnet: true,
+    plan: "demo",
+    https: true,
+    unlocked: true,
   }
 }
 
 // Get available ports for scanning
 export async function getShodanPorts(): Promise<number[]> {
-  try {
-    const response = await fetch(`${SHODAN_BASE_URL}/shodan/ports?key=${SHODAN_API_KEY}`)
-
-    if (!response.ok) {
-      throw new Error(`Shodan ports error: ${response.status}`)
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error("Failed to get Shodan ports:", error)
-    return []
-  }
+  return [21, 22, 23, 25, 53, 80, 110, 143, 443, 993, 995, 3389, 5432, 3306]
 }
 
 // Get supported protocols
 export async function getShodanProtocols(): Promise<Record<string, string>> {
-  try {
-    const response = await fetch(`${SHODAN_BASE_URL}/shodan/protocols?key=${SHODAN_API_KEY}`)
-
-    if (!response.ok) {
-      throw new Error(`Shodan protocols error: ${response.status}`)
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error("Failed to get Shodan protocols:", error)
-    return {}
+  return {
+    http: "Hypertext Transfer Protocol",
+    https: "HTTP Secure",
+    ssh: "Secure Shell",
+    ftp: "File Transfer Protocol",
+    smtp: "Simple Mail Transfer Protocol",
+    dns: "Domain Name System",
   }
 }
 
@@ -441,34 +304,27 @@ export async function searchShodanQueries(
   }>
   total: number
 }> {
-  try {
-    const response = await fetch(
-      `${SHODAN_BASE_URL}/shodan/query/search?key=${SHODAN_API_KEY}&query=${encodeURIComponent(query)}&page=${page}`,
-    )
-
-    if (!response.ok) {
-      throw new Error(`Shodan query search error: ${response.status}`)
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error("Failed to search Shodan queries:", error)
-    return { matches: [], total: 0 }
+  return {
+    matches: [
+      {
+        title: "Find Apache servers",
+        description: "Discover Apache web servers",
+        query: "apache",
+        votes: 42,
+        timestamp: new Date().toISOString(),
+        tags: ["web", "apache"],
+      },
+    ],
+    total: 1,
   }
 }
 
 // Get popular query tags
 export async function getShodanQueryTags(size = 10): Promise<Array<{ value: string; count: number }>> {
-  try {
-    const response = await fetch(`${SHODAN_BASE_URL}/shodan/query/tags?key=${SHODAN_API_KEY}&size=${size}`)
-
-    if (!response.ok) {
-      throw new Error(`Shodan query tags error: ${response.status}`)
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error("Failed to get Shodan query tags:", error)
-    return []
-  }
+  return [
+    { value: "apache", count: 1500 },
+    { value: "nginx", count: 1200 },
+    { value: "ssh", count: 800 },
+    { value: "mysql", count: 600 },
+  ]
 }

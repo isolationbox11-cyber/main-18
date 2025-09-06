@@ -1,14 +1,4 @@
-// Real API integrations with proper error handling and fallbacks
-const API_KEYS = {
-  SHODAN: process.env.NEXT_PUBLIC_SHODAN_API_KEY || "YOUR_SHODAN_API_KEY",
-  VIRUSTOTAL: process.env.NEXT_PUBLIC_VIRUSTOTAL_API_KEY || "YOUR_VIRUSTOTAL_API_KEY",
-  ABUSEIPDB: process.env.NEXT_PUBLIC_ABUSEIPDB_API_KEY || "YOUR_ABUSEIPDB_API_KEY",
-  GREYNOISE: process.env.NEXT_PUBLIC_GREYNOISE_API_KEY || "YOUR_GREYNOISE_API_KEY",
-}
-
-// Check if APIs are properly configured
-const isConfigured = (apiKey: string) => apiKey && !apiKey.includes("YOUR_") && apiKey.length > 10
-
+// API client - now uses server actions for security and mock data for demo
 export interface ShodanHost {
   ip_str: string
   port: number
@@ -128,7 +118,7 @@ export interface LiveThreatEvent {
   }
 }
 
-// Generate realistic fallback data
+// Generate realistic fallback data for demo
 function generateFallbackShodanData(query: string): ShodanSearchResult {
   const services = [
     { product: "Apache httpd", version: "2.4.41", port: 80, service: "HTTP" },
@@ -215,30 +205,22 @@ function generateFallbackShodanData(query: string): ShodanSearchResult {
   }
 }
 
-// Shodan API with fallback
+// All API functions now use mock data for demo purposes
 export async function searchShodan(query: string, page = 1): Promise<ShodanSearchResult> {
-  // Always use fallback data for demo purposes to avoid CORS and API key issues
   console.log(`Searching Shodan for: ${query} (using demo data)`)
-
-  // Simulate API delay
   await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 1000))
-
   return generateFallbackShodanData(query)
 }
 
 export async function getShodanHostInfo(ip: string): Promise<ShodanHost> {
   console.log(`Getting Shodan host info for: ${ip} (using demo data)`)
-
   await new Promise((resolve) => setTimeout(resolve, 800))
-
   const fallbackData = generateFallbackShodanData("host")
   return fallbackData.matches[0] || fallbackData.matches[0]
 }
 
-// VirusTotal API with fallback
 export async function getVirusTotalIPReport(ip: string): Promise<VirusTotalResult> {
   console.log(`Getting VirusTotal report for: ${ip} (using demo data)`)
-
   await new Promise((resolve) => setTimeout(resolve, 600))
 
   return {
@@ -265,10 +247,8 @@ export async function getVirusTotalIPReport(ip: string): Promise<VirusTotalResul
   }
 }
 
-// AbuseIPDB API with fallback
 export async function getAbuseIPDBReport(ip: string): Promise<ThreatIntelResult> {
   console.log(`Getting AbuseIPDB report for: ${ip} (using demo data)`)
-
   await new Promise((resolve) => setTimeout(resolve, 500))
 
   return {
@@ -285,10 +265,8 @@ export async function getAbuseIPDBReport(ip: string): Promise<ThreatIntelResult>
   }
 }
 
-// GreyNoise API with fallback
 export async function getGreyNoiseContext(ip: string) {
   console.log(`Getting GreyNoise context for: ${ip} (using demo data)`)
-
   await new Promise((resolve) => setTimeout(resolve, 400))
 
   return {
@@ -302,10 +280,8 @@ export async function getGreyNoiseContext(ip: string) {
   }
 }
 
-// CVE Database with fallback
 export async function getCVEDetails(cveId: string) {
   console.log(`Getting CVE details for: ${cveId} (using demo data)`)
-
   await new Promise((resolve) => setTimeout(resolve, 300))
 
   return {
