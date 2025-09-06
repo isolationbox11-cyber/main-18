@@ -6,60 +6,56 @@ import { BeginnerGuide } from "@/components/beginner-guide"
 import { ThreatWorldMap } from "@/components/threat-world-map"
 import { LiveBotnetTracker } from "@/components/live-botnet-tracker"
 import { GoogleDorkExplorer } from "@/components/google-dork-explorer"
-import { RealTimeEventsFeed } from "@/components/real-time-events-feed"
+import { LiveThreatFeed } from "@/components/live-threat-feed"
 import { SearchInterface } from "@/components/search-interface"
 import { EnhancedHostDetails } from "@/components/enhanced-host-details"
+import { RealWorldExamplesShowcase } from "@/components/real-world-examples-showcase"
 import { AdvancedShodanDashboard } from "@/components/advanced-shodan-dashboard"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Eye, Shield, Globe, Activity, Search, TrendingUp, AlertTriangle, Zap, Settings } from "lucide-react"
-import { searchEnhancedShodan, getEnhancedThreatIntel, type EnhancedShodanHost } from "@/lib/enhanced-api-client"
+import { Eye, Shield, Globe, Activity, Search, TrendingUp, AlertTriangle, Zap, Settings, BookOpen } from "lucide-react"
+import { searchShodan, generateDetailedThreatIntel } from "@/lib/api-client"
+import type { ShodanHost } from "@/lib/api-client"
 
 export default function CyberWatchVault() {
-  const [searchResults, setSearchResults] = useState<EnhancedShodanHost[]>([])
+  const [searchResults, setSearchResults] = useState<ShodanHost[]>([])
   const [threatIntelData, setThreatIntelData] = useState<Record<string, any>>({})
   const [loading, setLoading] = useState(false)
   const [totalResults, setTotalResults] = useState(0)
   const [currentQuery, setCurrentQuery] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState("overview")
-  const [facets, setFacets] = useState<Record<string, Array<{ value: string; count: number }>>>({})
+  const [selectedHost, setSelectedHost] = useState<ShodanHost | null>(null)
 
   const handleSearch = useCallback(async (query: string) => {
     setLoading(true)
     setError(null)
     setCurrentQuery(query)
+    setSelectedHost(null)
 
     try {
-      const shodanResults = await searchEnhancedShodan(query)
+      const shodanResults = await searchShodan(query)
       const hosts = shodanResults?.matches || []
       setSearchResults(hosts)
       setTotalResults(shodanResults?.total || 0)
-      setFacets(shodanResults?.facets || {})
 
       // Get enhanced threat intelligence for unique IPs
-      const uniqueIPs = [...new Set(hosts.map((host: any) => host.ip_str))].slice(0, 8)
+      const uniqueIPs = [...new Set(hosts.map((host: any) => host.ip_str))].slice(0, 10)
 
       if (uniqueIPs.length > 0) {
-        const threatIntelPromises = uniqueIPs.map(async (ip) => {
+        const threatIntelMap: Record<string, any> = {}
+
+        for (const ip of uniqueIPs) {
           try {
-            const intel = await getEnhancedThreatIntel(ip)
-            return { ip, intel }
+            // Use enhanced threat intel generator
+            const intel = generateDetailedThreatIntel(ip)
+            threatIntelMap[ip] = intel
           } catch (error) {
             console.warn(`Failed to get threat intel for ${ip}:`, error)
-            return { ip, intel: null }
+            threatIntelMap[ip] = null
           }
-        })
-
-        const threatIntelResults = await Promise.all(threatIntelPromises)
-        const threatIntelMap = threatIntelResults.reduce(
-          (acc, { ip, intel }) => {
-            acc[ip] = intel
-            return acc
-          },
-          {} as Record<string, any>,
-        )
+        }
 
         setThreatIntelData(threatIntelMap)
       }
@@ -75,6 +71,11 @@ export default function CyberWatchVault() {
     }
   }, [])
 
+  const handleHostSelect = (host: ShodanHost) => {
+    setSelectedHost(host)
+    setActiveTab("host-details")
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 relative overflow-hidden">
       {/* Floating Eyes Background */}
@@ -89,7 +90,7 @@ export default function CyberWatchVault() {
                 <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center">
                   <Eye className="w-6 h-6 text-white" />
                 </div>
-                <div className="absolute inset-0 bg-cyan-400/20 rounded-xl blur-lg animate-pulse"></div>
+                <div className="absolute inset-0 bg-cyan-400/20 rounded-xl blur-lg animate-pulse text-red-600"></div>
               </div>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
@@ -106,7 +107,7 @@ export default function CyberWatchVault() {
               </Badge>
               <Badge variant="outline" className="border-green-500/30 text-green-400">
                 <Shield className="w-3 h-3 mr-1" />
-                Real-Time Intel
+                Real Examples
               </Badge>
             </div>
           </div>
@@ -119,7 +120,7 @@ export default function CyberWatchVault() {
 
         {/* Main Content Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <TabsList className="grid w-full grid-cols-7 bg-slate-800/30 border-slate-700">
+          <TabsList className="grid w-full grid-cols-8 bg-slate-800/30 border-slate-700">
             <TabsTrigger value="overview" className="data-[state=active]:bg-cyan-600">
               <Globe className="w-4 h-4 mr-2" />
               Overview
@@ -140,6 +141,10 @@ export default function CyberWatchVault() {
               <Zap className="w-4 h-4 mr-2" />
               Dorks
             </TabsTrigger>
+            <TabsTrigger value="examples" className="data-[state=active]:bg-pink-600">
+              <BookOpen className="w-4 h-4 mr-2" />
+              Examples
+            </TabsTrigger>
             <TabsTrigger value="advanced" className="data-[state=active]:bg-green-600">
               <Settings className="w-4 h-4 mr-2" />
               Advanced
@@ -154,7 +159,7 @@ export default function CyberWatchVault() {
           <TabsContent value="overview" className="space-y-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <ThreatWorldMap />
-              <RealTimeEventsFeed />
+              <LiveThreatFeed />
             </div>
 
             {/* Quick Stats */}
@@ -212,37 +217,14 @@ export default function CyberWatchVault() {
           {/* Search Tab */}
           <TabsContent value="search" className="space-y-8">
             <SearchInterface onSearch={handleSearch} loading={loading} resultCount={totalResults} />
-
-            {/* Search Facets */}
-            {Object.keys(facets).length > 0 && (
-              <Card className="bg-slate-900/40 border-slate-700/50 backdrop-blur-xl">
-                <div className="p-6">
-                  <h3 className="text-lg font-semibold text-white mb-4">Search Facets</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {Object.entries(facets).map(([facetName, facetData]) => (
-                      <div key={facetName}>
-                        <h4 className="text-cyan-400 font-medium mb-2 capitalize">{facetName}</h4>
-                        <div className="space-y-1">
-                          {facetData.slice(0, 5).map((item, idx) => (
-                            <div key={idx} className="flex items-center justify-between text-sm">
-                              <span className="text-slate-300">{item.value}</span>
-                              <Badge variant="outline" className="text-xs border-slate-500 text-slate-400">
-                                {item.count}
-                              </Badge>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </Card>
-            )}
           </TabsContent>
 
           {/* Threats Tab */}
           <TabsContent value="threats" className="space-y-8">
-            <RealTimeEventsFeed />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <ThreatWorldMap />
+              <LiveThreatFeed />
+            </div>
           </TabsContent>
 
           {/* Botnets Tab */}
@@ -253,6 +235,11 @@ export default function CyberWatchVault() {
           {/* Google Dorks Tab */}
           <TabsContent value="dorks" className="space-y-8">
             <GoogleDorkExplorer />
+          </TabsContent>
+
+          {/* Real-World Examples Tab */}
+          <TabsContent value="examples" className="space-y-8">
+            <RealWorldExamplesShowcase />
           </TabsContent>
 
           {/* Advanced Shodan Tab */}
@@ -279,7 +266,7 @@ export default function CyberWatchVault() {
                 <div className="flex items-center justify-between">
                   <h2 className="text-2xl font-bold text-white flex items-center gap-3">
                     <Shield className="w-6 h-6 text-cyan-400" />
-                    Enhanced Search Results
+                    Search Results
                     <Badge variant="outline" className="border-cyan-500/30 text-cyan-400">
                       {currentQuery}
                     </Badge>
@@ -292,11 +279,60 @@ export default function CyberWatchVault() {
 
                 <div className="grid gap-6">
                   {searchResults.map((host, index) => (
-                    <EnhancedHostDetails
+                    <Card
                       key={`${host.ip_str}-${host.port}-${index}`}
-                      host={host}
-                      threatIntel={threatIntelData[host.ip_str]}
-                    />
+                      className="bg-slate-900/40 border-slate-700/50 backdrop-blur-xl hover:bg-slate-900/60 transition-all duration-300 cursor-pointer group"
+                      onClick={() => handleHostSelect(host)}
+                    >
+                      <div className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-slate-800/50 rounded-lg">
+                              <Globe className="w-5 h-5 text-cyan-400" />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-mono text-white group-hover:text-cyan-400 transition-colors">
+                                {host.ip_str}:{host.port}
+                              </h3>
+                              <p className="text-slate-400 text-sm">
+                                {host.product} {host.version && `v${host.version}`}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            {host.vulns && host.vulns.length > 0 && (
+                              <Badge variant="destructive" className="bg-red-500/20 text-red-400 border-red-500/30">
+                                <AlertTriangle className="w-3 h-3 mr-1" />
+                                {host.vulns.length} CVE{host.vulns.length > 1 ? "s" : ""}
+                              </Badge>
+                            )}
+                            <Badge variant="outline" className="border-slate-500 text-slate-300">
+                              Click for Details
+                            </Badge>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div className="flex items-center gap-2 text-slate-300">
+                            <span className="text-slate-400">Location:</span>
+                            <span>
+                              {host.location.city}, {host.location.country_name}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-slate-300">
+                            <span className="text-slate-400">Organization:</span>
+                            <span className="truncate">{host.org}</span>
+                          </div>
+                        </div>
+
+                        {host.title && (
+                          <div className="mt-3 p-2 bg-slate-800/30 rounded text-sm text-slate-300">
+                            <strong>Service Title:</strong> {host.title}
+                          </div>
+                        )}
+                      </div>
+                    </Card>
                   ))}
                 </div>
               </div>
@@ -310,6 +346,21 @@ export default function CyberWatchVault() {
                   <p className="text-slate-400">
                     No devices or services found for "{currentQuery}". Try a different search query.
                   </p>
+                </div>
+              </Card>
+            )}
+          </TabsContent>
+
+          {/* Host Details Tab */}
+          <TabsContent value="host-details" className="space-y-8">
+            {selectedHost ? (
+              <EnhancedHostDetails host={selectedHost} threatIntel={threatIntelData[selectedHost.ip_str]} />
+            ) : (
+              <Card className="bg-slate-900/40 border-slate-700/50 backdrop-blur-xl p-12">
+                <div className="text-center">
+                  <Shield className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                  <h3 className="text-xl font-medium text-white mb-2">No Host Selected</h3>
+                  <p className="text-slate-400">Search for hosts and click on a result to view detailed information.</p>
                 </div>
               </Card>
             )}

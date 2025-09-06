@@ -1,4 +1,4 @@
-// API client - now uses server actions for security and mock data for demo
+// API client - now uses enhanced data generators for more realistic demo data
 export interface ShodanHost {
   ip_str: string
   port: number
@@ -6,10 +6,13 @@ export interface ShodanHost {
   product?: string
   version?: string
   title?: string
+  banner?: string
   location: {
     country_name: string
     city: string
     region_code: string
+    latitude?: number
+    longitude?: number
   }
   org: string
   isp: string
@@ -27,8 +30,20 @@ export interface ShodanHost {
       issuer: {
         CN: string
       }
+      serial?: string
+      expired?: boolean
+      expires?: string
     }
   }
+  http?: {
+    status: number
+    title: string
+    server: string
+    headers: Record<string, string>
+    html: string
+  }
+  screenshot?: string
+  favicon?: string
 }
 
 export interface ShodanSearchResult {
@@ -39,15 +54,24 @@ export interface ShodanSearchResult {
 
 export interface ThreatIntelResult {
   ip: string
+  reputation: "clean" | "suspicious" | "malicious"
   abuseConfidence: number
   countryCode: string
-  usageType: string
+  city: string
   isp: string
-  domain: string
+  asn: string
+  usageType: string
   totalReports: number
-  numDistinctUsers: number
+  categories: string[]
   lastReportedAt: string
   whitelisted: boolean
+  malwareHashes: string[]
+  openPorts: number[]
+  services: string[]
+  riskScore: number
+  threatTypes: string[]
+  firstSeen: string
+  lastSeen: string
 }
 
 export interface VirusTotalResult {
@@ -118,109 +142,94 @@ export interface LiveThreatEvent {
   }
 }
 
-// Generate realistic fallback data for demo
-function generateFallbackShodanData(query: string): ShodanSearchResult {
-  const services = [
-    { product: "Apache httpd", version: "2.4.41", port: 80, service: "HTTP" },
-    { product: "OpenSSH", version: "8.2", port: 22, service: "SSH" },
-    { product: "nginx", version: "1.18.0", port: 443, service: "HTTPS" },
-    { product: "MySQL", version: "8.0.25", port: 3306, service: "MySQL" },
-    { product: "Microsoft IIS", version: "10.0", port: 80, service: "HTTP" },
-    { product: "Postfix smtpd", version: "3.4.13", port: 25, service: "SMTP" },
-  ]
+// Import enhanced data generators
+import { generateDetailedShodanData, generateDetailedThreatIntel } from "./enhanced-data-generator"
 
-  const countries = [
-    { name: "United States", code: "US", city: "New York" },
-    { name: "Germany", code: "DE", city: "Berlin" },
-    { name: "Japan", code: "JP", city: "Tokyo" },
-    { name: "United Kingdom", code: "GB", city: "London" },
-    { name: "France", code: "FR", city: "Paris" },
-    { name: "Canada", code: "CA", city: "Toronto" },
-  ]
+// Enhanced Shodan search with more realistic data
+export async function searchShodan(query: string, page = 1): Promise<ShodanSearchResult> {
+  console.log(`Searching Shodan for: ${query} (using enhanced demo data)`)
+  await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 1000))
 
-  const orgs = [
-    "Amazon Technologies Inc.",
-    "Google LLC",
-    "Microsoft Corporation",
-    "DigitalOcean LLC",
-    "Cloudflare Inc.",
-    "Hetzner Online GmbH",
-  ]
+  const detailedHosts = generateDetailedShodanData(query)
 
-  const vulnerabilities = ["CVE-2024-1234", "CVE-2023-5678", "CVE-2024-9012", "CVE-2023-3456"]
-
-  const matches: ShodanHost[] = []
-  const numResults = Math.floor(Math.random() * 15) + 5
-
-  for (let i = 0; i < numResults; i++) {
-    const service = services[Math.floor(Math.random() * services.length)]
-    const country = countries[Math.floor(Math.random() * countries.length)]
-    const org = orgs[Math.floor(Math.random() * orgs.length)]
-
-    // Generate realistic IP
-    const ip = `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`
-
-    const host: ShodanHost = {
-      ip_str: ip,
-      port: service.port,
-      transport: "tcp",
-      product: service.product,
-      version: service.version,
-      title: `${service.product} Server`,
-      location: {
-        country_name: country.name,
-        city: country.city,
-        region_code: country.code,
-      },
-      org: org,
-      isp: org,
-      asn: `AS${Math.floor(Math.random() * 65535)}`,
-      hostnames: [`host${i}.example.com`],
-      domains: ["example.com"],
-      timestamp: new Date(Date.now() - Math.random() * 86400000 * 30).toISOString(),
-      tags: [service.service.toLowerCase(), "web"],
-    }
-
-    // Add vulnerabilities based on query
-    if (query.toLowerCase().includes("vuln") || query.toLowerCase().includes("cve") || Math.random() > 0.7) {
-      host.vulns = [vulnerabilities[Math.floor(Math.random() * vulnerabilities.length)]]
-    }
-
-    // Add SSL for HTTPS services
-    if (service.port === 443) {
-      host.ssl = {
-        cert: {
-          subject: { CN: `host${i}.example.com` },
-          issuer: { CN: "Let's Encrypt Authority X3" },
-        },
-      }
-    }
-
-    matches.push(host)
-  }
+  // Convert detailed hosts to standard format
+  const matches: ShodanHost[] = detailedHosts.map((host) => ({
+    ip_str: host.ip_str,
+    port: host.port,
+    transport: host.transport,
+    product: host.product,
+    version: host.version,
+    title: host.title,
+    banner: host.banner,
+    location: {
+      country_name: host.location.country_name,
+      city: host.location.city,
+      region_code: host.location.region_code,
+      latitude: host.location.latitude,
+      longitude: host.location.longitude,
+    },
+    org: host.org,
+    isp: host.isp,
+    asn: host.asn,
+    hostnames: host.hostnames,
+    domains: host.domains,
+    timestamp: host.timestamp,
+    vulns: host.vulns,
+    tags: host.tags,
+    ssl: host.ssl,
+    http: host.http,
+    screenshot: host.screenshot,
+    favicon: host.favicon,
+  }))
 
   return {
     matches,
-    total: matches.length,
+    total: matches.length + Math.floor(Math.random() * 10000),
   }
 }
 
-// All API functions now use mock data for demo purposes
-export async function searchShodan(query: string, page = 1): Promise<ShodanSearchResult> {
-  console.log(`Searching Shodan for: ${query} (using demo data)`)
-  await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 1000))
-  return generateFallbackShodanData(query)
-}
-
 export async function getShodanHostInfo(ip: string): Promise<ShodanHost> {
-  console.log(`Getting Shodan host info for: ${ip} (using demo data)`)
+  console.log(`Getting Shodan host info for: ${ip} (using enhanced demo data)`)
   await new Promise((resolve) => setTimeout(resolve, 800))
-  const fallbackData = generateFallbackShodanData("host")
-  return fallbackData.matches[0] || fallbackData.matches[0]
+
+  const detailedHosts = generateDetailedShodanData("host")
+  const detailedHost = detailedHosts[0]
+
+  // Override IP with requested IP
+  detailedHost.ip_str = ip
+
+  return {
+    ip_str: detailedHost.ip_str,
+    port: detailedHost.port,
+    transport: detailedHost.transport,
+    product: detailedHost.product,
+    version: detailedHost.version,
+    title: detailedHost.title,
+    banner: detailedHost.banner,
+    location: {
+      country_name: detailedHost.location.country_name,
+      city: detailedHost.location.city,
+      region_code: detailedHost.location.region_code,
+      latitude: detailedHost.location.latitude,
+      longitude: detailedHost.location.longitude,
+    },
+    org: detailedHost.org,
+    isp: detailedHost.isp,
+    asn: detailedHost.asn,
+    hostnames: detailedHost.hostnames,
+    domains: detailedHost.domains,
+    timestamp: detailedHost.timestamp,
+    vulns: detailedHost.vulns,
+    tags: detailedHost.tags,
+    ssl: detailedHost.ssl,
+    http: detailedHost.http,
+    screenshot: detailedHost.screenshot,
+    favicon: detailedHost.favicon,
+  }
 }
 
 export async function getVirusTotalIPReport(ip: string): Promise<VirusTotalResult> {
-  console.log(`Getting VirusTotal report for: ${ip} (using demo data)`)
+  console.log(`Getting VirusTotal report for: ${ip} (using enhanced demo data)`)
   await new Promise((resolve) => setTimeout(resolve, 600))
 
   return {
@@ -248,21 +257,10 @@ export async function getVirusTotalIPReport(ip: string): Promise<VirusTotalResul
 }
 
 export async function getAbuseIPDBReport(ip: string): Promise<ThreatIntelResult> {
-  console.log(`Getting AbuseIPDB report for: ${ip} (using demo data)`)
+  console.log(`Getting AbuseIPDB report for: ${ip} (using enhanced demo data)`)
   await new Promise((resolve) => setTimeout(resolve, 500))
 
-  return {
-    ip,
-    abuseConfidence: Math.floor(Math.random() * 100),
-    countryCode: ["US", "CN", "RU", "DE", "GB"][Math.floor(Math.random() * 5)],
-    usageType: "Data Center/Web Hosting/Transit",
-    isp: "Example ISP",
-    domain: "example.com",
-    totalReports: Math.floor(Math.random() * 100),
-    numDistinctUsers: Math.floor(Math.random() * 50),
-    lastReportedAt: new Date(Date.now() - Math.random() * 86400000 * 7).toISOString(),
-    whitelisted: Math.random() > 0.8,
-  }
+  return generateDetailedThreatIntel(ip)
 }
 
 export async function getGreyNoiseContext(ip: string) {
@@ -294,7 +292,7 @@ export async function getCVEDetails(cveId: string) {
   }
 }
 
-// Threat intelligence aggregation
+// Enhanced threat intelligence aggregation
 export async function getComprehensiveThreatIntel(ip: string) {
   try {
     console.log(`Getting comprehensive threat intel for: ${ip}`)
@@ -320,7 +318,7 @@ export async function getComprehensiveThreatIntel(ip: string) {
   }
 }
 
-// Mock implementations for additional features
+// Rest of the functions remain the same with enhanced data where applicable
 export async function getThreatMapData(): Promise<ThreatMapData[]> {
   console.log("Loading threat map data (demo)")
   await new Promise((resolve) => setTimeout(resolve, 1000))
