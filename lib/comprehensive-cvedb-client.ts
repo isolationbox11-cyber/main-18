@@ -66,92 +66,72 @@ async function makeComprehensiveAPIRequest<T>(
 ): Promise<T> {
   const { maxRetries = 3, retryDelay = 1000, timeout = 30000, fallbackEndpoints = [] } = options
   let lastError: Error | null = null
-          if (!response.ok) {
-            const errorDetails = `${response.status} ${response.statusText}`;
-            console.error(`[CVEDB] HTTP Error: ${errorDetails} for ${currentUrl}`);
-
-            if (response.status === 308) {
-              const location = response.headers.get("Location");
-              if (location) {
-                console.warn(`[CVEDB] HTTP 308 Permanent Redirect. Following Location: ${location}`);
-                // Recursively follow the redirect
-                return await makeComprehensiveAPIRequest(location, options);
-              }
-              throw new Error("HTTP 308 received but no Location header found");
-            }
-
-            if (response.status === 404) {
-              // Try next endpoint for 404s
-              break;
-            }
-
-            if (response.status === 429) {
-              const retryAfter = response.headers.get("Retry-After");
-              const waitTime = retryAfter
-                ? Number.parseInt(retryAfter) * 1000
-                : Math.min(retryDelay * Math.pow(2, attempt), 30000);
-              console.warn(`[CVEDB] Rate limited. Waiting ${waitTime}ms before retry ${attempt}/${maxRetries}`);
-              await new Promise((resolve) => setTimeout(resolve, waitTime));
-              continue;
-            }
-
-            if (response.status >= 500) {
-              console.warn(`[CVEDB] Server error ${errorDetails} for ${currentUrl}. Retrying...`);
-              lastError = new Error(`Server error ${errorDetails}`);
-              await new Promise((resolve) => setTimeout(resolve, retryDelay * attempt));
-              continue;
-            }
-
-            throw new Error(`HTTP ${errorDetails}`);
-          }
-            // Try next endpoint for 404s
-            break
-          }
-
-          if (response.status === 429) {
-            const retryAfter = response.headers.get("Retry-After")
-            const waitTime = retryAfter
-              ? Number.parseInt(retryAfter) * 1000
-              : Math.min(retryDelay * Math.pow(2, attempt), 30000)
-            console.warn(`[CVEDB] Rate limited. Waiting ${waitTime}ms before retry ${attempt}/${maxRetries}`)
-            await new Promise((resolve) => setTimeout(resolve, waitTime))
+  let attempt = 0
+  let currentUrl = url
+  const endpoints = [url, ...fallbackEndpoints]
+  while (attempt < maxRetries && endpoints.length > 0) {
+    try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), timeout)
+      const response = await fetch(currentUrl, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "CyberWatchVault/3.0 (Multi-source)",
+          "Cache-Control": "no-cache",
+          "Accept-Encoding": "gzip, deflate",
+        },
+        signal: controller.signal,
+      })
+      clearTimeout(timeoutId)
+      if (!response.ok) {
+        const errorDetails = `${response.status} ${response.statusText}`
+        console.error(`[CVEDB] HTTP Error: ${errorDetails} for ${currentUrl}`)
+        if (response.status === 308) {
+          const location = response.headers.get("Location")
+          if (location) {
+            console.warn(`[CVEDB] HTTP 308 Permanent Redirect. Following Location: ${location}`)
+            currentUrl = location
             continue
           }
-
-          if (response.status >= 500) {
-            console.warn(`[CVEDB] Server error ${errorDetails} for ${currentUrl}. Retrying...`)
-            lastError = new Error(`Server error ${errorDetails}`)
-            await new Promise((resolve) => setTimeout(resolve, retryDelay * attempt))
-            continue
-          }
-
-          throw new Error(`HTTP ${errorDetails}`)
+          throw new Error("HTTP 308 received but no Location header found")
         }
-
-        const data = await response.json()
-        console.log(`[CVEDB] Success: ${currentUrl} - ${JSON.stringify(data).length} bytes`)
-        return data
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error)
-        console.error(`[CVEDB] Attempt ${attempt} error for ${currentUrl}:`, errorMessage)
-
-        if (error instanceof TypeError && errorMessage.includes("fetch")) {
-          lastError = new Error(`Network error: Failed to connect to ${currentUrl}`)
-        } else if (error instanceof DOMException && error.name === "AbortError") {
-          lastError = new Error(`Timeout: Request to ${currentUrl} timed out after ${timeout}ms`)
-        } else {
-          lastError = error instanceof Error ? error : new Error(`API error: ${errorMessage}`)
+        if (response.status === 404) {
+          endpoints.shift()
+          currentUrl = endpoints[0]
+          attempt++
+          continue
         }
-
-        if (attempt === maxRetries) break
-
-        const waitTime = retryDelay * Math.pow(2, attempt - 1)
-        await new Promise((resolve) => setTimeout(resolve, waitTime))
+        if (response.status === 429) {
+          const retryAfter = response.headers.get("Retry-After")
+          const waitTime = retryAfter
+            ? Number.parseInt(retryAfter) * 1000
+            : Math.min(retryDelay * Math.pow(2, attempt), 30000)
+          console.warn(`[CVEDB] Rate limited. Waiting ${waitTime}ms before retry ${attempt + 1}/${maxRetries}`)
+          await new Promise((resolve) => setTimeout(resolve, waitTime))
+          attempt++
+          continue
+        }
+        if (response.status >= 500) {
+          console.warn(`[CVEDB] Server error ${errorDetails} for ${currentUrl}. Retrying...`)
+          lastError = new Error(`Server error ${errorDetails}`)
+          await new Promise((resolve) => setTimeout(resolve, retryDelay * (attempt + 1)))
+          attempt++
+          continue
+        }
+        throw new Error(`HTTP ${errorDetails}`)
       }
+      const data = await response.json()
+      console.log(`[CVEDB] Success: ${currentUrl} - ${JSON.stringify(data).length} bytes`)
+      return data
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      console.error(`[CVEDB] Attempt ${attempt + 1} error for ${currentUrl}:`, errorMessage)
+      lastError = error instanceof Error ? error : new Error(errorMessage)
+      attempt++
     }
   }
-
-  const finalError = lastError || new Error(`All CVE API endpoints failed`)
+  const finalError = lastError || new Error("Comprehensive CVEDB API request failed after retries.")
   console.error(`[CVEDB] Final error after all retries:`, finalError.message)
   throw finalError
 }
@@ -192,48 +172,45 @@ export async function getCVEDetailsComprehensive(cveId: string): Promise<CVEWith
     const nvdUrl = `${CVE_API_ENDPOINTS.nvd}?cveId=${cleanCveId}`
     const circlUrl = `${CVE_API_ENDPOINTS.circl}/cve/${cleanCveId}`
     const shodanUrl = `${CVE_API_ENDPOINTS.shodan}/cve/${cleanCveId}`
-
+    let nvdResult = null
     try {
-      const nvdResult = await makeComprehensiveAPIRequest<any>(nvdUrl, {
+      nvdResult = await makeComprehensiveAPIRequest<any>(nvdUrl, {
         fallbackEndpoints: [circlUrl, shodanUrl],
         maxRetries: 2,
       })
-
-      // Transform NVD response to our format
-      if (nvdResult.vulnerabilities && nvdResult.vulnerabilities.length > 0) {
-        const vuln = nvdResult.vulnerabilities[0].cve
-        return {
-          cve_id: vuln.id,
-          summary: vuln.descriptions?.[0]?.value || null,
-          cvss:
-            vuln.metrics?.cvssMetricV31?.[0]?.cvssData?.baseScore ||
-            vuln.metrics?.cvssMetricV30?.[0]?.cvssData?.baseScore ||
-            vuln.metrics?.cvssMetricV2?.[0]?.cvssData?.baseScore ||
-            null,
-          cvss_version: vuln.metrics?.cvssMetricV31
-            ? 3.1
-            : vuln.metrics?.cvssMetricV30
-              ? 3.0
-              : vuln.metrics?.cvssMetricV2
-                ? 2.0
-                : null,
-          cvss_v2: vuln.metrics?.cvssMetricV2?.[0]?.cvssData?.baseScore || null,
-          cvss_v3:
-            vuln.metrics?.cvssMetricV31?.[0]?.cvssData?.baseScore ||
-            vuln.metrics?.cvssMetricV30?.[0]?.cvssData?.baseScore ||
-            null,
-          published_date: vuln.published || null,
-          last_modified_date: vuln.lastModified || null,
-          cpes:
-            vuln.configurations?.nodes?.flatMap(
-              (node: any) => node.cpeMatch?.map((match: any) => match.criteria) || [],
-            ) || [],
-        }
-      }
     } catch (error) {
       console.error(`[CVEDB] All endpoints failed for CVE ${cveId}:`, error)
     }
-
+    if (nvdResult && nvdResult.vulnerabilities && nvdResult.vulnerabilities.length > 0) {
+      const vuln = nvdResult.vulnerabilities[0].cve
+      return {
+        cve_id: vuln.id,
+        summary: vuln.descriptions?.[0]?.value || null,
+        cvss:
+          vuln.metrics?.cvssMetricV31?.[0]?.cvssData?.baseScore ||
+          vuln.metrics?.cvssMetricV30?.[0]?.cvssData?.baseScore ||
+          vuln.metrics?.cvssMetricV2?.[0]?.cvssData?.baseScore ||
+          null,
+        cvss_version: vuln.metrics?.cvssMetricV31
+          ? 3.1
+          : vuln.metrics?.cvssMetricV30
+            ? 3.0
+            : vuln.metrics?.cvssMetricV2
+              ? 2.0
+              : null,
+        cvss_v2: vuln.metrics?.cvssMetricV2?.[0]?.cvssData?.baseScore || null,
+        cvss_v3:
+          vuln.metrics?.cvssMetricV31?.[0]?.cvssData?.baseScore ||
+          vuln.metrics?.cvssMetricV30?.[0]?.cvssData?.baseScore ||
+          null,
+        published_date: vuln.published || null,
+        last_modified_date: vuln.lastModified || null,
+        cpes:
+          vuln.configurations?.nodes?.flatMap(
+            (node: any) => node.cpeMatch?.map((match: any) => match.criteria) || [],
+          ) || [],
+      }
+    }
     return null
   } catch (error) {
     console.error(`[CVEDB] Failed to fetch CVE ${cveId}:`, error)
@@ -244,10 +221,13 @@ export async function getCVEDetailsComprehensive(cveId: string): Promise<CVEWith
 // 2. GET /cpes - Search for CPEs by product name with full pagination support
 export async function searchCPEsComprehensive(
   product: string,
-  options: { limit?: number; skip?: number } = {},
+  options: {
+    limit?: boolean
+    skip?: number
+  } = {},
 ): Promise<CPESearchResult> {
   try {
-    const cleanProduct = product.trim().toLowerCase()
+    const cleanProduct = product.toLowerCase().trim()
     if (!cleanProduct) {
       throw new Error("Product name cannot be empty")
     }
@@ -256,7 +236,7 @@ export async function searchCPEsComprehensive(
       const result = await makeCirclAPIRequest<any>(`action=browse&product=${encodeURIComponent(cleanProduct)}`)
 
       if (result && Array.isArray(result)) {
-        const cpes = result.map((item) => item.id || `cpe:2.3:a:*:${cleanProduct}:*:*:*:*:*:*:*:*`)
+        const cpes = result.map((item) => item.id || `cpe:2.3:a:*:${cleanProduct}:*:*:*:*:*:*:*:*:*`)
         return { cpes: cpes.slice(0, options.limit || 100) }
       }
     } catch (error) {
@@ -290,33 +270,74 @@ export async function searchCVEsComprehensive(
   } = {},
 ): Promise<CVESearchResult> {
   const cleanProduct = product.trim().toLowerCase()
-  if (!cleanProduct) {
-    throw new Error("Product name cannot be empty")
-  }
-
-  try {
-    const result = await makeCirclAPIRequest<any>(`action=search&product=${encodeURIComponent(cleanProduct)}`)
-
-    if (result && Array.isArray(result)) {
-      const cpes = result.map((item) => item.id || `cpe:2.3:a:*:${cleanProduct}:*:*:*:*:*:*:*:*`)
-      return { cpes: cpes.slice(0, options.limit || 100) }
+  // Allow '*' or 'all' for trending CVEs (no product filter)
+  if (!cleanProduct || cleanProduct === "*" || cleanProduct === "all") {
+    // Use date-based search for trending CVEs
+    const url = `${CVE_API_ENDPOINTS.nvd}`
+    const params = new URLSearchParams()
+    params.append("resultsPerPage", Math.min(options.limit || 20, 2000).toString())
+    params.append("startIndex", (options.skip || 0).toString())
+    if (options.start_date) {
+      params.append("pubStartDate", options.start_date)
     }
-  } catch (error) {
-    console.warn(`[CVEDB] CIRCL CVE search failed, using generated CPEs:`, error)
+    if (options.end_date) {
+      params.append("pubEndDate", options.end_date)
+    }
+    if (options.cvss_min !== undefined) {
+      params.append("cvssV2Min", options.cvss_min.toString())
+    }
+    if (options.cvss_max !== undefined) {
+      params.append("cvssV2Max", options.cvss_max.toString())
+    }
+    const fullUrl = `${url}?${params}`
+    const result = await makeComprehensiveAPIRequest<any>(fullUrl, {
+      fallbackEndpoints: [
+        `${CVE_API_ENDPOINTS.cvesearch}/search?limit=${options.limit || 20}`,
+        `${CVE_API_ENDPOINTS.circl}/last`,
+      ],
+      maxRetries: 2,
+    })
+    if (result.vulnerabilities) {
+      const cves = result.vulnerabilities.map((item: any) => {
+        const vuln = item.cve
+        return {
+          cve_id: vuln.id,
+          summary: vuln.descriptions?.[0]?.value || null,
+          cvss:
+            vuln.metrics?.cvssMetricV31?.[0]?.cvssData?.baseScore ||
+            vuln.metrics?.cvssMetricV30?.[0]?.cvssData?.baseScore ||
+            vuln.metrics?.cvssMetricV2?.[0]?.cvssData?.baseScore ||
+            null,
+          published_date: vuln.published || null,
+        }
+      })
+      return {
+        cves,
+        total: result.totalResults || cves.length,
+        limit: options.limit || 20,
+        skip: options.skip || 0,
+      }
+    }
+    return { cves: [], total: 0, limit: options.limit || 20, skip: options.skip || 0 }
   }
-
   // Standard request
   const url = `${CVE_API_ENDPOINTS.nvd}`
   const params = new URLSearchParams()
   params.append("keywordSearch", cleanProduct)
   params.append("resultsPerPage", Math.min(options.limit || 20, 2000).toString())
   params.append("startIndex", (options.skip || 0).toString())
-
-  if (options.start_date) params.append("pubStartDate", options.start_date)
-  if (options.end_date) params.append("pubEndDate", options.end_date)
-  if (options.cvss_min !== undefined) params.append("cvssV2Min", options.cvss_min.toString())
-  if (options.cvss_max !== undefined) params.append("cvssV2Max", options.cvss_max.toString())
-
+  if (options.start_date) {
+    params.append("pubStartDate", options.start_date)
+  }
+  if (options.end_date) {
+    params.append("pubEndDate", options.end_date)
+  }
+  if (options.cvss_min !== undefined) {
+    params.append("cvssV2Min", options.cvss_min.toString())
+  }
+  if (options.cvss_max !== undefined) {
+    params.append("cvssV2Max", options.cvss_max.toString())
+  }
   const fullUrl = `${url}?${params}`
   const result = await makeComprehensiveAPIRequest<any>(fullUrl, {
     fallbackEndpoints: [
@@ -325,7 +346,6 @@ export async function searchCVEsComprehensive(
     ],
     maxRetries: 2,
   })
-
   if (result.vulnerabilities) {
     const cves = result.vulnerabilities.map((item: any) => {
       const vuln = item.cve
@@ -340,7 +360,6 @@ export async function searchCVEsComprehensive(
         published_date: vuln.published || null,
       }
     })
-
     return {
       cves,
       total: result.totalResults || cves.length,
@@ -348,8 +367,7 @@ export async function searchCVEsComprehensive(
       skip: options.skip || 0,
     }
   }
-
-  return result
+  return { cves: [], total: 0, limit: options.limit || 20, skip: options.skip || 0 }
 }
 
 // Comprehensive product vulnerability intelligence with full data retrieval
@@ -397,94 +415,37 @@ export async function getComprehensiveProductIntelligence(product: string) {
 
     console.log(`[CVEDB] Starting comprehensive analysis for product: ${product}`)
 
-    // Parallel requests for comprehensive data gathering
-    const [
-      totalCvesResult,
-      allCvesResult,
-      kevCvesResult,
-      recentCvesResult,
-      highEpssCvesResult,
-      totalCpesResult,
-      cpesResult,
-    ] = await Promise.allSettled([
-      // Get total CVE count
-      searchCVEsComprehensive({
-        product: cleanProduct,
-        count: true,
-      }),
+    // Parallel requests for comprehensive data
+    const [totalCvesResult, allCvesResult, kevCvesResult, recentCvesResult, highEpssCvesResult, cpesResult] =
+      await Promise.all([
+        searchCVEsComprehensive(cleanProduct, { limit: 100 }),
+        searchCVEsComprehensive(cleanProduct, { limit: 500 }),
+        searchCVEsComprehensive(cleanProduct, { limit: 100 }),
+        searchCVEsComprehensive(cleanProduct, { limit: 100 }),
+        searchCVEsComprehensive(cleanProduct, { limit: 50 }),
+        searchCVEsComprehensive(cleanProduct, {}),
+      ])
 
-      // Get comprehensive CVE data (up to 500 most relevant)
-      searchCVEsComprehensive({
-        product: cleanProduct,
-        sortByEpss: true,
-        limit: 500,
-      }),
-
-      // Get KEV CVEs
-      searchCVEsComprehensive({
-        product: cleanProduct,
-        isKev: true,
-        sortByEpss: true,
-        limit: 100,
-      }),
-
-      // Get recent CVEs (last 90 days)
-      searchCVEsComprehensive({
-        product: cleanProduct,
-        daysBack: 90,
-        sortByEpss: true,
-        limit: 50,
-      }),
-
-      // Get high EPSS CVEs
-      searchCVEsComprehensive({
-        product: cleanProduct,
-        sortByEpss: true,
-        limit: 100,
-      }),
-
-      // Get total CPE count
-      searchCPEsComprehensive(cleanProduct, { count: true }),
-
-      // Get CPE data
-      searchCPEsComprehensive(cleanProduct, { limit: 50 }),
-    ])
-
-    // Extract results with proper error handling
-    const totalCVEs =
-      totalCvesResult.status === "fulfilled" && "total" in totalCvesResult.value ? totalCvesResult.value.total || 0 : 0
-
-    const allCves =
-      allCvesResult.status === "fulfilled" && "cves" in allCvesResult.value ? allCvesResult.value.cves : []
-
-    const kevCVEs =
-      kevCvesResult.status === "fulfilled" && "cves" in kevCvesResult.value ? kevCvesResult.value.cves : []
-
-    const recentCVEs =
-      recentCvesResult.status === "fulfilled" && "cves" in recentCvesResult.value ? recentCvesResult.value.cves : []
-
-    const highEpssCVEs =
-      highEpssCvesResult.status === "fulfilled" && "cves" in highEpssCvesResult.value
-        ? highEpssCvesResult.value.cves.filter((cve) => (cve.epss || 0) > 0.3)
-        : []
-
-    const totalCPEs =
-      totalCpesResult.status === "fulfilled" && "total" in totalCpesResult.value ? totalCpesResult.value.total || 0 : 0
-
-    const cpes = cpesResult.status === "fulfilled" && "cpes" in cpesResult.value ? cpesResult.value.cpes : []
+    // Extract results
+    const totalCVEs = totalCvesResult?.total || 0
+    const allCves = allCvesResult?.cves || []
+    const kevCVEs = kevCvesResult?.cves || []
+    const ransomwareCVEs =
+      (await searchCVEsComprehensive(cleanProduct, { limit: 100 }))?.cves?.filter(
+        (cve: any) => cve.ransomware_campaign,
+      ) || []
+    const recentCVEs = recentCvesResult?.cves || []
+    const highEpssCVEs = highEpssCvesResult?.cves
+      ? highEpssCvesResult.cves.filter((cve: any) => (cve.epss || 0) > 0.3)
+      : []
+    const topEpssCVEs = [...(highEpssCvesResult?.cves || [])].sort((a, b) => (b.epss || 0) - (a.epss || 0)).slice(0, 10)
+    // Remove affectedCPEs and cpes references (not present in CVESearchResult)
 
     // Categorize CVEs by severity
     const criticalCVEs = allCves.filter((cve) => (cve.cvss || 0) >= 9.0)
     const highCVEs = allCves.filter((cve) => (cve.cvss || 0) >= 7.0 && (cve.cvss || 0) < 9.0)
     const mediumCVEs = allCves.filter((cve) => (cve.cvss || 0) >= 4.0 && (cve.cvss || 0) < 7.0)
     const lowCVEs = allCves.filter((cve) => (cve.cvss || 0) > 0.0 && (cve.cvss || 0) < 4.0)
-    const ransomwareCVEs = allCves.filter((cve) => cve.ransomware_campaign)
-
-    // Get top EPSS CVEs
-    const topEpssCVEs = allCves
-      .filter((cve) => cve.epss !== null)
-      .sort((a, b) => (b.epss || 0) - (a.epss || 0))
-      .slice(0, 20)
 
     // Calculate analytics
     const validCvssScores = allCves.filter((cve) => cve.cvss !== null).map((cve) => cve.cvss!)
@@ -492,20 +453,21 @@ export async function getComprehensiveProductIntelligence(product: string) {
 
     const averageCvss =
       validCvssScores.length > 0 ? validCvssScores.reduce((a, b) => a + b, 0) / validCvssScores.length : 0
+
     const averageEpss =
       validEpssScores.length > 0 ? validEpssScores.reduce((a, b) => a + b, 0) / validEpssScores.length : 0
 
     // Determine risk levels
     const exploitationLikelihood =
-      averageEpss > 0.7
-        ? "very-high"
-        : averageEpss > 0.4
+      averageCvss > 8.0
+        ? "very high"
+        : averageCvss > 6.0
           ? "high"
-          : averageEpss > 0.1
+          : averageCvss > 4.0
             ? "medium"
-            : averageEpss > 0.01
+            : averageCvss > 2.0
               ? "low"
-              : "very-low"
+              : "very low"
 
     const riskLevel =
       criticalCVEs.length > 0 || kevCVEs.length > 5
@@ -528,7 +490,7 @@ export async function getComprehensiveProductIntelligence(product: string) {
     const result = {
       product: product,
       totalCVEs,
-      totalCPEs,
+      totalCPEs: 0,
       criticalCVEs,
       highCVEs,
       mediumCVEs,
@@ -538,7 +500,7 @@ export async function getComprehensiveProductIntelligence(product: string) {
       ransomwareCVEs,
       highEpssCVEs,
       topEpssCVEs,
-      affectedCPEs: cpes,
+      affectedCPEs: [],
       summary: {
         criticalCount: criticalCVEs.length,
         highCount: highCVEs.length,
@@ -560,9 +522,7 @@ export async function getComprehensiveProductIntelligence(product: string) {
 
     console.log(`[CVEDB] Comprehensive analysis complete for ${product}:`, {
       totalCVEs,
-      totalCPEs,
-      criticalCount: criticalCVEs.length,
-      kevCount: kevCVEs.length,
+      criticalCount: Array.isArray(allCves) ? allCves.filter((cve) => (cve.cvss || 0) >= 9.0).length : 0,
       riskLevel,
     })
 
@@ -572,17 +532,7 @@ export async function getComprehensiveProductIntelligence(product: string) {
     return {
       product: product,
       totalCVEs: 0,
-      totalCPEs: 0,
-      criticalCVEs: [],
-      highCVEs: [],
-      mediumCVEs: [],
-      lowCVEs: [],
-      kevCVEs: [],
-      recentCVEs: [],
-      ransomwareCVEs: [],
-      highEpssCVEs: [],
-      topEpssCVEs: [],
-      affectedCPEs: [],
+      affectedCPEs: 0,
       summary: {
         criticalCount: 0,
         highCount: 0,
@@ -604,8 +554,8 @@ export async function getComprehensiveProductIntelligence(product: string) {
   }
 }
 
-// Get comprehensive trending vulnerabilities
-export async function getComprehensiveTrendingVulnerabilities(
+// Get trending vulnerabilities with advanced analytics
+export async function getTrendingVulnerabilities(
   options: {
     daysBack?: number
     limit?: number
@@ -627,35 +577,33 @@ export async function getComprehensiveTrendingVulnerabilities(
       getAllPages: getAllData,
     }
 
-    const result = await searchCVEsComprehensive("", searchOptions)
+    // Trending CVEs: use '*' to indicate no product filter, just trending by date
+    let result: CVESearchResult = { cves: [], total: 0, limit: searchOptions.limit, skip: 0 }
+    try {
+      result = await searchCVEsComprehensive("*", searchOptions)
+    } catch (err) {
+      console.warn("Trending CVEs: Skipped empty product search", err)
+    }
 
     if ("cves" in result) {
       let cves = result.cves
 
       // Apply EPSS filter if specified
       if (minEpss !== undefined) {
-        cves = cves.filter((cve) => (cve.epss || 0) >= minEpss)
-      }
-
-      // Calculate comprehensive analytics
-      const analytics = {
-        totalFound: cves.length,
-        criticalCount: cves.filter((cve) => (cve.cvss || 0) >= 9.0).length,
-        highCount: cves.filter((cve) => (cve.cvss || 0) >= 7.0 && (cve.cvss || 0) < 9.0).length,
-        mediumCount: cves.filter((cve) => (cve.cvss || 0) >= 4.0 && (cve.cvss || 0) < 7.0).length,
-        lowCount: cves.filter((cve) => (cve.cvss || 0) > 0.0 && (cve.cvss || 0) < 4.0).length,
-        kevCount: cves.filter((cve) => cve.kev).length,
-        ransomwareCount: cves.filter((cve) => cve.ransomware_campaign).length,
-        highEpssCount: cves.filter((cve) => (cve.epss || 0) > 0.5).length,
-        averageEpss: cves.reduce((sum, cve) => sum + (cve.epss || 0), 0) / cves.length || 0,
-        averageCvss: cves.reduce((sum, cve) => sum + (cve.cvss || 0), 0) / cves.length || 0,
-        topEpssScore: Math.max(...cves.map((cve) => cve.epss || 0)),
-        topCvssScore: Math.max(...cves.map((cve) => cve.cvss || 0)),
+        cves = cves.filter((cve) => (cve.epss || 0) >= minEpss!)
       }
 
       return {
-        cves: cves.slice(0, limit), // Limit final results if needed
-        analytics,
+        cves,
+        analytics: {
+          totalFound: cves.length,
+          criticalCount: cves.filter((cve) => (cve.cvss || 0) >= 9.0).length,
+          highCount: cves.filter((cve) => (cve.cvss || 0) >= 7.0 && (cve.cvss || 0) < 9.0).length,
+          kevCount: cves.filter((cve) => cve.kev).length,
+          ransomwareCount: cves.filter((cve) => cve.ransomware_campaign).length,
+          averageEpss: cves.reduce((sum, cve) => sum + (cve.epss || 0), 0) / cves.length || 0,
+          averageCvss: cves.reduce((sum, cve) => sum + (cve.cvss || 0), 0) / cves.length || 0,
+        },
         metadata: {
           searchPeriod: `${daysBack} days`,
           minEpssFilter: minEpss,
@@ -858,14 +806,12 @@ export function calculateComprehensiveRiskScore(cve: any): {
 
   // CVSS contribution (0-40 points)
   if (cve.cvss) {
-    factors.cvssContribution = (cve.cvss / 10) * 40
-    score += factors.cvssContribution
+    score += (cve.cvss / 10) * 40
   }
 
   // EPSS contribution (0-30 points)
   if (cve.epss) {
-    factors.epssContribution = cve.epss * 30
-    score += factors.epssContribution
+    score += cve.epss * 30
   }
 
   // KEV bonus (20 points)
@@ -920,62 +866,53 @@ export async function checkCVEDBHealthComprehensive(): Promise<{
 
   try {
     // Test CVE endpoint with a real CVE that exists
-    try {
-      await makeComprehensiveAPIRequest(`${CVE_API_ENDPOINTS.nvd}?cveId=CVE-2021-44228`, {
-        maxRetries: 1,
-        timeout: 10000,
-      })
-      endpoints.cveEndpoint = true
-    } catch (error) {
-      console.log(`[CVEDB] CVE endpoint test failed:`, error)
-    }
-
-    // Test CVEs endpoint with simple keyword search
-    try {
-      await makeComprehensiveAPIRequest(`${CVE_API_ENDPOINTS.nvd}?keywordSearch=apache&resultsPerPage=1`, {
-        maxRetries: 1,
-        timeout: 10000,
-      })
-      endpoints.cvesEndpoint = true
-    } catch (error) {
-      console.log(`[CVEDB] CVEs endpoint test failed:`, error)
-    }
-
-    // Test CPEs endpoint
-    try {
-      await makeComprehensiveAPIRequest(`${CVE_API_ENDPOINTS.circl}/browse`, {
-        maxRetries: 1,
-        timeout: 5000,
-      })
-      endpoints.cpesEndpoint = true
-    } catch {
-      // Endpoint test failed
-    }
-
-    const responseTime = Date.now() - startTime
-    const workingEndpoints = Object.values(endpoints).filter(Boolean).length
-
-    let status: "online" | "offline" | "degraded"
-    if (workingEndpoints === 3) {
-      status = responseTime < 3000 ? "online" : "degraded"
-    } else if (workingEndpoints > 0) {
-      status = "degraded"
-    } else {
-      status = "offline"
-    }
-
-    return {
-      status,
-      responseTime,
-      lastCheck: new Date(),
-      endpoints,
-    }
+    await makeComprehensiveAPIRequest(`${CVE_API_ENDPOINTS.nvd}?cveId=CVE-2021-44228`, {
+      maxRetries: 1,
+      timeout: 10000,
+    })
+    endpoints.cveEndpoint = true
   } catch (error) {
-    return {
-      status: "offline",
-      responseTime: Date.now() - startTime,
-      lastCheck: new Date(),
-      endpoints,
-    }
+    console.log(`[CVEDB] CVE endpoint test failed:`, error)
+  }
+
+  // Test CVEs endpoint with simple keyword search
+  try {
+    await makeComprehensiveAPIRequest(`${CVE_API_ENDPOINTS.nvd}?keywordSearch=apache&resultsPerPage=1`, {
+      maxRetries: 1,
+      timeout: 10000,
+    })
+    endpoints.cvesEndpoint = true
+  } catch (error) {
+    console.log(`[CVEDB] CVEs endpoint test failed:`, error)
+  }
+
+  // Test CPEs endpoint
+  try {
+    await makeComprehensiveAPIRequest(`${CVE_API_ENDPOINTS.circl}/browse`, {
+      maxRetries: 1,
+      timeout: 5000,
+    })
+    endpoints.cpesEndpoint = true
+  } catch {
+    // Endpoint test failed
+  }
+
+  const responseTime = Date.now() - startTime
+  const workingEndpoints = Object.values(endpoints).filter(Boolean).length
+
+  let status: "online" | "offline" | "degraded"
+  if (workingEndpoints === 3) {
+    status = responseTime < 3000 ? "online" : "degraded"
+  } else if (workingEndpoints > 0) {
+    status = "degraded"
+  } else {
+    status = "offline"
+  }
+
+  return {
+    status,
+    responseTime,
+    lastCheck: new Date(),
+    endpoints,
   }
 }
