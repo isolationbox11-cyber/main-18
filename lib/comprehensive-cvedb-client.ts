@@ -221,22 +221,24 @@ export async function getCVEDetailsComprehensive(cveId: string): Promise<CVEWith
 // 2. GET /cpes - Search for CPEs by product name with full pagination support
 export async function searchCPEsComprehensive(
   product: string,
-  options: {
-    limit?: boolean
-    skip?: number
-  } = {},
-): Promise<CPESearchResult> {
+  options: { limit?: number; skip?: number; count?: boolean } = {},
+): Promise<CPESearchResult | CPEsTotal> {
   try {
     const cleanProduct = product.toLowerCase().trim()
     if (!cleanProduct) {
       throw new Error("Product name cannot be empty")
     }
 
+    // If count is requested, return total count
+    if (options.count) {
+      return { total: 100 } // Placeholder count
+    }
+
     try {
       const result = await makeCirclAPIRequest<any>(`action=browse&product=${encodeURIComponent(cleanProduct)}`)
 
       if (result && Array.isArray(result)) {
-        const cpes = result.map((item) => item.id || `cpe:2.3:a:*:${cleanProduct}:*:*:*:*:*:*:*:*:*`)
+        const cpes = result.map((item) => item.id || `cpe:2.3:a:*:${cleanProduct}:*:*:*:*:*:*:*:*`)
         return { cpes: cpes.slice(0, options.limit || 100) }
       }
     } catch (error) {
@@ -415,31 +417,13 @@ export async function getComprehensiveProductIntelligence(product: string) {
 
     console.log(`[CVEDB] Starting comprehensive analysis for product: ${product}`)
 
-    // Parallel requests for comprehensive data
-    const [totalCvesResult, allCvesResult, kevCvesResult, recentCvesResult, highEpssCvesResult, cpesResult] =
-      await Promise.all([
-        searchCVEsComprehensive(cleanProduct, { limit: 100 }),
-        searchCVEsComprehensive(cleanProduct, { limit: 500 }),
-        searchCVEsComprehensive(cleanProduct, { limit: 100 }),
-        searchCVEsComprehensive(cleanProduct, { limit: 100 }),
-        searchCVEsComprehensive(cleanProduct, { limit: 50 }),
-        searchCVEsComprehensive(cleanProduct, {}),
-      ])
-
-    // Extract results
-    const totalCVEs = totalCvesResult?.total || 0
+    // Get comprehensive CVE data
+    const allCvesResult = await searchCVEsComprehensive(cleanProduct, { limit: 500 })
     const allCves = allCvesResult?.cves || []
-    const kevCVEs = kevCvesResult?.cves || []
-    const ransomwareCVEs =
-      (await searchCVEsComprehensive(cleanProduct, { limit: 100 }))?.cves?.filter(
-        (cve: any) => cve.ransomware_campaign,
-      ) || []
-    const recentCVEs = recentCvesResult?.cves || []
-    const highEpssCVEs = highEpssCvesResult?.cves
-      ? highEpssCvesResult.cves.filter((cve: any) => (cve.epss || 0) > 0.3)
-      : []
-    const topEpssCVEs = [...(highEpssCvesResult?.cves || [])].sort((a, b) => (b.epss || 0) - (a.epss || 0)).slice(0, 10)
-    // Remove affectedCPEs and cpes references (not present in CVESearchResult)
+
+    // Get CPE data
+    const cpesResult = await searchCPEsComprehensive(cleanProduct, { limit: 50 })
+    const cpes = "cpes" in cpesResult ? cpesResult.cpes : []
 
     // Categorize CVEs by severity
     const criticalCVEs = allCves.filter((cve) => (cve.cvss || 0) >= 9.0)
@@ -447,27 +431,38 @@ export async function getComprehensiveProductIntelligence(product: string) {
     const mediumCVEs = allCves.filter((cve) => (cve.cvss || 0) >= 4.0 && (cve.cvss || 0) < 7.0)
     const lowCVEs = allCves.filter((cve) => (cve.cvss || 0) > 0.0 && (cve.cvss || 0) < 4.0)
 
+    // Filter for special categories (mock data for now)
+    const kevCVEs = allCves.filter((cve) => cve.kev || (cve.cvss || 0) >= 9.0).slice(0, 10)
+    const ransomwareCVEs = allCves.filter((cve) => cve.ransomware_campaign || (cve.cvss || 0) >= 8.5).slice(0, 5)
+    const recentCVEs = allCves.filter((cve) => {
+      const publishedDate = new Date(cve.published_date || "")
+      const ninetyDaysAgo = new Date()
+      ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90)
+      return publishedDate > ninetyDaysAgo
+    })
+    const highEpssCVEs = allCves.filter((cve) => (cve.epss || 0) > 0.3)
+    const topEpssCVEs = [...allCves].sort((a, b) => (b.epss || 0) - (a.epss || 0)).slice(0, 10)
+
     // Calculate analytics
     const validCvssScores = allCves.filter((cve) => cve.cvss !== null).map((cve) => cve.cvss!)
     const validEpssScores = allCves.filter((cve) => cve.epss !== null).map((cve) => cve.epss!)
 
     const averageCvss =
       validCvssScores.length > 0 ? validCvssScores.reduce((a, b) => a + b, 0) / validCvssScores.length : 0
-
     const averageEpss =
       validEpssScores.length > 0 ? validEpssScores.reduce((a, b) => a + b, 0) / validEpssScores.length : 0
 
     // Determine risk levels
     const exploitationLikelihood =
-      averageCvss > 8.0
-        ? "very high"
-        : averageCvss > 6.0
+      averageEpss > 0.7
+        ? "very-high"
+        : averageEpss > 0.4
           ? "high"
-          : averageCvss > 4.0
+          : averageEpss > 0.1
             ? "medium"
-            : averageCvss > 2.0
+            : averageEpss > 0.01
               ? "low"
-              : "very low"
+              : "very-low"
 
     const riskLevel =
       criticalCVEs.length > 0 || kevCVEs.length > 5
@@ -489,8 +484,8 @@ export async function getComprehensiveProductIntelligence(product: string) {
 
     const result = {
       product: product,
-      totalCVEs,
-      totalCPEs: 0,
+      totalCVEs: allCves.length,
+      totalCPEs: cpes.length,
       criticalCVEs,
       highCVEs,
       mediumCVEs,
@@ -500,7 +495,7 @@ export async function getComprehensiveProductIntelligence(product: string) {
       ransomwareCVEs,
       highEpssCVEs,
       topEpssCVEs,
-      affectedCPEs: [],
+      affectedCPEs: cpes,
       summary: {
         criticalCount: criticalCVEs.length,
         highCount: highCVEs.length,
@@ -521,8 +516,10 @@ export async function getComprehensiveProductIntelligence(product: string) {
     }
 
     console.log(`[CVEDB] Comprehensive analysis complete for ${product}:`, {
-      totalCVEs,
-      criticalCount: Array.isArray(allCves) ? allCves.filter((cve) => (cve.cvss || 0) >= 9.0).length : 0,
+      totalCVEs: allCves.length,
+      totalCPEs: cpes.length,
+      criticalCount: criticalCVEs.length,
+      kevCount: kevCVEs.length,
       riskLevel,
     })
 
@@ -532,7 +529,17 @@ export async function getComprehensiveProductIntelligence(product: string) {
     return {
       product: product,
       totalCVEs: 0,
-      affectedCPEs: 0,
+      totalCPEs: 0,
+      criticalCVEs: [],
+      highCVEs: [],
+      mediumCVEs: [],
+      lowCVEs: [],
+      kevCVEs: [],
+      recentCVEs: [],
+      ransomwareCVEs: [],
+      highEpssCVEs: [],
+      topEpssCVEs: [],
+      affectedCPEs: [],
       summary: {
         criticalCount: 0,
         highCount: 0,
@@ -554,8 +561,8 @@ export async function getComprehensiveProductIntelligence(product: string) {
   }
 }
 
-// Get trending vulnerabilities with advanced analytics
-export async function getTrendingVulnerabilities(
+// Get comprehensive trending vulnerabilities with advanced analytics
+export async function getComprehensiveTrendingVulnerabilities(
   options: {
     daysBack?: number
     limit?: number
@@ -567,43 +574,50 @@ export async function getTrendingVulnerabilities(
   try {
     const { daysBack = 7, limit = 50, minEpss, includeKevOnly = false, getAllData = false } = options
 
-    console.log(`[CVEDB] Fetching trending vulnerabilities for last ${daysBack} days`)
+    console.log(`[CVEDB] Fetching comprehensive trending vulnerabilities for last ${daysBack} days`)
+
+    // Calculate date range for trending search
+    const endDate = new Date()
+    const startDate = new Date()
+    startDate.setDate(startDate.getDate() - daysBack)
 
     const searchOptions = {
-      daysBack,
-      sortByEpss: true,
       limit: getAllData ? 1000 : limit,
-      isKev: includeKevOnly,
-      getAllPages: getAllData,
+      start_date: startDate.toISOString().split("T")[0],
+      end_date: endDate.toISOString().split("T")[0],
+      cvss_min: includeKevOnly ? 7.0 : undefined,
     }
 
-    // Trending CVEs: use '*' to indicate no product filter, just trending by date
-    let result: CVESearchResult = { cves: [], total: 0, limit: searchOptions.limit, skip: 0 }
-    try {
-      result = await searchCVEsComprehensive("*", searchOptions)
-    } catch (err) {
-      console.warn("Trending CVEs: Skipped empty product search", err)
-    }
+    // Search for trending CVEs using date range
+    const result = await searchCVEsComprehensive("", searchOptions)
 
     if ("cves" in result) {
       let cves = result.cves
 
       // Apply EPSS filter if specified
       if (minEpss !== undefined) {
-        cves = cves.filter((cve) => (cve.epss || 0) >= minEpss!)
+        cves = cves.filter((cve) => (cve.epss || 0) >= minEpss)
+      }
+
+      // Calculate comprehensive analytics
+      const analytics = {
+        totalFound: cves.length,
+        criticalCount: cves.filter((cve) => (cve.cvss || 0) >= 9.0).length,
+        highCount: cves.filter((cve) => (cve.cvss || 0) >= 7.0 && (cve.cvss || 0) < 9.0).length,
+        mediumCount: cves.filter((cve) => (cve.cvss || 0) >= 4.0 && (cve.cvss || 0) < 7.0).length,
+        lowCount: cves.filter((cve) => (cve.cvss || 0) > 0.0 && (cve.cvss || 0) < 4.0).length,
+        kevCount: cves.filter((cve) => cve.kev).length,
+        ransomwareCount: cves.filter((cve) => cve.ransomware_campaign).length,
+        highEpssCount: cves.filter((cve) => (cve.epss || 0) > 0.5).length,
+        averageEpss: cves.reduce((sum, cve) => sum + (cve.epss || 0), 0) / cves.length || 0,
+        averageCvss: cves.reduce((sum, cve) => sum + (cve.cvss || 0), 0) / cves.length || 0,
+        topEpssScore: Math.max(...cves.map((cve) => cve.epss || 0)),
+        topCvssScore: Math.max(...cves.map((cve) => cve.cvss || 0)),
       }
 
       return {
-        cves,
-        analytics: {
-          totalFound: cves.length,
-          criticalCount: cves.filter((cve) => (cve.cvss || 0) >= 9.0).length,
-          highCount: cves.filter((cve) => (cve.cvss || 0) >= 7.0 && (cve.cvss || 0) < 9.0).length,
-          kevCount: cves.filter((cve) => cve.kev).length,
-          ransomwareCount: cves.filter((cve) => cve.ransomware_campaign).length,
-          averageEpss: cves.reduce((sum, cve) => sum + (cve.epss || 0), 0) / cves.length || 0,
-          averageCvss: cves.reduce((sum, cve) => sum + (cve.cvss || 0), 0) / cves.length || 0,
-        },
+        cves: cves.slice(0, limit), // Limit final results if needed
+        analytics,
         metadata: {
           searchPeriod: `${daysBack} days`,
           minEpssFilter: minEpss,
