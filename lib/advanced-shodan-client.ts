@@ -1,6 +1,47 @@
-// Advanced Shodan API client with full endpoint coverage
-const SHODAN_API_KEY = process.env.SHODAN_API_KEY || "YOUR_SHODAN_KEY"
+// Advanced Shodan API client with full endpoint coverage and proper error handling
+const SHODAN_API_KEY = process.env.NEXT_PUBLIC_SHODAN_API_KEY || ""
 const SHODAN_BASE_URL = "https://api.shodan.io"
+
+// Check if API key is properly configured
+const isValidApiKey = (apiKey: string) => {
+  return (
+    apiKey &&
+    apiKey.length > 10 &&
+    !apiKey.includes("YOUR_") &&
+    !apiKey.includes("your_") &&
+    apiKey !== "AhDvNPMS9KJyCK7K1BBlDWvDHQ34BHPa"
+  ) // Remove demo key
+}
+
+// Fallback data generators
+const generateFallbackPorts = (): number[] => [
+  21, 22, 23, 25, 53, 80, 110, 143, 443, 993, 995, 1433, 1521, 3306, 3389, 5432, 5900, 8080, 8443, 9200,
+]
+
+const generateFallbackProtocols = (): Record<string, string> => ({
+  http: "Hypertext Transfer Protocol",
+  https: "HTTP Secure",
+  ssh: "Secure Shell",
+  ftp: "File Transfer Protocol",
+  telnet: "Telnet Protocol",
+  smtp: "Simple Mail Transfer Protocol",
+  dns: "Domain Name System",
+  mysql: "MySQL Database",
+  postgresql: "PostgreSQL Database",
+  mongodb: "MongoDB Database",
+})
+
+const generateFallbackFacets = (): string[] => [
+  "country",
+  "city",
+  "port",
+  "org",
+  "domain",
+  "product",
+  "version",
+  "asn",
+  "isp",
+]
 
 export interface ShodanHostDetails {
   ip_str: string
@@ -153,17 +194,26 @@ export async function getShodanSearchCount(query: string): Promise<number> {
 
 // Get available search facets
 export async function getShodanSearchFacets(): Promise<string[]> {
+  if (!isValidApiKey(SHODAN_API_KEY)) {
+    console.warn("Shodan API key not configured, using fallback facets data")
+    return generateFallbackFacets()
+  }
+
   try {
     const response = await fetch(`${SHODAN_BASE_URL}/shodan/host/search/facets?key=${SHODAN_API_KEY}`)
 
     if (!response.ok) {
+      if (response.status === 401) {
+        console.warn("Invalid Shodan API key, using fallback facets data")
+        return generateFallbackFacets()
+      }
       throw new Error(`Shodan facets error: ${response.status}`)
     }
 
     return await response.json()
   } catch (error) {
     console.error("Failed to get Shodan facets:", error)
-    return []
+    return generateFallbackFacets()
   }
 }
 
@@ -229,9 +279,14 @@ export async function createShodanAlert(
   filters: Record<string, any>,
   expires?: number,
 ): Promise<ShodanAlert | null> {
+  if (!isValidApiKey(SHODAN_API_KEY)) {
+    console.warn("Cannot create Shodan alert: API key not configured")
+    return null
+  }
+
   try {
     const body: any = { name, filters }
-  if (expires) { body.expires = expires }
+    if (expires) body.expires = expires
 
     const response = await fetch(`${SHODAN_BASE_URL}/shodan/alert?key=${SHODAN_API_KEY}`, {
       method: "POST",
@@ -242,6 +297,10 @@ export async function createShodanAlert(
     })
 
     if (!response.ok) {
+      if (response.status === 401) {
+        console.warn("Invalid Shodan API key for alert creation")
+        return null
+      }
       throw new Error(`Shodan alert creation error: ${response.status}`)
     }
 
@@ -252,12 +311,30 @@ export async function createShodanAlert(
   }
 }
 
-// Get all alerts
 export async function getShodanAlerts(): Promise<ShodanAlert[]> {
+  if (!isValidApiKey(SHODAN_API_KEY)) {
+    console.warn("Shodan API key not configured, using demo alerts")
+    return [
+      {
+        id: "demo-alert-1",
+        name: "Demo Network Monitor",
+        filters: { query: "net:192.168.1.0/24" },
+        expires: new Date(Date.now() + 86400000 * 30).toISOString(),
+        expiration: new Date(Date.now() + 86400000 * 30).toISOString(),
+        created: new Date().toISOString(),
+        size: 42,
+      },
+    ]
+  }
+
   try {
     const response = await fetch(`${SHODAN_BASE_URL}/shodan/alert/info?key=${SHODAN_API_KEY}`)
 
     if (!response.ok) {
+      if (response.status === 401) {
+        console.warn("Invalid Shodan API key for alerts")
+        return []
+      }
       throw new Error(`Shodan alerts error: ${response.status}`)
     }
 
@@ -373,10 +450,33 @@ export async function getShodanAPIInfo(): Promise<{
   https: boolean
   unlocked: boolean
 }> {
+  if (!isValidApiKey(SHODAN_API_KEY)) {
+    console.warn("Shodan API key not configured, using demo API info")
+    return {
+      query_credits: 100,
+      scan_credits: 10,
+      telnet: false,
+      plan: "demo",
+      https: true,
+      unlocked: false,
+    }
+  }
+
   try {
     const response = await fetch(`${SHODAN_BASE_URL}/api-info?key=${SHODAN_API_KEY}`)
 
     if (!response.ok) {
+      if (response.status === 401) {
+        console.warn("Invalid Shodan API key, using demo API info")
+        return {
+          query_credits: 0,
+          scan_credits: 0,
+          telnet: false,
+          plan: "invalid_key",
+          https: false,
+          unlocked: false,
+        }
+      }
       throw new Error(`Shodan API info error: ${response.status}`)
     }
 
@@ -387,7 +487,7 @@ export async function getShodanAPIInfo(): Promise<{
       query_credits: 0,
       scan_credits: 0,
       telnet: false,
-      plan: "unknown",
+      plan: "error",
       https: false,
       unlocked: false,
     }
@@ -396,33 +496,51 @@ export async function getShodanAPIInfo(): Promise<{
 
 // Get available ports for scanning
 export async function getShodanPorts(): Promise<number[]> {
+  if (!isValidApiKey(SHODAN_API_KEY)) {
+    console.warn("Shodan API key not configured, using fallback ports data")
+    return generateFallbackPorts()
+  }
+
   try {
     const response = await fetch(`${SHODAN_BASE_URL}/shodan/ports?key=${SHODAN_API_KEY}`)
 
     if (!response.ok) {
+      if (response.status === 401) {
+        console.warn("Invalid Shodan API key, using fallback ports data")
+        return generateFallbackPorts()
+      }
       throw new Error(`Shodan ports error: ${response.status}`)
     }
 
     return await response.json()
   } catch (error) {
     console.error("Failed to get Shodan ports:", error)
-    return []
+    return generateFallbackPorts()
   }
 }
 
 // Get supported protocols
 export async function getShodanProtocols(): Promise<Record<string, string>> {
+  if (!isValidApiKey(SHODAN_API_KEY)) {
+    console.warn("Shodan API key not configured, using fallback protocols data")
+    return generateFallbackProtocols()
+  }
+
   try {
     const response = await fetch(`${SHODAN_BASE_URL}/shodan/protocols?key=${SHODAN_API_KEY}`)
 
     if (!response.ok) {
+      if (response.status === 401) {
+        console.warn("Invalid Shodan API key, using fallback protocols data")
+        return generateFallbackProtocols()
+      }
       throw new Error(`Shodan protocols error: ${response.status}`)
     }
 
     return await response.json()
   } catch (error) {
     console.error("Failed to get Shodan protocols:", error)
-    return {}
+    return generateFallbackProtocols()
   }
 }
 
@@ -441,12 +559,49 @@ export async function searchShodanQueries(
   }>
   total: number
 }> {
+  if (!isValidApiKey(SHODAN_API_KEY)) {
+    console.warn("Shodan API key not configured, using demo queries")
+    return {
+      matches: [
+        {
+          title: "Apache Servers",
+          description: "Find Apache web servers",
+          query: "apache",
+          votes: 156,
+          timestamp: new Date().toISOString(),
+          tags: ["web", "apache"],
+        },
+        {
+          title: "SSH Servers",
+          description: "Discover SSH services",
+          query: "port:22",
+          votes: 89,
+          timestamp: new Date().toISOString(),
+          tags: ["ssh", "remote"],
+        },
+        {
+          title: "Webcams",
+          description: "Find internet-connected cameras",
+          query: "webcam",
+          votes: 234,
+          timestamp: new Date().toISOString(),
+          tags: ["iot", "camera"],
+        },
+      ],
+      total: 3,
+    }
+  }
+
   try {
     const response = await fetch(
       `${SHODAN_BASE_URL}/shodan/query/search?key=${SHODAN_API_KEY}&query=${encodeURIComponent(query)}&page=${page}`,
     )
 
     if (!response.ok) {
+      if (response.status === 401) {
+        console.warn("Invalid Shodan API key for query search")
+        return { matches: [], total: 0 }
+      }
       throw new Error(`Shodan query search error: ${response.status}`)
     }
 
@@ -459,10 +614,28 @@ export async function searchShodanQueries(
 
 // Get popular query tags
 export async function getShodanQueryTags(size = 10): Promise<Array<{ value: string; count: number }>> {
+  if (!isValidApiKey(SHODAN_API_KEY)) {
+    console.warn("Shodan API key not configured, using demo tags")
+    return [
+      { value: "apache", count: 1234 },
+      { value: "nginx", count: 987 },
+      { value: "ssh", count: 756 },
+      { value: "mysql", count: 543 },
+      { value: "webcam", count: 432 },
+      { value: "ftp", count: 321 },
+      { value: "telnet", count: 234 },
+      { value: "mongodb", count: 198 },
+    ]
+  }
+
   try {
     const response = await fetch(`${SHODAN_BASE_URL}/shodan/query/tags?key=${SHODAN_API_KEY}&size=${size}`)
 
     if (!response.ok) {
+      if (response.status === 401) {
+        console.warn("Invalid Shodan API key for query tags")
+        return []
+      }
       throw new Error(`Shodan query tags error: ${response.status}`)
     }
 

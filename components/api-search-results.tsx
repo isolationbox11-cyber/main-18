@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, Globe, Shield, AlertTriangle, Eye } from "lucide-react"
-import type { ShodanResult, ThreatIntelResult } from '@/types/api-integrations';
+import type { ShodanResult, ThreatIntelResult } from "@/lib/api-integrations"
 
 interface ApiSearchResultsProps {
   results: ShodanResult[]
@@ -54,7 +54,7 @@ export function ApiSearchResults({ results, threatIntel, loading }: ApiSearchRes
                   <h3 className="text-white font-mono">
                     {result.ip}:{result.port}
                   </h3>
-                  <p className="text-slate-400 text-sm">{typeof result.service === 'string' && result.service.length > 0 ? result.service : 'Unknown service'}</p>
+                  <p className="text-slate-400 text-sm">{result.service}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -63,7 +63,7 @@ export function ApiSearchResults({ results, threatIntel, loading }: ApiSearchRes
                     {threat.reputation}
                   </Badge>
                 )}
-                {(result.vulns && result.vulns.length > 0) && (
+                {result.vulnerability && (
                   <Badge variant="destructive" className="text-xs">
                     <AlertTriangle className="w-3 h-3 mr-1" />
                     VULN
@@ -76,27 +76,27 @@ export function ApiSearchResults({ results, threatIntel, loading }: ApiSearchRes
               <div>
                 <span className="text-slate-400">Location:</span>
                 <span className="text-slate-300 ml-2">
-                  {result.location.city}, {result.location.country}
+                  {result.city}, {result.country}
                 </span>
               </div>
               <div>
                 <span className="text-slate-400">Organization:</span>
-                <span className="text-slate-300 ml-2">{result.org}</span>
+                <span className="text-slate-300 ml-2">{result.organization}</span>
               </div>
             </div>
 
-            {(result.vulns && result.vulns.length > 0) && (
+            {result.vulnerability && (
               <div className="mt-3 p-2 bg-red-900/20 border border-red-500/30 rounded">
                 <div className="flex items-center gap-2 text-red-400 text-sm">
                   <Shield className="w-4 h-4" />
-                  <span>Vulnerabilities: {result.vulns.join(', ')}</span>
+                  <span>Vulnerability: {result.vulnerability}</span>
                 </div>
               </div>
             )}
 
-            {threat && (threat.tags?.length ?? 0) > 0 && (
+            {threat && threat.categories.length > 0 && (
               <div className="mt-3 flex gap-2">
-                {threat.tags?.map((category, idx) => (
+                {threat.categories.map((category, idx) => (
                   <Badge key={idx} variant="outline" className="text-xs border-orange-500 text-orange-400">
                     {category}
                   </Badge>

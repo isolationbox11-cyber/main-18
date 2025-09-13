@@ -1,10 +1,9 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import {
   Globe,
   MapPin,
@@ -12,6 +11,7 @@ import {
   Shield,
   AlertTriangle,
   Eye,
+  ExternalLink,
   ChevronDown,
   ChevronUp,
   Wifi,
@@ -19,10 +19,8 @@ import {
   Database,
   Zap,
   Target,
-  Search,
 } from "lucide-react"
 import { CVEIntelligencePanel } from "./cve-intelligence-panel"
-import { ShodanProInterface } from "./shodan-pro-interface"
 import { getProductVulnerabilityIntel } from "@/lib/cvedb-client"
 import type { ShodanHost } from "@/lib/api-client"
 
@@ -34,13 +32,16 @@ interface EnhancedHostCardProps {
 export function EnhancedHostCard({ host, threatIntel }: EnhancedHostCardProps) {
   const [expanded, setExpanded] = useState(false)
   const [showCVEPanel, setShowCVEPanel] = useState(false)
-  const [showShodanPro, setShowShodanPro] = useState(false)
   const [vulnIntel, setVulnIntel] = useState<any>(null)
 
-  const loadVulnerabilityIntel = useCallback(async () => {
-    if (!host.product) {
-      return
+  useEffect(() => {
+    if (host.product && showCVEPanel) {
+      loadVulnerabilityIntel()
     }
+  }, [host.product, showCVEPanel])
+
+  const loadVulnerabilityIntel = async () => {
+    if (!host.product) return
 
     try {
       const intel = await getProductVulnerabilityIntel(host.product)
@@ -48,13 +49,7 @@ export function EnhancedHostCard({ host, threatIntel }: EnhancedHostCardProps) {
     } catch (error) {
       console.error("Failed to load vulnerability intel:", error)
     }
-  }, [host.product])
-
-  useEffect(() => {
-    if (host.product && showCVEPanel) {
-      loadVulnerabilityIntel()
-    }
-  }, [host.product, showCVEPanel, loadVulnerabilityIntel])
+  }
 
   const getServiceIcon = (product?: string) => {
     if (!product) return <Server className="w-4 h-4" />
@@ -103,15 +98,9 @@ export function EnhancedHostCard({ host, threatIntel }: EnhancedHostCardProps) {
       }
     }
 
-    if (score > 10) {
-      return { level: "critical", color: "text-red-400", bg: "bg-red-500/10", reasons }
-    }
-    if (score > 5) {
-      return { level: "high", color: "text-orange-400", bg: "bg-orange-500/10", reasons }
-    }
-    if (score > 2) {
-      return { level: "medium", color: "text-yellow-400", bg: "bg-yellow-500/10", reasons }
-    }
+    if (score > 10) return { level: "critical", color: "text-red-400", bg: "bg-red-500/10", reasons }
+    if (score > 5) return { level: "high", color: "text-orange-400", bg: "bg-orange-500/10", reasons }
+    if (score > 2) return { level: "medium", color: "text-yellow-400", bg: "bg-yellow-500/10", reasons }
     return { level: "low", color: "text-green-400", bg: "bg-green-500/10", reasons }
   }
 
@@ -193,16 +182,6 @@ export function EnhancedHostCard({ host, threatIntel }: EnhancedHostCardProps) {
             <div className="text-xs text-slate-400">Last seen: {new Date(host.timestamp).toLocaleDateString()}</div>
 
             <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowShodanPro(true)}
-                className="text-slate-400 hover:text-cyan-400"
-              >
-                <Search className="w-4 h-4 mr-1" />
-                Analyze
-              </Button>
-
               {host.product && (
                 <Button
                   variant="ghost"
@@ -214,6 +193,15 @@ export function EnhancedHostCard({ host, threatIntel }: EnhancedHostCardProps) {
                   CVE Intel
                 </Button>
               )}
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => window.open(`https://www.shodan.io/host/${host.ip_str}`, "_blank")}
+                className="text-slate-400 hover:text-cyan-400"
+              >
+                <ExternalLink className="w-4 h-4" />
+              </Button>
 
               <Button
                 variant="ghost"
@@ -304,18 +292,6 @@ export function EnhancedHostCard({ host, threatIntel }: EnhancedHostCardProps) {
 
       {/* CVE Intelligence Panel */}
       {showCVEPanel && host.product && <CVEIntelligencePanel product={host.product} cveIds={host.vulns} />}
-
-      {/* Shodan Pro Interface Modal */}
-      <Dialog open={showShodanPro} onOpenChange={setShowShodanPro}>
-        <DialogContent className="max-w-7xl max-h-[95vh] bg-slate-900 border-slate-700">
-          <DialogHeader>
-            <DialogTitle className="text-2xl text-cyan-400">Advanced Host Analysis - {host.ip_str}</DialogTitle>
-          </DialogHeader>
-          <div className="overflow-y-auto max-h-[80vh]">
-            <ShodanProInterface initialHost={host} />
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

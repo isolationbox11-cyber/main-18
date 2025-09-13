@@ -170,7 +170,7 @@ export function LiveBotnetTracker() {
                   <div>
                     <h4 className="font-medium text-blue-400 mb-1">What are Botnets? 🤖</h4>
                     <p className="text-sm text-blue-300">
-                      Botnets are networks of infected computers controlled by cybercriminals. These &quot;zombie&quot; devices
+                      Botnets are networks of infected computers controlled by cybercriminals. These "zombie" devices
                       can be used for attacks, spam, or cryptocurrency mining without their owners knowing. This tracker
                       helps security researchers monitor and combat these threats.
                     </p>

@@ -42,6 +42,7 @@ export function AdvancedShodanDashboard() {
   const [protocols, setProtocols] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState("overview")
+  const [apiKeyStatus, setApiKeyStatus] = useState<"valid" | "invalid" | "demo">("demo")
 
   // Alert creation state
   const [newAlertName, setNewAlertName] = useState("")
@@ -71,8 +72,18 @@ export function AdvancedShodanDashboard() {
       setFacets(facetsData)
       setPorts(portsData.slice(0, 20))
       setProtocols(protocolsData)
+
+      // Determine API key status
+      if (apiData.plan === "demo") {
+        setApiKeyStatus("demo")
+      } else if (apiData.plan === "invalid_key" || apiData.plan === "error") {
+        setApiKeyStatus("invalid")
+      } else {
+        setApiKeyStatus("valid")
+      }
     } catch (error) {
       console.error("Failed to load dashboard data:", error)
+      setApiKeyStatus("invalid")
     } finally {
       setLoading(false)
     }
@@ -80,6 +91,11 @@ export function AdvancedShodanDashboard() {
 
   const handleCreateAlert = async () => {
     if (!newAlertName || !newAlertQuery) return
+
+    if (apiKeyStatus !== "valid") {
+      alert("Valid Shodan API key required to create alerts")
+      return
+    }
 
     try {
       const alert = await createShodanAlert(newAlertName, { query: newAlertQuery })
@@ -90,6 +106,29 @@ export function AdvancedShodanDashboard() {
       }
     } catch (error) {
       console.error("Failed to create alert:", error)
+    }
+  }
+
+  const getStatusBadge = () => {
+    switch (apiKeyStatus) {
+      case "valid":
+        return (
+          <Badge variant="outline" className="text-green-400 border-green-400">
+            API CONNECTED
+          </Badge>
+        )
+      case "invalid":
+        return (
+          <Badge variant="outline" className="text-red-400 border-red-400">
+            INVALID API KEY
+          </Badge>
+        )
+      case "demo":
+        return (
+          <Badge variant="outline" className="text-yellow-400 border-yellow-400">
+            DEMO MODE
+          </Badge>
+        )
     }
   }
 
@@ -110,11 +149,15 @@ export function AdvancedShodanDashboard() {
         <CardHeader>
           <CardTitle className="text-cyan-400 flex items-center gap-2">
             <Shield className="w-5 h-5" />
-            Shodan API Status 🎃
-            <Badge variant="outline" className="text-green-400 border-green-400">
-              {apiInfo?.plan?.toUpperCase() || "CONNECTED"}
-            </Badge>
+            Shodan API Status 🎃{getStatusBadge()}
           </CardTitle>
+          {apiKeyStatus !== "valid" && (
+            <div className="text-sm text-slate-400">
+              {apiKeyStatus === "demo"
+                ? "Using demo data. Add your Shodan API key for live data."
+                : "Please check your Shodan API key configuration."}
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
