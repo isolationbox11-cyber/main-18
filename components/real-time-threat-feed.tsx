@@ -18,26 +18,37 @@ export function RealTimeThreatFeed() {
   const [threats, setThreats] = useState<ThreatEvent[]>([])
 
   useEffect(() => {
-    let isMounted = true;
-    async function fetchThreats() {
-      try {
-        const res = await fetch("/api/live-threat-feed");
-  if (!res.ok) { throw new Error("Failed to fetch live threat feed"); }
-        const data = await res.json();
-        if (isMounted) {
-          setThreats(data.slice(0, 10));
+    const interval = setInterval(() => {
+      const threatTypes: ThreatEvent["type"][] = ["malware", "phishing", "breach", "vulnerability"]
+      const severities: ThreatEvent["severity"][] = ["low", "medium", "high", "critical"]
+      const sources = ["Dark Web Monitor", "Threat Intel", "CVE Database", "Honeypot Network"]
+      const descriptions = [
+        "New ransomware variant detected in the wild",
+        "Phishing campaign targeting financial institutions",
+        "Data breach affecting 50K+ users discovered",
+        "Zero-day vulnerability in popular software",
+        "Botnet C&C server identified and tracked",
+        "Credential stuffing attack on e-commerce sites",
+        "APT group using new malware strain",
+        "Critical vulnerability in IoT devices",
+      ]
+
+      if (Math.random() > 0.7) {
+        const newThreat: ThreatEvent = {
+          id: Math.random().toString(36).substr(2, 9),
+          type: threatTypes[Math.floor(Math.random() * threatTypes.length)],
+          description: descriptions[Math.floor(Math.random() * descriptions.length)],
+          severity: severities[Math.floor(Math.random() * severities.length)],
+          timestamp: new Date(),
+          source: sources[Math.floor(Math.random() * sources.length)],
         }
-      } catch (e) {
-        // Optionally handle error
+
+        setThreats((prev) => [newThreat, ...prev.slice(0, 9)])
       }
-    }
-    fetchThreats();
-    const interval = setInterval(fetchThreats, 3000);
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-    };
-  }, []);
+    }, 3000)
+
+    return () => clearInterval(interval)
+  }, [])
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {

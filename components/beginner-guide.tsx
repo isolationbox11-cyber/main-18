@@ -19,8 +19,7 @@ interface GuideStep {
 
 export function BeginnerGuide() {
   const [activeStep, setActiveStep] = useState<string | null>(null)
-  const [showGuide, setShowGuide] = useState(true)
-  const [searchQuery, setSearchQuery] = useState<string>("")
+  const [showGuide, setShowGuide] = useState(false)
 
   const guideSteps: GuideStep[] = [
     {
@@ -123,18 +122,6 @@ export function BeginnerGuide() {
         </Badge>
       </div>
 
-      {searchQuery && (
-        <div className="p-4 bg-slate-800/40 border border-cyan-500/30 rounded-xl mt-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Search className="w-4 h-4 text-cyan-400" />
-            <span className="text-cyan-400 font-bold">Search:</span>
-            <span className="text-white">{searchQuery}</span>
-          </div>
-          <p className="text-slate-300">(This would trigger a real search in a full implementation.)</p>
-          <Button size="sm" variant="outline" className="mt-2 border-cyan-500/30 text-cyan-400" onClick={() => setSearchQuery("")}>Clear</Button>
-        </div>
-      )}
-
       {showGuide && (
         <Card className="bg-slate-900/40 border-slate-700/50 backdrop-blur-xl">
           <CardHeader>
@@ -226,7 +213,10 @@ export function BeginnerGuide() {
                         size="sm"
                         variant="outline"
                         className="w-full border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 bg-transparent"
-                        onClick={() => setSearchQuery(action.search)}
+                        onClick={() => {
+                          // This would trigger a search
+                          console.log("Search:", action.search)
+                        }}
                       >
                         Explore Now
                       </Button>
@@ -236,7 +226,21 @@ export function BeginnerGuide() {
               </div>
             </div>
 
-            {/* Removed Safety Reminder and legal/ethical notice as requested */}
+            {/* Safety Reminder */}
+            <Card className="bg-green-900/20 border-green-500/30">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <Shield className="w-5 h-5 text-green-400 mt-0.5" />
+                  <div>
+                    <h4 className="font-medium text-green-400 mb-1">Remember: Stay Ethical! 🧙‍♀️</h4>
+                    <p className="text-sm text-green-300">
+                      You're here to learn and explore safely. Never attempt to access or interfere with devices you
+                      discover. Think of yourself as a digital explorer, not a digital intruder.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </CardContent>
         </Card>
       )}
