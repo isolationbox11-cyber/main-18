@@ -98,17 +98,13 @@ async function makeComprehensiveAPIRequest<T>(
         }
         if (response.status === 404) {
           console.warn(`[CVEDB] 404 Not Found for ${currentUrl}. This may be due to no results matching the criteria.`)
-          // For 404s, try fallback endpoints or return empty result
-          if (endpoints.length > 1) {
-            endpoints.shift()
-            if (endpoints.length > 0) {
-              currentUrl = endpoints[0]
-              attempt = 0 // Reset attempt counter for new endpoint
-              continue
-            }
-          }
-          // If no more endpoints, return empty result instead of throwing error
-          return { vulnerabilities: [], totalResults: 0 } as T
+          // Return empty result structure for 404s
+          return {
+            vulnerabilities: [],
+            totalResults: 0,
+            resultsPerPage: 20,
+            startIndex: 0,
+          } as T
         }
         if (response.status === 429) {
           const retryAfter = response.headers.get("Retry-After")
@@ -288,14 +284,14 @@ export async function searchCVEsComprehensive(
     params.append("resultsPerPage", Math.min(options.limit || 20, 2000).toString())
     params.append("startIndex", (options.skip || 0).toString())
     if (options.start_date) {
-      // Ensure proper ISO format for NVD API
-      const startDate = options.start_date.includes("T") ? options.start_date : options.start_date + "T00:00:00.000"
-      params.append("pubStartDate", startDate)
+      // NVD API requires ISO format: YYYY-MM-DDTHH:mm:ss:sss [+-]HH:mm
+      const startDate = new Date(options.start_date)
+      params.append("pubStartDate", startDate.toISOString())
     }
     if (options.end_date) {
-      // Ensure proper ISO format for NVD API
-      const endDate = options.end_date.includes("T") ? options.end_date : options.end_date + "T23:59:59.999"
-      params.append("pubEndDate", endDate)
+      // NVD API requires ISO format: YYYY-MM-DDTHH:mm:ss:sss [+-]HH:mm
+      const endDate = new Date(options.end_date)
+      params.append("pubEndDate", endDate.toISOString())
     }
     if (options.cvss_min !== undefined) {
       params.append("cvssV2Min", options.cvss_min.toString())
@@ -332,8 +328,45 @@ export async function searchCVEsComprehensive(
         skip: options.skip || 0,
       }
     }
+
+    // If no results from date-based search, try without date filters
+    if (options.start_date || options.end_date) {
+      console.log(`[CVEDB] No results found for date range, trying without date filters`)
+      const fallbackParams = new URLSearchParams()
+      fallbackParams.append("resultsPerPage", Math.min(options.limit || 20, 100).toString())
+      fallbackParams.append("startIndex", (options.skip || 0).toString())
+      if (options.cvss_min !== undefined) {
+        fallbackParams.append("cvssV3Min", options.cvss_min.toString())
+      }
+      const fallbackUrl = `${CVE_API_ENDPOINTS.nvd}?${fallbackParams}`
+      const fallbackResult = await makeComprehensiveAPIRequest<any>(fallbackUrl, {
+        maxRetries: 1,
+      })
+      if (fallbackResult.vulnerabilities) {
+        return {
+          cves: fallbackResult.vulnerabilities.map((item: any) => {
+            const vuln = item.cve
+            return {
+              cve_id: vuln.id,
+              summary: vuln.descriptions?.[0]?.value || null,
+              cvss:
+                vuln.metrics?.cvssMetricV31?.[0]?.cvssData?.baseScore ||
+                vuln.metrics?.cvssMetricV30?.[0]?.cvssData?.baseScore ||
+                vuln.metrics?.cvssMetricV2?.[0]?.cvssData?.baseScore ||
+                null,
+              published_date: vuln.published || null,
+            }
+          }),
+          total: fallbackResult.totalResults || 0,
+          limit: options.limit || 20,
+          skip: options.skip || 0,
+        }
+      }
+    }
+
     return { cves: [], total: 0, limit: options.limit || 20, skip: options.skip || 0 }
   }
+
   // Standard request
   const url = `${CVE_API_ENDPOINTS.nvd}`
   const params = new URLSearchParams()
@@ -341,20 +374,20 @@ export async function searchCVEsComprehensive(
   params.append("resultsPerPage", Math.min(options.limit || 20, 2000).toString())
   params.append("startIndex", (options.skip || 0).toString())
   if (options.start_date) {
-    // Ensure proper ISO format for NVD API
-    const startDate = options.start_date.includes("T") ? options.start_date : options.start_date + "T00:00:00.000"
-    params.append("pubStartDate", startDate)
+    // NVD API requires ISO format: YYYY-MM-DDTHH:mm:ss:sss [+-]HH:mm
+    const startDate = new Date(options.start_date)
+    params.append("pubStartDate", startDate.toISOString())
   }
   if (options.end_date) {
-    // Ensure proper ISO format for NVD API
-    const endDate = options.end_date.includes("T") ? options.end_date : options.end_date + "T23:59:59.999"
-    params.append("pubEndDate", endDate)
+    // NVD API requires ISO format: YYYY-MM-DDTHH:mm:ss:sss [+-]HH:mm
+    const endDate = new Date(options.end_date)
+    params.append("pubEndDate", endDate.toISOString())
   }
   if (options.cvss_min !== undefined) {
-    params.append("cvssV2Min", options.cvss_min.toString())
+    params.append("cvssV3Min", options.cvss_min.toString())
   }
   if (options.cvss_max !== undefined) {
-    params.append("cvssV2Max", options.cvss_max.toString())
+    params.append("cvssV3Max", options.cvss_max.toString())
   }
   const fullUrl = `${url}?${params}`
   const result = await makeComprehensiveAPIRequest<any>(fullUrl, {
@@ -588,19 +621,19 @@ export async function getComprehensiveTrendingVulnerabilities(
   } = {},
 ) {
   try {
-    const { daysBack = 7, limit = 50, minEpss, includeKevOnly = false, getAllData = false } = options
+    const { daysBack = 30, limit = 50, minEpss, includeKevOnly = false, getAllData = false } = options
 
     console.log(`[CVEDB] Fetching comprehensive trending vulnerabilities for last ${daysBack} days`)
 
     // Calculate date range for trending search
     const endDate = new Date()
     const startDate = new Date()
-    startDate.setDate(startDate.getDate() - daysBack)
+    startDate.setDate(startDate.getDate() - Math.max(daysBack, 30)) // Minimum 30 days
 
     const searchOptions = {
       limit: getAllData ? 1000 : limit,
-      start_date: startDate.toISOString().split("T")[0] + "T00:00:00.000",
-      end_date: endDate.toISOString().split("T")[0] + "T23:59:59.999",
+      start_date: startDate.toISOString(),
+      end_date: endDate.toISOString(),
       cvss_min: includeKevOnly ? 7.0 : undefined,
     }
 
@@ -677,7 +710,7 @@ export async function getComprehensiveTrendingVulnerabilities(
         topCvssScore: 8.5,
       },
       metadata: {
-        searchPeriod: `${options.daysBack || 7} days`,
+        searchPeriod: `${options.daysBack || 30} days`,
         minEpssFilter: options.minEpss,
         kevOnlyFilter: options.includeKevOnly,
         totalAvailable: mockTrendingCVEs.length,
@@ -959,8 +992,8 @@ export async function checkCVEDBHealthComprehensive(): Promise<{
       timeout: 5000,
     })
     endpoints.cpesEndpoint = true
-  } catch {
-    // Endpoint test failed
+  } catch (error) {
+    console.log(`[CVEDB] CPEs endpoint test failed:`, error)
   }
 
   const responseTime = Date.now() - startTime
