@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import {
   Globe,
   MapPin,
@@ -11,7 +12,6 @@ import {
   Shield,
   AlertTriangle,
   Eye,
-  ExternalLink,
   ChevronDown,
   ChevronUp,
   Wifi,
@@ -19,8 +19,10 @@ import {
   Database,
   Zap,
   Target,
+  Search,
 } from "lucide-react"
 import { CVEIntelligencePanel } from "./cve-intelligence-panel"
+import { ShodanProInterface } from "./shodan-pro-interface"
 import { getProductVulnerabilityIntel } from "@/lib/cvedb-client"
 import type { ShodanHost } from "@/lib/api-client"
 
@@ -32,6 +34,7 @@ interface EnhancedHostCardProps {
 export function EnhancedHostCard({ host, threatIntel }: EnhancedHostCardProps) {
   const [expanded, setExpanded] = useState(false)
   const [showCVEPanel, setShowCVEPanel] = useState(false)
+  const [showShodanPro, setShowShodanPro] = useState(false)
   const [vulnIntel, setVulnIntel] = useState<any>(null)
 
   useEffect(() => {
@@ -182,6 +185,16 @@ export function EnhancedHostCard({ host, threatIntel }: EnhancedHostCardProps) {
             <div className="text-xs text-slate-400">Last seen: {new Date(host.timestamp).toLocaleDateString()}</div>
 
             <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowShodanPro(true)}
+                className="text-slate-400 hover:text-cyan-400"
+              >
+                <Search className="w-4 h-4 mr-1" />
+                Analyze
+              </Button>
+
               {host.product && (
                 <Button
                   variant="ghost"
@@ -193,15 +206,6 @@ export function EnhancedHostCard({ host, threatIntel }: EnhancedHostCardProps) {
                   CVE Intel
                 </Button>
               )}
-
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => window.open(`https://www.shodan.io/host/${host.ip_str}`, "_blank")}
-                className="text-slate-400 hover:text-cyan-400"
-              >
-                <ExternalLink className="w-4 h-4" />
-              </Button>
 
               <Button
                 variant="ghost"
@@ -292,6 +296,18 @@ export function EnhancedHostCard({ host, threatIntel }: EnhancedHostCardProps) {
 
       {/* CVE Intelligence Panel */}
       {showCVEPanel && host.product && <CVEIntelligencePanel product={host.product} cveIds={host.vulns} />}
+
+      {/* Shodan Pro Interface Modal */}
+      <Dialog open={showShodanPro} onOpenChange={setShowShodanPro}>
+        <DialogContent className="max-w-7xl max-h-[95vh] bg-slate-900 border-slate-700">
+          <DialogHeader>
+            <DialogTitle className="text-2xl text-cyan-400">Advanced Host Analysis - {host.ip_str}</DialogTitle>
+          </DialogHeader>
+          <div className="overflow-y-auto max-h-[80vh]">
+            <ShodanProInterface initialHost={host} />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -1,15 +1,13 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Toaster } from "@/components/ui/toaster"
 import "./globals.css"
 
-const inter = Inter({ subsets: ["latin"] })
-
 export const metadata: Metadata = {
-  title: "Salem Cyber Vault - Internet Intelligence Platform",
+  title: "Cyber Watch Vault - Internet Intelligence Platform",
   description:
     "Advanced cybersecurity intelligence platform for discovering and analyzing internet-connected devices and services.",
-    generator: 'v0.app'
+  generator: "v0.dev",
 }
 
 export default function RootLayout({
@@ -19,7 +17,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className={inter.className}>{children}</body>
+      <head></head>
+      <body className="font-sans">
+        {children}
+        <Toaster />
+      </body>
     </html>
   )
 }

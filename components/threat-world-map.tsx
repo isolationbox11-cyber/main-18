@@ -73,7 +73,7 @@ export function ThreatWorldMap() {
                       cy={250 - country.coordinates[0] * 2.5} // Latitude to Y (inverted)
                       r={Math.max(3, Math.min(20, country.threats / 500))}
                       fill="currentColor"
-                      className={`${getThreatColor(country.threats)} opacity-70 cursor-pointer hover:opacity-100 transition-all text-transparent rounded-lg`}
+                      className={`${getThreatColor(country.threats)} opacity-70 cursor-pointer hover:opacity-100 transition-all`}
                       onClick={() => setSelectedCountry(country)}
                     />
 

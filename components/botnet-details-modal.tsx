@@ -13,7 +13,6 @@ import {
   Globe,
   Server,
   Eye,
-  ExternalLink,
   MapPin,
   Zap,
   Target,
@@ -311,10 +310,27 @@ export function BotnetDetailsModal({ botnet, open, onOpenChange }: BotnetDetails
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => window.open(`https://www.shodan.io/host/${server}`, "_blank")}
+                                onClick={() => {
+                                  // Set this server as selected host for detailed analysis
+                                  const mockHost: ShodanHost = {
+                                    ip_str: server,
+                                    port: 80,
+                                    transport: "tcp",
+                                    product: "Unknown",
+                                    location: { country_name: "Unknown", city: "Unknown", region_code: "XX" },
+                                    org: "Unknown",
+                                    isp: "Unknown",
+                                    asn: "Unknown",
+                                    hostnames: [],
+                                    domains: [],
+                                    timestamp: new Date().toISOString(),
+                                  }
+                                  setSelectedHost(mockHost)
+                                  setActiveTab("hosts")
+                                }}
                                 className="text-slate-400 hover:text-cyan-400"
                               >
-                                <ExternalLink className="w-3 h-3" />
+                                <Eye className="w-3 h-3" />
                               </Button>
                             </div>
                           </div>
