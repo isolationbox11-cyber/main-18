@@ -13,6 +13,37 @@ A Halloween-themed cybersecurity monitoring dashboard built with Next.js, React,
 - 📚 **Learn Mode** - Educational content explaining cybersecurity concepts
 - 🔮 **Spooky Scan** - Halloween-themed security scanner
 
+## Environment Setup
+
+1. Copy `.env.local.example` to `.env.local`:
+   ```bash
+   cp .env.local.example .env.local
+   ```
+
+2. Update the environment variables in `.env.local` with your Supabase credentials:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+   SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
+   ```
+
+3. Generate database types:
+   ```bash
+   npm run generate:types
+   ```
+
+## Development
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
 ## Deployment
 
 This application is configured for deployment on Vercel.

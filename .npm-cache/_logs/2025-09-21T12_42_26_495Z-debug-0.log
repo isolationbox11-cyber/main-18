@@ -1,0 +1,99 @@
+0 verbose cli /Users/nicolecurcis/.nvm/versions/node/v22.19.0/bin/node /Users/nicolecurcis/.nvm/versions/node/v22.19.0/bin/npm
+1 info using npm@10.9.3
+2 info using node@v22.19.0
+3 silly config load:file:/Users/nicolecurcis/.nvm/versions/node/v22.19.0/lib/node_modules/npm/npmrc
+4 silly config load:file:/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npmrc
+5 silly config load:file:/Users/nicolecurcis/.npmrc
+6 silly config load:file:/Users/nicolecurcis/.nvm/versions/node/v22.19.0/etc/npmrc
+7 verbose title npm install dotenv tsx
+8 verbose argv "install" "dotenv" "tsx" "--save-dev"
+9 verbose logfile logs-max:10 dir:/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npm-cache/_logs/2025-09-21T12_42_26_495Z-
+10 verbose logfile /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npm-cache/_logs/2025-09-21T12_42_26_495Z-debug-0.log
+11 silly logfile start cleaning logs, removing 1 files
+12 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+13 silly logfile done cleaning log files
+14 silly idealTree buildDeps
+15 silly fetch manifest dotenv@^16.6.1
+16 silly packumentCache full:https://registry.npmjs.org/dotenv cache-miss
+17 http cache https://registry.npmjs.org/dotenv 81ms (cache hit)
+18 silly packumentCache full:https://registry.npmjs.org/dotenv set size:258824 disposed:false
+19 silly fetch manifest tsx@^4.7.1
+20 silly packumentCache full:https://registry.npmjs.org/tsx cache-miss
+21 http cache https://registry.npmjs.org/tsx 10ms (cache hit)
+22 silly packumentCache full:https://registry.npmjs.org/tsx set size:285045 disposed:false
+23 silly placeDep ROOT dotenv@16.6.1 REPLACE for: my-v0-project@0.1.0 want: ^16.6.1
+24 silly placeDep ROOT tsx@4.20.5 REPLACE for: my-v0-project@0.1.0 want: ^4.7.1
+25 silly fetch manifest picomatch@^3 || ^4
+26 silly packumentCache full:https://registry.npmjs.org/picomatch cache-miss
+27 http cache https://registry.npmjs.org/picomatch 11ms (cache hit)
+28 silly packumentCache full:https://registry.npmjs.org/picomatch set size:118818 disposed:false
+29 silly placeDep ROOT picomatch@4.0.3 REPLACE for: fdir@6.5.0 want: ^3 || ^4
+30 silly fetch manifest picomatch@^2.3.1
+31 silly packumentCache full:https://registry.npmjs.org/picomatch cache-hit
+32 silly placeDep node_modules/micromatch picomatch@2.3.1 OK for: micromatch@4.0.8 want: ^2.3.1
+33 silly fetch manifest react@^16.8 || ^17.0 || ^18.0
+34 silly packumentCache full:https://registry.npmjs.org/react cache-miss
+35 http fetch GET 200 https://registry.npmjs.org/react 235ms (cache revalidated)
+36 silly packumentCache full:https://registry.npmjs.org/react set size:6068774 disposed:false
+37 silly fetch manifest react-dom@^16.8 || ^17.0 || ^18.0
+38 silly packumentCache full:https://registry.npmjs.org/react-dom cache-miss
+39 http fetch GET 200 https://registry.npmjs.org/react-dom 76ms (cache revalidated)
+40 silly packumentCache full:https://registry.npmjs.org/react-dom set size:7871383 disposed:false
+41 verbose stack Error: could not resolve
+41 verbose stack     at PlaceDep.failPeerConflict (/Users/nicolecurcis/.nvm/versions/node/v22.19.0/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/place-dep.js:503:25)
+41 verbose stack     at new PlaceDep (/Users/nicolecurcis/.nvm/versions/node/v22.19.0/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/place-dep.js:157:21)
+41 verbose stack     at #buildDepStep (/Users/nicolecurcis/.nvm/versions/node/v22.19.0/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/build-ideal-tree.js:920:18)
+41 verbose stack     at async Arborist.buildIdealTree (/Users/nicolecurcis/.nvm/versions/node/v22.19.0/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/build-ideal-tree.js:181:7)
+41 verbose stack     at async Promise.all (index 1)
+41 verbose stack     at async Arborist.reify (/Users/nicolecurcis/.nvm/versions/node/v22.19.0/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:131:5)
+41 verbose stack     at async Install.exec (/Users/nicolecurcis/.nvm/versions/node/v22.19.0/lib/node_modules/npm/lib/commands/install.js:150:5)
+41 verbose stack     at async Npm.exec (/Users/nicolecurcis/.nvm/versions/node/v22.19.0/lib/node_modules/npm/lib/npm.js:207:9)
+41 verbose stack     at async module.exports (/Users/nicolecurcis/.nvm/versions/node/v22.19.0/lib/node_modules/npm/lib/cli/entry.js:74:5)
+42 error code ERESOLVE
+43 error ERESOLVE could not resolve
+44 error
+45 error While resolving: vaul@0.9.9
+45 error Found: react@19.1.1
+45 error node_modules/react
+45 error   peer react@">=16.8.0" from @floating-ui/react-dom@2.1.6
+45 error   node_modules/@floating-ui/react-dom
+45 error     @floating-ui/react-dom@"^2.0.0" from @radix-ui/react-popper@1.2.1
+45 error     node_modules/@radix-ui/react-popper
+45 error       @radix-ui/react-popper@"1.2.1" from @radix-ui/react-hover-card@1.1.4
+45 error       node_modules/@radix-ui/react-hover-card
+45 error         @radix-ui/react-hover-card@"1.1.4" from the root project
+45 error       4 more (@radix-ui/react-menu, @radix-ui/react-popover, ...)
+45 error   peer react@"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc" from @radix-ui/react-accordion@1.2.12
+45 error   node_modules/@radix-ui/react-accordion
+45 error     @radix-ui/react-accordion@"latest" from the root project
+45 error   260 more (@radix-ui/react-collapsible, ...)
+45 error
+45 error Could not resolve dependency:
+45 error peer react@"^16.8 || ^17.0 || ^18.0" from vaul@0.9.9
+45 error node_modules/vaul
+45 error   vaul@"^0.9.6" from the root project
+45 error
+45 error Conflicting peer dependency: react@18.3.1
+45 error node_modules/react
+45 error   peer react@"^16.8 || ^17.0 || ^18.0" from vaul@0.9.9
+45 error   node_modules/vaul
+45 error     vaul@"^0.9.6" from the root project
+45 error
+45 error Fix the upstream dependency conflict, or retry
+45 error this command with --force or --legacy-peer-deps
+45 error to accept an incorrect (and potentially broken) dependency resolution.
+46 error
+46 error
+46 error For a full report see:
+46 error /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npm-cache/_logs/2025-09-21T12_42_26_495Z-eresolve-report.txt
+47 silly unfinished npm timer reify 1758458547354
+48 silly unfinished npm timer reify:loadTrees 1758458547359
+49 silly unfinished npm timer idealTree:buildDeps 1758458547731
+50 silly unfinished npm timer idealTree:node_modules/vaul 1758458547871
+51 verbose cwd /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized
+52 verbose os Darwin 24.6.0
+53 verbose node v22.19.0
+54 verbose npm  v10.9.3
+55 verbose exit 1
+56 verbose code 1
+57 error A complete log of this run can be found in: /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npm-cache/_logs/2025-09-21T12_42_26_495Z-debug-0.log

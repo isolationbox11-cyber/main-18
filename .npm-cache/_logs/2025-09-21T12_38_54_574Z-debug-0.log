@@ -1,0 +1,1957 @@
+0 verbose cli /Users/nicolecurcis/.nvm/versions/node/v22.19.0/bin/node /Users/nicolecurcis/.nvm/versions/node/v22.19.0/bin/npm
+1 info using npm@10.9.3
+2 info using node@v22.19.0
+3 silly config load:file:/Users/nicolecurcis/.nvm/versions/node/v22.19.0/lib/node_modules/npm/npmrc
+4 silly config load:file:/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npmrc
+5 silly config load:file:/Users/nicolecurcis/.npmrc
+6 silly config load:file:/Users/nicolecurcis/.nvm/versions/node/v22.19.0/etc/npmrc
+7 verbose title npm install dotenv
+8 verbose argv "install" "dotenv" "--save" "--legacy-peer-deps"
+9 verbose logfile logs-max:10 dir:/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npm-cache/_logs/2025-09-21T12_38_54_574Z-
+10 verbose logfile /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npm-cache/_logs/2025-09-21T12_38_54_574Z-debug-0.log
+11 silly logfile start cleaning logs, removing 1 files
+12 silly logfile done cleaning log files
+13 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+14 silly idealTree buildDeps
+15 silly fetch manifest dotenv@^16.6.1
+16 silly packumentCache full:https://registry.npmjs.org/dotenv cache-miss
+17 http cache https://registry.npmjs.org/dotenv 43ms (cache hit)
+18 silly packumentCache full:https://registry.npmjs.org/dotenv set size:258824 disposed:false
+19 silly placeDep ROOT dotenv@16.6.1 REPLACE for: my-v0-project@0.1.0 want: ^16.6.1
+20 silly reify moves {}
+21 silly reify mark deleted [
+21 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@emnapi/core'
+21 silly reify ]
+22 silly reify mark deleted [
+22 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@emnapi/wasi-threads'
+22 silly reify ]
+23 silly reify mark deleted [
+23 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/aix-ppc64'
+23 silly reify ]
+24 silly reify mark deleted [
+24 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/android-arm'
+24 silly reify ]
+25 silly reify mark deleted [
+25 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/android-arm64'
+25 silly reify ]
+26 silly reify mark deleted [
+26 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/android-x64'
+26 silly reify ]
+27 silly reify mark deleted [
+27 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/darwin-arm64'
+27 silly reify ]
+28 silly reify mark deleted [
+28 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/darwin-x64'
+28 silly reify ]
+29 silly reify mark deleted [
+29 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/freebsd-arm64'
+29 silly reify ]
+30 silly reify mark deleted [
+30 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/freebsd-x64'
+30 silly reify ]
+31 silly reify mark deleted [
+31 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/linux-arm'
+31 silly reify ]
+32 silly reify mark deleted [
+32 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/linux-arm64'
+32 silly reify ]
+33 silly reify mark deleted [
+33 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/linux-ia32'
+33 silly reify ]
+34 silly reify mark deleted [
+34 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/linux-loong64'
+34 silly reify ]
+35 silly reify mark deleted [
+35 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/linux-mips64el'
+35 silly reify ]
+36 silly reify mark deleted [
+36 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/linux-ppc64'
+36 silly reify ]
+37 silly reify mark deleted [
+37 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/linux-riscv64'
+37 silly reify ]
+38 silly reify mark deleted [
+38 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/linux-s390x'
+38 silly reify ]
+39 silly reify mark deleted [
+39 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/linux-x64'
+39 silly reify ]
+40 silly reify mark deleted [
+40 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/netbsd-arm64'
+40 silly reify ]
+41 silly reify mark deleted [
+41 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/netbsd-x64'
+41 silly reify ]
+42 silly reify mark deleted [
+42 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/openbsd-arm64'
+42 silly reify ]
+43 silly reify mark deleted [
+43 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/openbsd-x64'
+43 silly reify ]
+44 silly reify mark deleted [
+44 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/openharmony-arm64'
+44 silly reify ]
+45 silly reify mark deleted [
+45 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/sunos-x64'
+45 silly reify ]
+46 silly reify mark deleted [
+46 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/win32-arm64'
+46 silly reify ]
+47 silly reify mark deleted [
+47 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/win32-ia32'
+47 silly reify ]
+48 silly reify mark deleted [
+48 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@esbuild/win32-x64'
+48 silly reify ]
+49 silly reify mark deleted [
+49 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@eslint-community/eslint-utils'
+49 silly reify ]
+50 silly reify mark deleted [
+50 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@eslint-community/regexpp'
+50 silly reify ]
+51 silly reify mark deleted [
+51 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@eslint/eslintrc'
+51 silly reify ]
+52 silly reify mark deleted [
+52 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@eslint/eslintrc/node_modules/brace-expansion'
+52 silly reify ]
+53 silly reify mark deleted [
+53 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@eslint/eslintrc/node_modules/minimatch'
+53 silly reify ]
+54 silly reify mark deleted [
+54 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@eslint/js'
+54 silly reify ]
+55 silly reify mark deleted [
+55 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@humanwhocodes/config-array'
+55 silly reify ]
+56 silly reify mark deleted [
+56 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@humanwhocodes/config-array/node_modules/brace-expansion'
+56 silly reify ]
+57 silly reify mark deleted [
+57 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@humanwhocodes/config-array/node_modules/minimatch'
+57 silly reify ]
+58 silly reify mark deleted [
+58 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@humanwhocodes/module-importer'
+58 silly reify ]
+59 silly reify mark deleted [
+59 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@humanwhocodes/object-schema'
+59 silly reify ]
+60 silly reify mark deleted [
+60 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@isaacs/cliui'
+60 silly reify ]
+61 silly reify mark deleted [
+61 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@isaacs/cliui/node_modules/ansi-regex'
+61 silly reify ]
+62 silly reify mark deleted [
+62 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@isaacs/cliui/node_modules/strip-ansi'
+62 silly reify ]
+63 silly reify mark deleted [
+63 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@napi-rs/wasm-runtime'
+63 silly reify ]
+64 silly reify mark deleted [
+64 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@next/eslint-plugin-next'
+64 silly reify ]
+65 silly reify mark deleted [
+65 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@nodelib/fs.scandir'
+65 silly reify ]
+66 silly reify mark deleted [
+66 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@nodelib/fs.stat'
+66 silly reify ]
+67 silly reify mark deleted [
+67 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@nodelib/fs.walk'
+67 silly reify ]
+68 silly reify mark deleted [
+68 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@nolyfill/is-core-module'
+68 silly reify ]
+69 silly reify mark deleted [
+69 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@pkgjs/parseargs'
+69 silly reify ]
+70 silly reify mark deleted [
+70 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@rtsao/scc'
+70 silly reify ]
+71 silly reify mark deleted [
+71 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@rushstack/eslint-patch'
+71 silly reify ]
+72 silly reify mark deleted [
+72 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@tybys/wasm-util'
+72 silly reify ]
+73 silly reify mark deleted [
+73 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@types/json5'
+73 silly reify ]
+74 silly reify mark deleted [
+74 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@types/prop-types'
+74 silly reify ]
+75 silly reify mark deleted [
+75 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@types/react'
+75 silly reify ]
+76 silly reify mark deleted [
+76 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@types/react-dom'
+76 silly reify ]
+77 silly reify mark deleted [
+77 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@typescript-eslint/eslint-plugin'
+77 silly reify ]
+78 silly reify mark deleted [
+78 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@typescript-eslint/parser'
+78 silly reify ]
+79 silly reify mark deleted [
+79 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@typescript-eslint/scope-manager'
+79 silly reify ]
+80 silly reify mark deleted [
+80 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@typescript-eslint/type-utils'
+80 silly reify ]
+81 silly reify mark deleted [
+81 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@typescript-eslint/types'
+81 silly reify ]
+82 silly reify mark deleted [
+82 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@typescript-eslint/typescript-estree'
+82 silly reify ]
+83 silly reify mark deleted [
+83 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@typescript-eslint/utils'
+83 silly reify ]
+84 silly reify mark deleted [
+84 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@typescript-eslint/visitor-keys'
+84 silly reify ]
+85 silly reify mark deleted [
+85 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@ungap/structured-clone'
+85 silly reify ]
+86 silly reify mark deleted [
+86 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-android-arm-eabi'
+86 silly reify ]
+87 silly reify mark deleted [
+87 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-android-arm64'
+87 silly reify ]
+88 silly reify mark deleted [
+88 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-darwin-arm64'
+88 silly reify ]
+89 silly reify mark deleted [
+89 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-darwin-x64'
+89 silly reify ]
+90 silly reify mark deleted [
+90 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-freebsd-x64'
+90 silly reify ]
+91 silly reify mark deleted [
+91 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-linux-arm-gnueabihf'
+91 silly reify ]
+92 silly reify mark deleted [
+92 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-linux-arm-musleabihf'
+92 silly reify ]
+93 silly reify mark deleted [
+93 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-linux-arm64-gnu'
+93 silly reify ]
+94 silly reify mark deleted [
+94 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-linux-arm64-musl'
+94 silly reify ]
+95 silly reify mark deleted [
+95 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-linux-ppc64-gnu'
+95 silly reify ]
+96 silly reify mark deleted [
+96 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-linux-riscv64-gnu'
+96 silly reify ]
+97 silly reify mark deleted [
+97 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-linux-riscv64-musl'
+97 silly reify ]
+98 silly reify mark deleted [
+98 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-linux-s390x-gnu'
+98 silly reify ]
+99 silly reify mark deleted [
+99 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-linux-x64-gnu'
+99 silly reify ]
+100 silly reify mark deleted [
+100 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-linux-x64-musl'
+100 silly reify ]
+101 silly reify mark deleted [
+101 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-wasm32-wasi'
+101 silly reify ]
+102 silly reify mark deleted [
+102 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-win32-arm64-msvc'
+102 silly reify ]
+103 silly reify mark deleted [
+103 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-win32-ia32-msvc'
+103 silly reify ]
+104 silly reify mark deleted [
+104 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@unrs/resolver-binding-win32-x64-msvc'
+104 silly reify ]
+105 silly reify mark deleted [
+105 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/acorn',
+105 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/.bin/acorn'
+105 silly reify ]
+106 silly reify mark deleted [
+106 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/acorn-jsx'
+106 silly reify ]
+107 silly reify mark deleted [
+107 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/ajv'
+107 silly reify ]
+108 silly reify mark deleted [
+108 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/ansi-regex'
+108 silly reify ]
+109 silly reify mark deleted [
+109 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/ansi-styles'
+109 silly reify ]
+110 silly reify mark deleted [
+110 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/argparse'
+110 silly reify ]
+111 silly reify mark deleted [
+111 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/aria-query'
+111 silly reify ]
+112 silly reify mark deleted [
+112 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/array-buffer-byte-length'
+112 silly reify ]
+113 silly reify mark deleted [
+113 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/array-includes'
+113 silly reify ]
+114 silly reify mark deleted [
+114 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/array-union'
+114 silly reify ]
+115 silly reify mark deleted [
+115 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/array.prototype.findlast'
+115 silly reify ]
+116 silly reify mark deleted [
+116 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/array.prototype.findlastindex'
+116 silly reify ]
+117 silly reify mark deleted [
+117 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/array.prototype.flat'
+117 silly reify ]
+118 silly reify mark deleted [
+118 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/array.prototype.flatmap'
+118 silly reify ]
+119 silly reify mark deleted [
+119 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/array.prototype.tosorted'
+119 silly reify ]
+120 silly reify mark deleted [
+120 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/arraybuffer.prototype.slice'
+120 silly reify ]
+121 silly reify mark deleted [
+121 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/ast-types-flow'
+121 silly reify ]
+122 silly reify mark deleted [
+122 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/async-function'
+122 silly reify ]
+123 silly reify mark deleted [
+123 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/autoprefixer',
+123 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/.bin/autoprefixer'
+123 silly reify ]
+124 silly reify mark deleted [
+124 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/available-typed-arrays'
+124 silly reify ]
+125 silly reify mark deleted [
+125 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/axe-core'
+125 silly reify ]
+126 silly reify mark deleted [
+126 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/axobject-query'
+126 silly reify ]
+127 silly reify mark deleted [
+127 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/balanced-match'
+127 silly reify ]
+128 silly reify mark deleted [
+128 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/baseline-browser-mapping',
+128 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/.bin/baseline-browser-mapping'
+128 silly reify ]
+129 silly reify mark deleted [
+129 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/brace-expansion'
+129 silly reify ]
+130 silly reify mark deleted [
+130 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/braces'
+130 silly reify ]
+131 silly reify mark deleted [
+131 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/browserslist',
+131 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/.bin/browserslist'
+131 silly reify ]
+132 silly reify mark deleted [
+132 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/call-bind'
+132 silly reify ]
+133 silly reify mark deleted [
+133 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/call-bind-apply-helpers'
+133 silly reify ]
+134 silly reify mark deleted [
+134 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/call-bound'
+134 silly reify ]
+135 silly reify mark deleted [
+135 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/callsites'
+135 silly reify ]
+136 silly reify mark deleted [
+136 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/chalk'
+136 silly reify ]
+137 silly reify mark deleted [
+137 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/color-convert'
+137 silly reify ]
+138 silly reify mark deleted [
+138 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/color-name'
+138 silly reify ]
+139 silly reify mark deleted [
+139 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/concat-map'
+139 silly reify ]
+140 silly reify mark deleted [
+140 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/cross-spawn'
+140 silly reify ]
+141 silly reify mark deleted [
+141 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/csstype'
+141 silly reify ]
+142 silly reify mark deleted [
+142 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/damerau-levenshtein'
+142 silly reify ]
+143 silly reify mark deleted [
+143 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/data-view-buffer'
+143 silly reify ]
+144 silly reify mark deleted [
+144 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/data-view-byte-length'
+144 silly reify ]
+145 silly reify mark deleted [
+145 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/data-view-byte-offset'
+145 silly reify ]
+146 silly reify mark deleted [
+146 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/debug'
+146 silly reify ]
+147 silly reify mark deleted [
+147 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/deep-is'
+147 silly reify ]
+148 silly reify mark deleted [
+148 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/define-data-property'
+148 silly reify ]
+149 silly reify mark deleted [
+149 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/define-properties'
+149 silly reify ]
+150 silly reify mark deleted [
+150 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/dir-glob'
+150 silly reify ]
+151 silly reify mark deleted [
+151 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/doctrine'
+151 silly reify ]
+152 silly reify mark deleted [
+152 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/dunder-proto'
+152 silly reify ]
+153 silly reify mark deleted [
+153 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eastasianwidth'
+153 silly reify ]
+154 silly reify mark deleted [
+154 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/electron-to-chromium'
+154 silly reify ]
+155 silly reify mark deleted [
+155 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/emoji-regex'
+155 silly reify ]
+156 silly reify mark deleted [
+156 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/es-abstract'
+156 silly reify ]
+157 silly reify mark deleted [
+157 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/es-define-property'
+157 silly reify ]
+158 silly reify mark deleted [
+158 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/es-errors'
+158 silly reify ]
+159 silly reify mark deleted [
+159 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/es-iterator-helpers'
+159 silly reify ]
+160 silly reify mark deleted [
+160 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/es-object-atoms'
+160 silly reify ]
+161 silly reify mark deleted [
+161 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/es-set-tostringtag'
+161 silly reify ]
+162 silly reify mark deleted [
+162 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/es-shim-unscopables'
+162 silly reify ]
+163 silly reify mark deleted [
+163 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/es-to-primitive'
+163 silly reify ]
+164 silly reify mark deleted [
+164 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/esbuild',
+164 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/.bin/esbuild'
+164 silly reify ]
+165 silly reify mark deleted [
+165 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/escalade'
+165 silly reify ]
+166 silly reify mark deleted [
+166 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/escape-string-regexp'
+166 silly reify ]
+167 silly reify mark deleted [
+167 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint',
+167 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/.bin/eslint'
+167 silly reify ]
+168 silly reify mark deleted [
+168 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-config-next'
+168 silly reify ]
+169 silly reify mark deleted [
+169 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-config-next/node_modules/@typescript-eslint/parser'
+169 silly reify ]
+170 silly reify mark deleted [
+170 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-config-next/node_modules/@typescript-eslint/scope-manager'
+170 silly reify ]
+171 silly reify mark deleted [
+171 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-config-next/node_modules/@typescript-eslint/types'
+171 silly reify ]
+172 silly reify mark deleted [
+172 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-config-next/node_modules/@typescript-eslint/typescript-estree'
+172 silly reify ]
+173 silly reify mark deleted [
+173 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-config-next/node_modules/@typescript-eslint/visitor-keys'
+173 silly reify ]
+174 silly reify mark deleted [
+174 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-config-next/node_modules/minimatch'
+174 silly reify ]
+175 silly reify mark deleted [
+175 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-import-resolver-node'
+175 silly reify ]
+176 silly reify mark deleted [
+176 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-import-resolver-node/node_modules/debug'
+176 silly reify ]
+177 silly reify mark deleted [
+177 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-import-resolver-typescript'
+177 silly reify ]
+178 silly reify mark deleted [
+178 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-module-utils'
+178 silly reify ]
+179 silly reify mark deleted [
+179 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-module-utils/node_modules/debug'
+179 silly reify ]
+180 silly reify mark deleted [
+180 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-import'
+180 silly reify ]
+181 silly reify mark deleted [
+181 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-import/node_modules/brace-expansion'
+181 silly reify ]
+182 silly reify mark deleted [
+182 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-import/node_modules/debug'
+182 silly reify ]
+183 silly reify mark deleted [
+183 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-import/node_modules/doctrine'
+183 silly reify ]
+184 silly reify mark deleted [
+184 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-import/node_modules/minimatch'
+184 silly reify ]
+185 silly reify mark deleted [
+185 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-import/node_modules/semver',
+185 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-import/node_modules/.bin/semver'
+185 silly reify ]
+186 silly reify mark deleted [
+186 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-jsx-a11y'
+186 silly reify ]
+187 silly reify mark deleted [
+187 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-jsx-a11y/node_modules/brace-expansion'
+187 silly reify ]
+188 silly reify mark deleted [
+188 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-jsx-a11y/node_modules/minimatch'
+188 silly reify ]
+189 silly reify mark deleted [
+189 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-react'
+189 silly reify ]
+190 silly reify mark deleted [
+190 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-react-hooks'
+190 silly reify ]
+191 silly reify mark deleted [
+191 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-react/node_modules/brace-expansion'
+191 silly reify ]
+192 silly reify mark deleted [
+192 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-react/node_modules/doctrine'
+192 silly reify ]
+193 silly reify mark deleted [
+193 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-react/node_modules/minimatch'
+193 silly reify ]
+194 silly reify mark deleted [
+194 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-react/node_modules/resolve',
+194 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-react/node_modules/.bin/resolve'
+194 silly reify ]
+195 silly reify mark deleted [
+195 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-react/node_modules/semver',
+195 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-plugin-react/node_modules/.bin/semver'
+195 silly reify ]
+196 silly reify mark deleted [
+196 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-scope'
+196 silly reify ]
+197 silly reify mark deleted [
+197 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint-visitor-keys'
+197 silly reify ]
+198 silly reify mark deleted [
+198 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint/node_modules/brace-expansion'
+198 silly reify ]
+199 silly reify mark deleted [
+199 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/eslint/node_modules/minimatch'
+199 silly reify ]
+200 silly reify mark deleted [
+200 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/espree'
+200 silly reify ]
+201 silly reify mark deleted [
+201 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/esquery'
+201 silly reify ]
+202 silly reify mark deleted [
+202 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/esrecurse'
+202 silly reify ]
+203 silly reify mark deleted [
+203 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/estraverse'
+203 silly reify ]
+204 silly reify mark deleted [
+204 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/esutils'
+204 silly reify ]
+205 silly reify mark deleted [
+205 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/fast-deep-equal'
+205 silly reify ]
+206 silly reify mark deleted [
+206 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/fast-glob'
+206 silly reify ]
+207 silly reify mark deleted [
+207 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/fast-glob/node_modules/glob-parent'
+207 silly reify ]
+208 silly reify mark deleted [
+208 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/fast-json-stable-stringify'
+208 silly reify ]
+209 silly reify mark deleted [
+209 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/fast-levenshtein'
+209 silly reify ]
+210 silly reify mark deleted [
+210 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/fastq'
+210 silly reify ]
+211 silly reify mark deleted [
+211 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/fdir'
+211 silly reify ]
+212 silly reify mark deleted [
+212 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/file-entry-cache'
+212 silly reify ]
+213 silly reify mark deleted [
+213 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/fill-range'
+213 silly reify ]
+214 silly reify mark deleted [
+214 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/find-up'
+214 silly reify ]
+215 silly reify mark deleted [
+215 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/flat-cache'
+215 silly reify ]
+216 silly reify mark deleted [
+216 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/flatted'
+216 silly reify ]
+217 silly reify mark deleted [
+217 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/for-each'
+217 silly reify ]
+218 silly reify mark deleted [
+218 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/foreground-child'
+218 silly reify ]
+219 silly reify mark deleted [
+219 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/fraction.js'
+219 silly reify ]
+220 silly reify mark deleted [
+220 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/fs.realpath'
+220 silly reify ]
+221 silly reify mark deleted [
+221 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/fsevents'
+221 silly reify ]
+222 silly reify mark deleted [
+222 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/function-bind'
+222 silly reify ]
+223 silly reify mark deleted [
+223 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/function.prototype.name'
+223 silly reify ]
+224 silly reify mark deleted [
+224 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/functions-have-names'
+224 silly reify ]
+225 silly reify mark deleted [
+225 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/get-intrinsic'
+225 silly reify ]
+226 silly reify mark deleted [
+226 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/get-proto'
+226 silly reify ]
+227 silly reify mark deleted [
+227 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/get-symbol-description'
+227 silly reify ]
+228 silly reify mark deleted [
+228 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/get-tsconfig'
+228 silly reify ]
+229 silly reify mark deleted [
+229 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/glob',
+229 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/.bin/glob'
+229 silly reify ]
+230 silly reify mark deleted [
+230 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/glob-parent'
+230 silly reify ]
+231 silly reify mark deleted [
+231 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/globals'
+231 silly reify ]
+232 silly reify mark deleted [
+232 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/globalthis'
+232 silly reify ]
+233 silly reify mark deleted [
+233 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/globby'
+233 silly reify ]
+234 silly reify mark deleted [
+234 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/gopd'
+234 silly reify ]
+235 silly reify mark deleted [
+235 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/graphemer'
+235 silly reify ]
+236 silly reify mark deleted [
+236 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/has-bigints'
+236 silly reify ]
+237 silly reify mark deleted [
+237 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/has-flag'
+237 silly reify ]
+238 silly reify mark deleted [
+238 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/has-property-descriptors'
+238 silly reify ]
+239 silly reify mark deleted [
+239 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/has-proto'
+239 silly reify ]
+240 silly reify mark deleted [
+240 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/has-symbols'
+240 silly reify ]
+241 silly reify mark deleted [
+241 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/has-tostringtag'
+241 silly reify ]
+242 silly reify mark deleted [
+242 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/hasown'
+242 silly reify ]
+243 silly reify mark deleted [
+243 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/ignore'
+243 silly reify ]
+244 silly reify mark deleted [
+244 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/import-fresh'
+244 silly reify ]
+245 silly reify mark deleted [
+245 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/imurmurhash'
+245 silly reify ]
+246 silly reify mark deleted [
+246 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/inflight'
+246 silly reify ]
+247 silly reify mark deleted [
+247 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/inherits'
+247 silly reify ]
+248 silly reify mark deleted [
+248 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/internal-slot'
+248 silly reify ]
+249 silly reify mark deleted [
+249 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-array-buffer'
+249 silly reify ]
+250 silly reify mark deleted [
+250 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-async-function'
+250 silly reify ]
+251 silly reify mark deleted [
+251 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-bigint'
+251 silly reify ]
+252 silly reify mark deleted [
+252 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-boolean-object'
+252 silly reify ]
+253 silly reify mark deleted [
+253 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-bun-module'
+253 silly reify ]
+254 silly reify mark deleted [
+254 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-callable'
+254 silly reify ]
+255 silly reify mark deleted [
+255 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-core-module'
+255 silly reify ]
+256 silly reify mark deleted [
+256 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-data-view'
+256 silly reify ]
+257 silly reify mark deleted [
+257 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-date-object'
+257 silly reify ]
+258 silly reify mark deleted [
+258 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-extglob'
+258 silly reify ]
+259 silly reify mark deleted [
+259 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-finalizationregistry'
+259 silly reify ]
+260 silly reify mark deleted [
+260 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-fullwidth-code-point'
+260 silly reify ]
+261 silly reify mark deleted [
+261 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-generator-function'
+261 silly reify ]
+262 silly reify mark deleted [
+262 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-glob'
+262 silly reify ]
+263 silly reify mark deleted [
+263 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-map'
+263 silly reify ]
+264 silly reify mark deleted [
+264 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-negative-zero'
+264 silly reify ]
+265 silly reify mark deleted [
+265 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-number'
+265 silly reify ]
+266 silly reify mark deleted [
+266 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-number-object'
+266 silly reify ]
+267 silly reify mark deleted [
+267 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-path-inside'
+267 silly reify ]
+268 silly reify mark deleted [
+268 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-regex'
+268 silly reify ]
+269 silly reify mark deleted [
+269 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-set'
+269 silly reify ]
+270 silly reify mark deleted [
+270 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-shared-array-buffer'
+270 silly reify ]
+271 silly reify mark deleted [
+271 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-string'
+271 silly reify ]
+272 silly reify mark deleted [
+272 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-symbol'
+272 silly reify ]
+273 silly reify mark deleted [
+273 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-typed-array'
+273 silly reify ]
+274 silly reify mark deleted [
+274 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-weakmap'
+274 silly reify ]
+275 silly reify mark deleted [
+275 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-weakref'
+275 silly reify ]
+276 silly reify mark deleted [
+276 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/is-weakset'
+276 silly reify ]
+277 silly reify mark deleted [
+277 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/isarray'
+277 silly reify ]
+278 silly reify mark deleted [
+278 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/isexe'
+278 silly reify ]
+279 silly reify mark deleted [
+279 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/iterator.prototype'
+279 silly reify ]
+280 silly reify mark deleted [
+280 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/jackspeak'
+280 silly reify ]
+281 silly reify mark deleted [
+281 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/js-tokens'
+281 silly reify ]
+282 silly reify mark deleted [
+282 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/js-yaml',
+282 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/.bin/js-yaml'
+282 silly reify ]
+283 silly reify mark deleted [
+283 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/json-buffer'
+283 silly reify ]
+284 silly reify mark deleted [
+284 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/json-schema-traverse'
+284 silly reify ]
+285 silly reify mark deleted [
+285 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/json-stable-stringify-without-jsonify'
+285 silly reify ]
+286 silly reify mark deleted [
+286 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/json5',
+286 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/.bin/json5'
+286 silly reify ]
+287 silly reify mark deleted [
+287 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/jsx-ast-utils'
+287 silly reify ]
+288 silly reify mark deleted [
+288 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/keyv'
+288 silly reify ]
+289 silly reify mark deleted [
+289 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/language-subtag-registry'
+289 silly reify ]
+290 silly reify mark deleted [
+290 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/language-tags'
+290 silly reify ]
+291 silly reify mark deleted [
+291 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/levn'
+291 silly reify ]
+292 silly reify mark deleted [
+292 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/locate-path'
+292 silly reify ]
+293 silly reify mark deleted [
+293 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/lodash.merge'
+293 silly reify ]
+294 silly reify mark deleted [
+294 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/loose-envify',
+294 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/.bin/loose-envify'
+294 silly reify ]
+295 silly reify mark deleted [
+295 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/lru-cache'
+295 silly reify ]
+296 silly reify mark deleted [
+296 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/math-intrinsics'
+296 silly reify ]
+297 silly reify mark deleted [
+297 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/merge2'
+297 silly reify ]
+298 silly reify mark deleted [
+298 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/micromatch'
+298 silly reify ]
+299 silly reify mark deleted [
+299 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/minimatch'
+299 silly reify ]
+300 silly reify mark deleted [
+300 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/minimist'
+300 silly reify ]
+301 silly reify mark deleted [
+301 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/minipass'
+301 silly reify ]
+302 silly reify mark deleted [
+302 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/ms'
+302 silly reify ]
+303 silly reify mark deleted [
+303 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/napi-postinstall',
+303 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/.bin/napi-postinstall'
+303 silly reify ]
+304 silly reify mark deleted [
+304 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/natural-compare'
+304 silly reify ]
+305 silly reify mark deleted [
+305 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/node-releases'
+305 silly reify ]
+306 silly reify mark deleted [
+306 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/normalize-range'
+306 silly reify ]
+307 silly reify mark deleted [
+307 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/object-assign'
+307 silly reify ]
+308 silly reify mark deleted [
+308 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/object-inspect'
+308 silly reify ]
+309 silly reify mark deleted [
+309 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/object-keys'
+309 silly reify ]
+310 silly reify mark deleted [
+310 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/object.assign'
+310 silly reify ]
+311 silly reify mark deleted [
+311 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/object.entries'
+311 silly reify ]
+312 silly reify mark deleted [
+312 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/object.fromentries'
+312 silly reify ]
+313 silly reify mark deleted [
+313 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/object.groupby'
+313 silly reify ]
+314 silly reify mark deleted [
+314 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/object.values'
+314 silly reify ]
+315 silly reify mark deleted [
+315 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/once'
+315 silly reify ]
+316 silly reify mark deleted [
+316 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/optionator'
+316 silly reify ]
+317 silly reify mark deleted [
+317 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/own-keys'
+317 silly reify ]
+318 silly reify mark deleted [
+318 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/p-limit'
+318 silly reify ]
+319 silly reify mark deleted [
+319 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/p-locate'
+319 silly reify ]
+320 silly reify mark deleted [
+320 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/parent-module'
+320 silly reify ]
+321 silly reify mark deleted [
+321 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/path-exists'
+321 silly reify ]
+322 silly reify mark deleted [
+322 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/path-is-absolute'
+322 silly reify ]
+323 silly reify mark deleted [
+323 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/path-key'
+323 silly reify ]
+324 silly reify mark deleted [
+324 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/path-parse'
+324 silly reify ]
+325 silly reify mark deleted [
+325 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/path-scurry'
+325 silly reify ]
+326 silly reify mark deleted [
+326 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/path-type'
+326 silly reify ]
+327 silly reify mark deleted [
+327 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/picomatch'
+327 silly reify ]
+328 silly reify mark deleted [
+328 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/possible-typed-array-names'
+328 silly reify ]
+329 silly reify mark deleted [
+329 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/postcss'
+329 silly reify ]
+330 silly reify mark deleted [
+330 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/postcss-value-parser'
+330 silly reify ]
+331 silly reify mark deleted [
+331 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/prelude-ls'
+331 silly reify ]
+332 silly reify mark deleted [
+332 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/prop-types'
+332 silly reify ]
+333 silly reify mark deleted [
+333 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/punycode'
+333 silly reify ]
+334 silly reify mark deleted [
+334 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/queue-microtask'
+334 silly reify ]
+335 silly reify mark deleted [
+335 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/react-is'
+335 silly reify ]
+336 silly reify mark deleted [
+336 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/reflect.getprototypeof'
+336 silly reify ]
+337 silly reify mark deleted [
+337 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/regexp.prototype.flags'
+337 silly reify ]
+338 silly reify mark deleted [
+338 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/resolve',
+338 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/.bin/resolve'
+338 silly reify ]
+339 silly reify mark deleted [
+339 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/resolve-from'
+339 silly reify ]
+340 silly reify mark deleted [
+340 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/resolve-pkg-maps'
+340 silly reify ]
+341 silly reify mark deleted [
+341 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/reusify'
+341 silly reify ]
+342 silly reify mark deleted [
+342 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/rimraf',
+342 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/.bin/rimraf'
+342 silly reify ]
+343 silly reify mark deleted [
+343 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/rimraf/node_modules/brace-expansion'
+343 silly reify ]
+344 silly reify mark deleted [
+344 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/rimraf/node_modules/glob'
+344 silly reify ]
+345 silly reify mark deleted [
+345 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/rimraf/node_modules/minimatch'
+345 silly reify ]
+346 silly reify mark deleted [
+346 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/run-parallel'
+346 silly reify ]
+347 silly reify mark deleted [
+347 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/safe-array-concat'
+347 silly reify ]
+348 silly reify mark deleted [
+348 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/safe-push-apply'
+348 silly reify ]
+349 silly reify mark deleted [
+349 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/safe-regex-test'
+349 silly reify ]
+350 silly reify mark deleted [
+350 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/set-function-length'
+350 silly reify ]
+351 silly reify mark deleted [
+351 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/set-function-name'
+351 silly reify ]
+352 silly reify mark deleted [
+352 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/set-proto'
+352 silly reify ]
+353 silly reify mark deleted [
+353 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/shebang-command'
+353 silly reify ]
+354 silly reify mark deleted [
+354 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/shebang-regex'
+354 silly reify ]
+355 silly reify mark deleted [
+355 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/side-channel'
+355 silly reify ]
+356 silly reify mark deleted [
+356 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/side-channel-list'
+356 silly reify ]
+357 silly reify mark deleted [
+357 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/side-channel-map'
+357 silly reify ]
+358 silly reify mark deleted [
+358 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/side-channel-weakmap'
+358 silly reify ]
+359 silly reify mark deleted [
+359 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/signal-exit'
+359 silly reify ]
+360 silly reify mark deleted [
+360 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/slash'
+360 silly reify ]
+361 silly reify mark deleted [
+361 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/stable-hash'
+361 silly reify ]
+362 silly reify mark deleted [
+362 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/stop-iteration-iterator'
+362 silly reify ]
+363 silly reify mark deleted [
+363 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/string-width'
+363 silly reify ]
+364 silly reify mark deleted [
+364 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/string-width-cjs'
+364 silly reify ]
+365 silly reify mark deleted [
+365 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/string-width-cjs/node_modules/emoji-regex'
+365 silly reify ]
+366 silly reify mark deleted [
+366 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/string-width/node_modules/ansi-regex'
+366 silly reify ]
+367 silly reify mark deleted [
+367 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/string-width/node_modules/strip-ansi'
+367 silly reify ]
+368 silly reify mark deleted [
+368 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/string.prototype.includes'
+368 silly reify ]
+369 silly reify mark deleted [
+369 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/string.prototype.matchall'
+369 silly reify ]
+370 silly reify mark deleted [
+370 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/string.prototype.repeat'
+370 silly reify ]
+371 silly reify mark deleted [
+371 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/string.prototype.trim'
+371 silly reify ]
+372 silly reify mark deleted [
+372 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/string.prototype.trimend'
+372 silly reify ]
+373 silly reify mark deleted [
+373 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/string.prototype.trimstart'
+373 silly reify ]
+374 silly reify mark deleted [
+374 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/strip-ansi'
+374 silly reify ]
+375 silly reify mark deleted [
+375 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/strip-ansi-cjs'
+375 silly reify ]
+376 silly reify mark deleted [
+376 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/strip-bom'
+376 silly reify ]
+377 silly reify mark deleted [
+377 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/strip-json-comments'
+377 silly reify ]
+378 silly reify mark deleted [
+378 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/supports-color'
+378 silly reify ]
+379 silly reify mark deleted [
+379 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/supports-preserve-symlinks-flag'
+379 silly reify ]
+380 silly reify mark deleted [
+380 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/tailwindcss'
+380 silly reify ]
+381 silly reify mark deleted [
+381 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/tailwindcss-animate'
+381 silly reify ]
+382 silly reify mark deleted [
+382 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/text-table'
+382 silly reify ]
+383 silly reify mark deleted [
+383 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/tinyglobby'
+383 silly reify ]
+384 silly reify mark deleted [
+384 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/tinyglobby/node_modules/picomatch'
+384 silly reify ]
+385 silly reify mark deleted [
+385 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/to-regex-range'
+385 silly reify ]
+386 silly reify mark deleted [
+386 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/ts-api-utils'
+386 silly reify ]
+387 silly reify mark deleted [
+387 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/tsconfig-paths'
+387 silly reify ]
+388 silly reify mark deleted [
+388 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/tsx',
+388 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/.bin/tsx'
+388 silly reify ]
+389 silly reify mark deleted [
+389 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/type-check'
+389 silly reify ]
+390 silly reify mark deleted [
+390 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/type-fest'
+390 silly reify ]
+391 silly reify mark deleted [
+391 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/typed-array-buffer'
+391 silly reify ]
+392 silly reify mark deleted [
+392 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/typed-array-byte-length'
+392 silly reify ]
+393 silly reify mark deleted [
+393 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/typed-array-byte-offset'
+393 silly reify ]
+394 silly reify mark deleted [
+394 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/typed-array-length'
+394 silly reify ]
+395 silly reify mark deleted [
+395 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/typescript',
+395 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/.bin/tsc',
+395 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/.bin/tsserver'
+395 silly reify ]
+396 silly reify mark deleted [
+396 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/unbox-primitive'
+396 silly reify ]
+397 silly reify mark deleted [
+397 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/unrs-resolver'
+397 silly reify ]
+398 silly reify mark deleted [
+398 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/update-browserslist-db',
+398 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/.bin/update-browserslist-db'
+398 silly reify ]
+399 silly reify mark deleted [
+399 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/uri-js'
+399 silly reify ]
+400 silly reify mark deleted [
+400 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/which',
+400 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/.bin/node-which'
+400 silly reify ]
+401 silly reify mark deleted [
+401 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/which-boxed-primitive'
+401 silly reify ]
+402 silly reify mark deleted [
+402 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/which-builtin-type'
+402 silly reify ]
+403 silly reify mark deleted [
+403 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/which-collection'
+403 silly reify ]
+404 silly reify mark deleted [
+404 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/which-typed-array'
+404 silly reify ]
+405 silly reify mark deleted [
+405 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/word-wrap'
+405 silly reify ]
+406 silly reify mark deleted [
+406 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/wrap-ansi'
+406 silly reify ]
+407 silly reify mark deleted [
+407 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/wrap-ansi-cjs'
+407 silly reify ]
+408 silly reify mark deleted [
+408 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/wrap-ansi-cjs/node_modules/emoji-regex'
+408 silly reify ]
+409 silly reify mark deleted [
+409 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/wrap-ansi-cjs/node_modules/string-width'
+409 silly reify ]
+410 silly reify mark deleted [
+410 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/wrap-ansi/node_modules/ansi-regex'
+410 silly reify ]
+411 silly reify mark deleted [
+411 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/wrap-ansi/node_modules/ansi-styles'
+411 silly reify ]
+412 silly reify mark deleted [
+412 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/wrap-ansi/node_modules/strip-ansi'
+412 silly reify ]
+413 silly reify mark deleted [
+413 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/wrappy'
+413 silly reify ]
+414 silly reify mark deleted [
+414 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/yocto-queue'
+414 silly reify ]
+415 silly reify mark deleted [
+415 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/dotenv'
+415 silly reify ]
+416 silly audit bulk request {
+416 silly audit   '@date-fns/tz': [ '1.2.0' ],
+416 silly audit   '@emnapi/runtime': [ '1.5.0' ],
+416 silly audit   '@floating-ui/core': [ '1.7.3' ],
+416 silly audit   '@floating-ui/dom': [ '1.7.4' ],
+416 silly audit   '@floating-ui/react-dom': [ '2.1.6' ],
+416 silly audit   '@floating-ui/utils': [ '0.2.10' ],
+416 silly audit   '@hookform/resolvers': [ '3.10.0' ],
+416 silly audit   '@img/colour': [ '1.0.0' ],
+416 silly audit   '@img/sharp-darwin-arm64': [ '0.34.4' ],
+416 silly audit   '@img/sharp-darwin-x64': [ '0.34.4' ],
+416 silly audit   '@img/sharp-libvips-darwin-arm64': [ '1.2.3' ],
+416 silly audit   '@img/sharp-libvips-darwin-x64': [ '1.2.3' ],
+416 silly audit   '@img/sharp-libvips-linux-arm': [ '1.2.3' ],
+416 silly audit   '@img/sharp-libvips-linux-arm64': [ '1.2.3' ],
+416 silly audit   '@img/sharp-libvips-linux-ppc64': [ '1.2.3' ],
+416 silly audit   '@img/sharp-libvips-linux-s390x': [ '1.2.3' ],
+416 silly audit   '@img/sharp-libvips-linux-x64': [ '1.2.3' ],
+416 silly audit   '@img/sharp-libvips-linuxmusl-arm64': [ '1.2.3' ],
+416 silly audit   '@img/sharp-libvips-linuxmusl-x64': [ '1.2.3' ],
+416 silly audit   '@img/sharp-linux-arm': [ '0.34.4' ],
+416 silly audit   '@img/sharp-linux-arm64': [ '0.34.4' ],
+416 silly audit   '@img/sharp-linux-ppc64': [ '0.34.4' ],
+416 silly audit   '@img/sharp-linux-s390x': [ '0.34.4' ],
+416 silly audit   '@img/sharp-linux-x64': [ '0.34.4' ],
+416 silly audit   '@img/sharp-linuxmusl-arm64': [ '0.34.4' ],
+416 silly audit   '@img/sharp-linuxmusl-x64': [ '0.34.4' ],
+416 silly audit   '@img/sharp-wasm32': [ '0.34.4' ],
+416 silly audit   '@img/sharp-win32-arm64': [ '0.34.4' ],
+416 silly audit   '@img/sharp-win32-ia32': [ '0.34.4' ],
+416 silly audit   '@img/sharp-win32-x64': [ '0.34.4' ],
+416 silly audit   '@next/env': [ '15.5.3' ],
+416 silly audit   '@next/swc-darwin-arm64': [ '15.5.3' ],
+416 silly audit   '@next/swc-darwin-x64': [ '15.5.3' ],
+416 silly audit   '@next/swc-linux-arm64-gnu': [ '15.5.3' ],
+416 silly audit   '@next/swc-linux-arm64-musl': [ '15.5.3' ],
+416 silly audit   '@next/swc-linux-x64-gnu': [ '15.5.3' ],
+416 silly audit   '@next/swc-linux-x64-musl': [ '15.5.3' ],
+416 silly audit   '@next/swc-win32-arm64-msvc': [ '15.5.3' ],
+416 silly audit   '@next/swc-win32-x64-msvc': [ '15.5.3' ],
+416 silly audit   '@radix-ui/number': [ '1.1.1', '1.1.0' ],
+416 silly audit   '@radix-ui/primitive': [ '1.1.3', '1.1.1' ],
+416 silly audit   '@radix-ui/react-accordion': [ '1.2.12' ],
+416 silly audit   '@radix-ui/react-collapsible': [ '1.1.12', '1.1.2' ],
+416 silly audit   '@radix-ui/react-presence': [ '1.1.5', '1.1.2' ],
+416 silly audit   '@radix-ui/react-use-layout-effect': [ '1.1.1', '1.1.0' ],
+416 silly audit   '@radix-ui/react-alert-dialog': [ '1.1.4' ],
+416 silly audit   '@radix-ui/react-compose-refs': [ '1.1.1', '1.1.2' ],
+416 silly audit   '@radix-ui/react-context': [ '1.1.1', '1.1.2' ],
+416 silly audit   '@radix-ui/react-dialog': [ '1.1.4', '1.1.15' ],
+416 silly audit   '@radix-ui/react-dismissable-layer': [ '1.1.3', '1.1.11' ],
+416 silly audit   '@radix-ui/react-focus-guards': [ '1.1.1', '1.1.3' ],
+416 silly audit   '@radix-ui/react-focus-scope': [ '1.1.1', '1.1.7' ],
+416 silly audit   '@radix-ui/react-id': [ '1.1.0', '1.1.1' ],
+416 silly audit   '@radix-ui/react-portal': [ '1.1.3', '1.1.9' ],
+416 silly audit   '@radix-ui/react-primitive': [ '2.0.1', '2.1.3' ],
+416 silly audit   '@radix-ui/react-slot': [ '1.1.1', '1.2.3' ],
+416 silly audit   '@radix-ui/react-use-controllable-state': [ '1.1.0', '1.2.2' ],
+416 silly audit   '@radix-ui/react-use-escape-keydown': [ '1.1.0', '1.1.1' ],
+416 silly audit   '@radix-ui/react-arrow': [ '1.1.1' ],
+416 silly audit   '@radix-ui/react-aspect-ratio': [ '1.1.1' ],
+416 silly audit   '@radix-ui/react-avatar': [ '1.1.2' ],
+416 silly audit   '@radix-ui/react-checkbox': [ '1.1.3' ],
+416 silly audit   '@radix-ui/react-collection': [ '1.1.7', '1.1.1' ],
+416 silly audit   '@radix-ui/react-context-menu': [ '2.2.4' ],
+416 silly audit   '@radix-ui/react-direction': [ '1.1.1', '1.1.0' ],
+416 silly audit   '@radix-ui/react-use-callback-ref': [ '1.1.1', '1.1.0' ],
+416 silly audit   '@radix-ui/react-dropdown-menu': [ '2.1.4' ],
+416 silly audit   '@radix-ui/react-hover-card': [ '1.1.4' ],
+416 silly audit   '@radix-ui/react-label': [ '2.1.1' ],
+416 silly audit   '@radix-ui/react-menu': [ '2.1.4' ],
+416 silly audit   '@radix-ui/react-menubar': [ '1.1.4' ],
+416 silly audit   '@radix-ui/react-navigation-menu': [ '1.2.3' ],
+416 silly audit   '@radix-ui/react-popover': [ '1.1.4' ],
+416 silly audit   '@radix-ui/react-popper': [ '1.2.1' ],
+416 silly audit   '@radix-ui/react-progress': [ '1.1.7' ],
+416 silly audit   '@radix-ui/react-radio-group': [ '1.2.2' ],
+416 silly audit   '@radix-ui/react-roving-focus': [ '1.1.1', '1.1.11' ],
+416 silly audit   '@radix-ui/react-scroll-area': [ '1.2.10' ],
+416 silly audit   '@radix-ui/react-select': [ '2.1.4' ],
+416 silly audit   '@radix-ui/react-separator': [ '1.1.7' ],
+416 silly audit   '@radix-ui/react-slider': [ '1.2.2' ],
+416 silly audit   '@radix-ui/react-switch': [ '1.2.6' ],
+416 silly audit   '@radix-ui/react-use-previous': [ '1.1.1', '1.1.0' ],
+416 silly audit   '@radix-ui/react-use-size': [ '1.1.1', '1.1.0' ],
+416 silly audit   '@radix-ui/react-tabs': [ '1.1.13' ],
+416 silly audit   '@radix-ui/react-toast': [ '1.2.4' ],
+416 silly audit   '@radix-ui/react-toggle': [ '1.1.1' ],
+416 silly audit   '@radix-ui/react-toggle-group': [ '1.1.1' ],
+416 silly audit   '@radix-ui/react-tooltip': [ '1.1.6' ],
+416 silly audit   '@radix-ui/react-use-effect-event': [ '0.0.2' ],
+416 silly audit   '@radix-ui/react-use-rect': [ '1.1.0' ],
+416 silly audit   '@radix-ui/react-visually-hidden': [ '1.1.1' ],
+416 silly audit   '@radix-ui/rect': [ '1.1.0' ],
+416 silly audit   '@reduxjs/toolkit': [ '2.9.0' ],
+416 silly audit   '@standard-schema/spec': [ '1.0.0' ],
+416 silly audit   '@standard-schema/utils': [ '0.3.0' ],
+416 silly audit   '@supabase/auth-js': [ '2.71.1' ],
+416 silly audit   '@supabase/functions-js': [ '2.4.6' ],
+416 silly audit   '@supabase/node-fetch': [ '2.6.15' ],
+416 silly audit   '@supabase/postgrest-js': [ '1.21.4' ],
+416 silly audit   '@supabase/realtime-js': [ '2.15.5' ],
+416 silly audit   '@supabase/ssr': [ '0.7.0' ],
+416 silly audit   '@supabase/storage-js': [ '2.12.1' ],
+416 silly audit   '@supabase/supabase-js': [ '2.57.4' ],
+416 silly audit   '@swc/helpers': [ '0.5.15' ],
+416 silly audit   '@types/d3-array': [ '3.2.2' ],
+416 silly audit   '@types/d3-color': [ '3.1.3' ],
+416 silly audit   '@types/d3-ease': [ '3.0.2' ],
+416 silly audit   '@types/d3-interpolate': [ '3.0.4' ],
+416 silly audit   '@types/d3-path': [ '3.1.1' ],
+416 silly audit   '@types/d3-scale': [ '4.0.9' ],
+416 silly audit   '@types/d3-shape': [ '3.1.7' ],
+416 silly audit   '@types/d3-time': [ '3.0.4' ],
+416 silly audit   '@types/d3-timer': [ '3.0.2' ],
+416 silly audit   '@types/node': [ '20.19.17' ],
+416 silly audit   '@types/phoenix': [ '1.6.6' ],
+416 silly audit   '@types/use-sync-external-store': [ '0.0.6' ],
+416 silly audit   '@types/ws': [ '8.18.1' ],
+416 silly audit   'aria-hidden': [ '1.2.6' ],
+416 silly audit   'caniuse-lite': [ '1.0.30001743' ],
+416 silly audit   'class-variance-authority': [ '0.7.1' ],
+416 silly audit   'client-only': [ '0.0.1' ],
+416 silly audit   clsx: [ '2.1.1' ],
+416 silly audit   cmdk: [ '1.0.4' ],
+416 silly audit   cookie: [ '1.0.2' ],
+416 silly audit   'd3-array': [ '3.2.4' ],
+416 silly audit   'd3-color': [ '3.1.0' ],
+416 silly audit   'd3-ease': [ '3.0.1' ],
+416 silly audit   'd3-format': [ '3.1.0' ],
+416 silly audit   'd3-interpolate': [ '3.0.1' ],
+416 silly audit   'd3-path': [ '3.1.0' ],
+416 silly audit   'd3-scale': [ '4.0.2' ],
+416 silly audit   'd3-shape': [ '3.2.0' ],
+416 silly audit   'd3-time': [ '3.1.0' ],
+416 silly audit   'd3-time-format': [ '4.1.0' ],
+416 silly audit   'd3-timer': [ '3.0.1' ],
+416 silly audit   'date-fns': [ '4.1.0' ],
+416 silly audit   'date-fns-jalali': [ '4.1.0-0' ],
+416 silly audit   'decimal.js-light': [ '2.5.1' ],
+416 silly audit   'detect-libc': [ '2.1.0' ],
+416 silly audit   'detect-node-es': [ '1.1.0' ],
+416 silly audit   'embla-carousel': [ '8.5.1' ],
+416 silly audit   'embla-carousel-react': [ '8.5.1' ],
+416 silly audit   'embla-carousel-reactive-utils': [ '8.5.1' ],
+416 silly audit   'es-toolkit': [ '1.39.10' ],
+416 silly audit   semver: [ '7.7.2' ],
+416 silly audit   eventemitter3: [ '5.0.1' ],
+416 silly audit   geist: [ '1.5.1' ],
+416 silly audit   'get-nonce': [ '1.0.1' ],
+416 silly audit   immer: [ '10.1.3' ],
+416 silly audit   'input-otp': [ '1.4.1' ],
+416 silly audit   internmap: [ '2.0.3' ],
+416 silly audit   'lucide-react': [ '0.454.0' ],
+416 silly audit   nanoid: [ '3.3.11' ],
+416 silly audit   next: [ '15.5.3' ],
+416 silly audit   'next-themes': [ '0.4.6' ],
+416 silly audit   postcss: [ '8.4.31' ],
+416 silly audit   picocolors: [ '1.1.1' ],
+416 silly audit   react: [ '19.1.1' ],
+416 silly audit   'react-day-picker': [ '9.8.0' ],
+416 silly audit   'react-dom': [ '19.1.1' ],
+416 silly audit   'react-hook-form': [ '7.63.0' ],
+416 silly audit   'react-redux': [ '9.2.0' ],
+416 silly audit   'react-remove-scroll': [ '2.7.1' ],
+416 silly audit   'react-remove-scroll-bar': [ '2.3.8' ],
+416 silly audit   'react-resizable-panels': [ '2.1.9' ],
+416 silly audit   'react-style-singleton': [ '2.2.3' ],
+416 silly audit   recharts: [ '3.2.1' ],
+416 silly audit   redux: [ '5.0.1' ],
+416 silly audit   'redux-thunk': [ '3.1.0' ],
+416 silly audit   reselect: [ '5.1.1' ],
+416 silly audit   scheduler: [ '0.26.0' ],
+416 silly audit   sharp: [ '0.34.4' ],
+416 silly audit   sonner: [ '2.0.7' ],
+416 silly audit   'source-map-js': [ '1.2.1' ],
+416 silly audit   'styled-jsx': [ '5.1.6' ],
+416 silly audit   'tailwind-merge': [ '2.6.0' ],
+416 silly audit   'tiny-invariant': [ '1.3.3' ],
+416 silly audit   tr46: [ '0.0.3' ],
+416 silly audit   tslib: [ '2.8.1' ],
+416 silly audit   'undici-types': [ '6.21.0' ],
+416 silly audit   'use-callback-ref': [ '1.3.3' ],
+416 silly audit   'use-sidecar': [ '1.1.3' ],
+416 silly audit   'use-sync-external-store': [ '1.5.0' ],
+416 silly audit   vaul: [ '0.9.9' ],
+416 silly audit   'victory-vendor': [ '37.3.6' ],
+416 silly audit   'webidl-conversions': [ '3.0.1' ],
+416 silly audit   'whatwg-url': [ '5.0.0' ],
+416 silly audit   ws: [ '8.18.3' ],
+416 silly audit   zod: [ '3.25.76' ]
+416 silly audit }
+417 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@next/swc-win32-x64-msvc
+418 silly reify mark deleted [
+418 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@next/swc-win32-x64-msvc'
+418 silly reify ]
+419 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@next/swc-win32-arm64-msvc
+420 silly reify mark deleted [
+420 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@next/swc-win32-arm64-msvc'
+420 silly reify ]
+421 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@next/swc-linux-x64-musl
+422 silly reify mark deleted [
+422 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@next/swc-linux-x64-musl'
+422 silly reify ]
+423 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@next/swc-linux-x64-gnu
+424 silly reify mark deleted [
+424 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@next/swc-linux-x64-gnu'
+424 silly reify ]
+425 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@next/swc-linux-arm64-musl
+426 silly reify mark deleted [
+426 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@next/swc-linux-arm64-musl'
+426 silly reify ]
+427 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@next/swc-linux-arm64-gnu
+428 silly reify mark deleted [
+428 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@next/swc-linux-arm64-gnu'
+428 silly reify ]
+429 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@next/swc-darwin-x64
+430 silly reify mark deleted [
+430 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@next/swc-darwin-x64'
+430 silly reify ]
+431 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-win32-x64
+432 silly reify mark deleted [
+432 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-win32-x64'
+432 silly reify ]
+433 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-win32-ia32
+434 silly reify mark deleted [
+434 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-win32-ia32'
+434 silly reify ]
+435 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-win32-arm64
+436 silly reify mark deleted [
+436 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-win32-arm64'
+436 silly reify ]
+437 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-wasm32
+438 silly reify mark deleted [
+438 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-wasm32'
+438 silly reify ]
+439 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-linuxmusl-x64
+440 silly reify mark deleted [
+440 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-linuxmusl-x64'
+440 silly reify ]
+441 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-linuxmusl-arm64
+442 silly reify mark deleted [
+442 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-linuxmusl-arm64'
+442 silly reify ]
+443 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-linux-x64
+444 silly reify mark deleted [
+444 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-linux-x64'
+444 silly reify ]
+445 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-linux-s390x
+446 silly reify mark deleted [
+446 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-linux-s390x'
+446 silly reify ]
+447 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-linux-ppc64
+448 silly reify mark deleted [
+448 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-linux-ppc64'
+448 silly reify ]
+449 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-linux-arm64
+450 silly reify mark deleted [
+450 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-linux-arm64'
+450 silly reify ]
+451 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-linux-arm
+452 silly reify mark deleted [
+452 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-linux-arm'
+452 silly reify ]
+453 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-libvips-linuxmusl-x64
+454 silly reify mark deleted [
+454 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-libvips-linuxmusl-x64'
+454 silly reify ]
+455 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-libvips-linuxmusl-arm64
+456 silly reify mark deleted [
+456 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-libvips-linuxmusl-arm64'
+456 silly reify ]
+457 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-libvips-linux-x64
+458 silly reify mark deleted [
+458 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-libvips-linux-x64'
+458 silly reify ]
+459 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-libvips-linux-s390x
+460 silly reify mark deleted [
+460 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-libvips-linux-s390x'
+460 silly reify ]
+461 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-libvips-linux-ppc64
+462 silly reify mark deleted [
+462 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-libvips-linux-ppc64'
+462 silly reify ]
+463 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-libvips-linux-arm64
+464 silly reify mark deleted [
+464 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-libvips-linux-arm64'
+464 silly reify ]
+465 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-libvips-linux-arm
+466 silly reify mark deleted [
+466 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-libvips-linux-arm'
+466 silly reify ]
+467 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-libvips-darwin-x64
+468 silly reify mark deleted [
+468 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-libvips-darwin-x64'
+468 silly reify ]
+469 verbose reify failed optional dependency /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-darwin-x64
+470 silly reify mark deleted [
+470 silly reify   '/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/node_modules/@img/sharp-darwin-x64'
+470 silly reify ]
+471 http fetch POST 200 https://registry.npmjs.org/-/npm/v1/security/advisories/bulk 495ms
+472 silly audit report {}
+473 silly ADD
+474 silly ADD
+475 silly ADD
+476 silly ADD
+477 silly ADD node_modules/string-width
+478 silly ADD node_modules/emoji-regex
+479 silly ADD
+480 silly ADD node_modules/strip-ansi
+481 silly ADD node_modules/ansi-styles
+482 silly ADD node_modules/ansi-regex
+483 silly ADD
+484 silly ADD
+485 silly ADD
+486 silly ADD
+487 silly ADD
+488 silly ADD
+489 silly ADD
+490 silly ADD
+491 silly ADD
+492 silly ADD
+493 silly ADD
+494 silly ADD
+495 silly ADD
+496 silly ADD
+497 silly ADD
+498 silly ADD
+499 silly ADD
+500 silly ADD
+501 silly ADD
+502 silly ADD
+503 silly ADD
+504 silly ADD
+505 silly ADD node_modules/picomatch
+506 silly ADD
+507 silly ADD
+508 silly ADD
+509 silly ADD
+510 silly ADD
+511 silly ADD
+512 silly ADD
+513 silly ADD
+514 silly ADD
+515 silly ADD
+516 silly ADD
+517 silly ADD
+518 silly ADD
+519 silly ADD
+520 silly ADD
+521 silly ADD
+522 silly ADD node_modules/emoji-regex
+523 silly ADD
+524 silly ADD node_modules/strip-ansi
+525 silly ADD node_modules/ansi-regex
+526 silly ADD
+527 silly ADD
+528 silly ADD
+529 silly ADD
+530 silly ADD
+531 silly ADD
+532 silly ADD
+533 silly ADD
+534 silly ADD
+535 silly ADD
+536 silly ADD
+537 silly ADD
+538 silly ADD
+539 silly ADD
+540 silly ADD
+541 silly ADD
+542 silly ADD
+543 silly ADD
+544 silly ADD node_modules/minimatch
+545 silly ADD node_modules/glob
+546 silly ADD node_modules/brace-expansion
+547 silly ADD
+548 silly ADD
+549 silly ADD
+550 silly ADD
+551 silly ADD
+552 silly ADD
+553 silly ADD
+554 silly ADD
+555 silly ADD
+556 silly ADD
+557 silly ADD
+558 silly ADD
+559 silly ADD
+560 silly ADD
+561 silly ADD
+562 silly ADD
+563 silly ADD
+564 silly ADD
+565 silly ADD
+566 silly ADD
+567 silly ADD
+568 silly ADD
+569 silly ADD
+570 silly ADD
+571 silly ADD
+572 silly ADD
+573 silly ADD
+574 silly ADD
+575 silly ADD
+576 silly ADD
+577 silly ADD
+578 silly ADD
+579 silly ADD
+580 silly ADD
+581 silly ADD
+582 silly ADD
+583 silly ADD
+584 silly ADD
+585 silly ADD
+586 silly ADD
+587 silly ADD
+588 silly ADD
+589 silly ADD
+590 silly ADD
+591 silly ADD
+592 silly ADD
+593 silly ADD
+594 silly ADD
+595 silly ADD
+596 silly ADD
+597 silly ADD
+598 silly ADD
+599 silly ADD
+600 silly ADD
+601 silly ADD
+602 silly ADD
+603 silly ADD
+604 silly ADD
+605 silly ADD
+606 silly ADD
+607 silly ADD
+608 silly ADD
+609 silly ADD
+610 silly ADD
+611 silly ADD
+612 silly ADD
+613 silly ADD
+614 silly ADD
+615 silly ADD
+616 silly ADD
+617 silly ADD
+618 silly ADD
+619 silly ADD
+620 silly ADD
+621 silly ADD
+622 silly ADD
+623 silly ADD
+624 silly ADD
+625 silly ADD
+626 silly ADD
+627 silly ADD
+628 silly ADD
+629 silly ADD
+630 silly ADD
+631 silly ADD
+632 silly ADD
+633 silly ADD
+634 silly ADD
+635 silly ADD
+636 silly ADD
+637 silly ADD
+638 silly ADD
+639 silly ADD
+640 silly ADD
+641 silly ADD
+642 silly ADD
+643 silly ADD
+644 silly ADD
+645 silly ADD
+646 silly ADD
+647 silly ADD
+648 silly ADD
+649 silly ADD
+650 silly ADD
+651 silly ADD
+652 silly ADD
+653 silly ADD
+654 silly ADD
+655 silly ADD
+656 silly ADD
+657 silly ADD
+658 silly ADD
+659 silly ADD
+660 silly ADD
+661 silly ADD
+662 silly ADD
+663 silly ADD
+664 silly ADD
+665 silly ADD
+666 silly ADD
+667 silly ADD
+668 silly ADD
+669 silly ADD
+670 silly ADD
+671 silly ADD
+672 silly ADD
+673 silly ADD
+674 silly ADD
+675 silly ADD
+676 silly ADD
+677 silly ADD
+678 silly ADD
+679 silly ADD
+680 silly ADD
+681 silly ADD
+682 silly ADD node_modules/glob-parent
+683 silly ADD
+684 silly ADD
+685 silly ADD
+686 silly ADD
+687 silly ADD
+688 silly ADD
+689 silly ADD
+690 silly ADD
+691 silly ADD
+692 silly ADD
+693 silly ADD node_modules/semver
+694 silly ADD node_modules/resolve
+695 silly ADD node_modules/minimatch
+696 silly ADD node_modules/doctrine
+697 silly ADD node_modules/brace-expansion
+698 silly ADD
+699 silly ADD node_modules/minimatch
+700 silly ADD node_modules/brace-expansion
+701 silly ADD
+702 silly ADD node_modules/semver
+703 silly ADD node_modules/minimatch
+704 silly ADD node_modules/doctrine
+705 silly ADD node_modules/debug
+706 silly ADD node_modules/brace-expansion
+707 silly ADD
+708 silly ADD node_modules/debug
+709 silly ADD
+710 silly ADD
+711 silly ADD node_modules/debug
+712 silly ADD
+713 silly ADD node_modules/minimatch
+714 silly ADD node_modules/@typescript-eslint/visitor-keys
+715 silly ADD node_modules/@typescript-eslint/typescript-estree
+716 silly ADD node_modules/@typescript-eslint/types
+717 silly ADD node_modules/@typescript-eslint/scope-manager
+718 silly ADD node_modules/@typescript-eslint/parser
+719 silly ADD
+720 silly ADD node_modules/minimatch
+721 silly ADD node_modules/brace-expansion
+722 silly ADD
+723 silly ADD
+724 silly ADD
+725 silly ADD
+726 silly ADD
+727 silly ADD
+728 silly ADD
+729 silly ADD
+730 silly ADD
+731 silly ADD
+732 silly ADD
+733 silly ADD
+734 silly ADD
+735 silly ADD
+736 silly ADD
+737 silly ADD
+738 silly ADD
+739 silly ADD
+740 silly ADD
+741 silly ADD
+742 silly ADD
+743 silly ADD
+744 silly ADD
+745 silly ADD
+746 silly ADD
+747 silly ADD
+748 silly ADD
+749 silly ADD
+750 silly ADD
+751 silly ADD
+752 silly ADD
+753 silly ADD
+754 silly ADD
+755 silly ADD
+756 silly ADD
+757 silly ADD
+758 silly ADD
+759 silly ADD
+760 silly ADD
+761 silly ADD
+762 silly ADD
+763 silly ADD
+764 silly ADD
+765 silly ADD
+766 silly ADD
+767 silly ADD
+768 silly ADD
+769 silly ADD
+770 silly ADD
+771 silly ADD
+772 silly ADD
+773 silly ADD
+774 silly ADD
+775 silly ADD
+776 silly ADD
+777 silly ADD
+778 silly ADD
+779 silly ADD
+780 silly ADD
+781 silly ADD
+782 silly ADD
+783 silly ADD
+784 silly ADD
+785 silly ADD
+786 silly ADD
+787 silly ADD
+788 silly ADD
+789 silly ADD
+790 silly ADD
+791 silly ADD
+792 silly ADD
+793 silly ADD
+794 silly ADD
+795 silly ADD
+796 silly ADD
+797 silly ADD
+798 silly ADD
+799 silly ADD
+800 silly ADD
+801 silly ADD
+802 silly ADD
+803 silly ADD
+804 silly ADD
+805 silly ADD
+806 silly ADD
+807 silly ADD
+808 silly ADD
+809 silly ADD
+810 silly ADD
+811 silly ADD
+812 silly ADD
+813 silly ADD
+814 silly ADD
+815 silly ADD
+816 silly ADD
+817 silly ADD
+818 silly ADD
+819 silly ADD
+820 silly ADD
+821 silly ADD
+822 silly ADD
+823 silly ADD
+824 silly ADD
+825 silly ADD
+826 silly ADD
+827 silly ADD
+828 silly ADD
+829 silly ADD
+830 silly ADD
+831 silly ADD
+832 silly ADD
+833 silly ADD
+834 silly ADD node_modules/strip-ansi
+835 silly ADD node_modules/ansi-regex
+836 silly ADD
+837 silly ADD
+838 silly ADD
+839 silly ADD
+840 silly ADD
+841 silly ADD
+842 silly ADD
+843 silly ADD
+844 silly ADD
+845 silly ADD
+846 silly ADD
+847 silly ADD
+848 silly ADD
+849 silly ADD
+850 silly ADD
+851 silly ADD
+852 silly ADD
+853 silly ADD
+854 silly ADD
+855 silly ADD
+856 silly ADD
+857 silly ADD
+858 silly ADD
+859 silly ADD node_modules/minimatch
+860 silly ADD node_modules/brace-expansion
+861 silly ADD
+862 silly ADD
+863 silly ADD node_modules/minimatch
+864 silly ADD node_modules/brace-expansion
+865 silly ADD
+866 silly ADD
+867 silly ADD
+868 silly ADD
+869 silly ADD
+870 silly ADD
+871 silly ADD
+872 silly ADD
+873 silly ADD
+874 silly ADD
+875 silly ADD
+876 silly ADD
+877 silly ADD
+878 silly ADD
+879 silly ADD
+880 silly ADD
+881 silly ADD
+882 silly ADD
+883 silly ADD
+884 silly ADD
+885 silly ADD
+886 silly ADD
+887 silly ADD
+888 silly ADD
+889 silly ADD
+890 silly ADD
+891 silly ADD
+892 silly ADD
+893 silly ADD
+894 silly ADD
+895 verbose cwd /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized
+896 verbose os Darwin 24.6.0
+897 verbose node v22.19.0
+898 verbose npm  v10.9.3
+899 verbose exit 0
+900 info ok
