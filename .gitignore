@@ -2,9 +2,11 @@
 
 # dependencies
 /node_modules
+/cybersecurity-dashboard-2/node_modules
 
 # next.js
 /.next/
+/cybersecurity-dashboard-2/.next/
 /out/
 
 # production
@@ -25,3 +27,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/cybersecurity-dashboard-2/next-env.d.ts

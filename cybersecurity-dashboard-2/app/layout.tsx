@@ -1,9 +1,9 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
 import "./globals.css"
 
-const inter = Inter({ subsets: ["latin"] })
+// Using system font fallback instead of Google Fonts for reliable builds
+const inter = { className: "font-sans" }
 
 export const metadata: Metadata = {
   title: "Salem Cyber Vault - Internet Intelligence Platform",
