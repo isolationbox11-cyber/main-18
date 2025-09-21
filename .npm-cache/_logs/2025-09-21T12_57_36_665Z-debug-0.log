@@ -5,10 +5,10 @@
 4 silly config load:file:/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npmrc
 5 silly config load:file:/Users/nicolecurcis/.npmrc
 6 silly config load:file:/Users/nicolecurcis/.nvm/versions/node/v22.19.0/etc/npmrc
-7 verbose title npm exec tsx scripts/generate-types.ts
-8 verbose argv "exec" "--" "tsx" "scripts/generate-types.ts"
-9 verbose logfile logs-max:10 dir:/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npm-cache/_logs/2025-09-21T12_43_17_987Z-
-10 verbose logfile /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npm-cache/_logs/2025-09-21T12_43_17_987Z-debug-0.log
+7 verbose title npm exec tsx scripts/generate-types.ts --debug
+8 verbose argv "exec" "--" "tsx" "scripts/generate-types.ts" "--debug"
+9 verbose logfile logs-max:10 dir:/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npm-cache/_logs/2025-09-21T12_57_36_665Z-
+10 verbose logfile /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npm-cache/_logs/2025-09-21T12_57_36_665Z-debug-0.log
 11 silly logfile start cleaning logs, removing 1 files
 12 silly logfile done cleaning log files
 13 verbose cwd /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized

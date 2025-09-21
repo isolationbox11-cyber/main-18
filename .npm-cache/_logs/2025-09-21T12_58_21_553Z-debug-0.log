@@ -6,21 +6,21 @@
 5 silly config load:file:/Users/nicolecurcis/.npmrc
 6 silly config load:file:/Users/nicolecurcis/.nvm/versions/node/v22.19.0/etc/npmrc
 7 verbose title npm install dotenv
-8 verbose argv "install" "dotenv" "--save"
-9 verbose logfile logs-max:10 dir:/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npm-cache/_logs/2025-09-21T12_38_34_359Z-
-10 verbose logfile /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npm-cache/_logs/2025-09-21T12_38_34_359Z-debug-0.log
+8 verbose argv "install" "dotenv" "--save-dev"
+9 verbose logfile logs-max:10 dir:/Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npm-cache/_logs/2025-09-21T12_58_21_553Z-
+10 verbose logfile /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npm-cache/_logs/2025-09-21T12_58_21_553Z-debug-0.log
 11 silly logfile start cleaning logs, removing 1 files
 12 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
 13 silly logfile done cleaning log files
 14 silly idealTree buildDeps
 15 silly fetch manifest dotenv@^16.6.1
 16 silly packumentCache full:https://registry.npmjs.org/dotenv cache-miss
-17 http cache https://registry.npmjs.org/dotenv 39ms (cache hit)
+17 http fetch GET 200 https://registry.npmjs.org/dotenv 273ms (cache revalidated)
 18 silly packumentCache full:https://registry.npmjs.org/dotenv set size:258824 disposed:false
 19 silly placeDep ROOT dotenv@16.6.1 REPLACE for: my-v0-project@0.1.0 want: ^16.6.1
 20 silly fetch manifest picomatch@^3 || ^4
 21 silly packumentCache full:https://registry.npmjs.org/picomatch cache-miss
-22 http cache https://registry.npmjs.org/picomatch 3ms (cache hit)
+22 http fetch GET 200 https://registry.npmjs.org/picomatch 60ms (cache revalidated)
 23 silly packumentCache full:https://registry.npmjs.org/picomatch set size:118818 disposed:false
 24 silly placeDep ROOT picomatch@4.0.3 REPLACE for: fdir@6.5.0 want: ^3 || ^4
 25 silly fetch manifest picomatch@^2.3.1
@@ -28,11 +28,11 @@
 27 silly placeDep node_modules/micromatch picomatch@2.3.1 OK for: micromatch@4.0.8 want: ^2.3.1
 28 silly fetch manifest react@^16.8 || ^17.0 || ^18.0
 29 silly packumentCache full:https://registry.npmjs.org/react cache-miss
-30 http cache https://registry.npmjs.org/react 8ms (cache hit)
+30 http fetch GET 200 https://registry.npmjs.org/react 59ms (cache revalidated)
 31 silly packumentCache full:https://registry.npmjs.org/react set size:6068774 disposed:false
 32 silly fetch manifest react-dom@^16.8 || ^17.0 || ^18.0
 33 silly packumentCache full:https://registry.npmjs.org/react-dom cache-miss
-34 http cache https://registry.npmjs.org/react-dom 11ms (cache hit)
+34 http fetch GET 200 https://registry.npmjs.org/react-dom 58ms (cache revalidated)
 35 silly packumentCache full:https://registry.npmjs.org/react-dom set size:7871383 disposed:false
 36 verbose stack Error: could not resolve
 36 verbose stack     at PlaceDep.failPeerConflict (/Users/nicolecurcis/.nvm/versions/node/v22.19.0/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/place-dep.js:503:25)
@@ -80,15 +80,15 @@
 41 error
 41 error
 41 error For a full report see:
-41 error /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npm-cache/_logs/2025-09-21T12_38_34_359Z-eresolve-report.txt
-42 silly unfinished npm timer reify 1758458314891
-43 silly unfinished npm timer reify:loadTrees 1758458314906
-44 silly unfinished npm timer idealTree:buildDeps 1758458315155
-45 silly unfinished npm timer idealTree:node_modules/vaul 1758458315210
+41 error /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npm-cache/_logs/2025-09-21T12_58_21_553Z-eresolve-report.txt
+42 silly unfinished npm timer reify 1758459502298
+43 silly unfinished npm timer reify:loadTrees 1758459502324
+44 silly unfinished npm timer idealTree:buildDeps 1758459502739
+45 silly unfinished npm timer idealTree:node_modules/vaul 1758459503085
 46 verbose cwd /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized
 47 verbose os Darwin 24.6.0
 48 verbose node v22.19.0
 49 verbose npm  v10.9.3
 50 verbose exit 1
 51 verbose code 1
-52 error A complete log of this run can be found in: /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npm-cache/_logs/2025-09-21T12_38_34_359Z-debug-0.log
+52 error A complete log of this run can be found in: /Users/nicolecurcis/CascadeProjects/salem-cyber-vault-optimized/.npm-cache/_logs/2025-09-21T12_58_21_553Z-debug-0.log
